@@ -1,5 +1,7 @@
 import argparse
 import Library
+import Component
+
 
 def main(args):
     #establish all usable libraries and usable components
