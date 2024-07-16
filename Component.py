@@ -5,6 +5,7 @@ class Component:
         self.name = name
         self.device_type = device_type
 
+
     def get_include(self):
         """
         The #include<...> part of each generated code

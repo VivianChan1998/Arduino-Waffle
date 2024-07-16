@@ -14,11 +14,15 @@ class Board():
 
         self.pins[pin_num].set_in_use(required_pin_type)
         return pin_num
+    
+    def loop_delay(self):
+        # TODO: figure out delay
+        return 100
 
 
 
 class Pin():
-    def __init__(self, pin_types:Array[PinType], in_use:bool=False):
+    def __init__(self, pin_types:list[PinType], in_use:bool=False):
         self.pin_types = pin_types
         self.in_use = in_use
         self.used_as = PinType.DIGITAL

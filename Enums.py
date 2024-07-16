@@ -1,5 +1,8 @@
 from enum import Enum
 
+class PinMode(Enum):
+    INPUT = 0
+    OUTPUT = 1
 
 class PinType(Enum):
     POWER = 0
