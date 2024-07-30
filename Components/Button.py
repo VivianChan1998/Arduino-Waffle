@@ -8,20 +8,17 @@ class Button(Component):
         self.device_type = ComponentType.OUTPUT_DEVICE_DIGITAL
         self.library = None
 
+        self._pin_name = "button" + str(id) + "_pin"
+        self._val_name = "button" + str(id) + "_val"
+        
     def get_global_var(self):
-        ret = self.str_define("STEPS", "100")
-        ret += self.str_init_variable("int", "prev", "0")
-        ret += "Stepper stepper(STEPS, 8, 9, 10, 11);\n" #TODO
+        ret = self.str_init_variable("int", self._pin_name, '2') #TEMP
+        ret = self.str_init_variable("int", self._val_name, '0')
         return ret
     
     def get_setup(self):
-        return self.str_call_function("stepper", "setspeed", [30])
+        return self.str_pinMode(self._pin_name, 'o')
     
     def get_loop_start(self):
-        ret = self.str_init_variable("int", "val", "analogRead(0)")
-        ret += self.str_call_function("stepper", "step", ["val-previous"])
-        return ret
-
-    def get_loop_end(self):
-        ret = self.str_assign_variable("prev", "val")
+        ret = self.str_assign_variable(self._val_name, 'digitalRead(' + self._pin_name + ');')
         return ret

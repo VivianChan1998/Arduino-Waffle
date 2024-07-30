@@ -3,7 +3,7 @@ import Library
 from abc import ABCMeta, abstractmethod
 
 class Component(metaclass=ABCMeta):
-    def __init__(self, id):
+    def __init__(self, id: int):
         self.id = id
         pass
 
@@ -48,6 +48,14 @@ class Component(metaclass=ABCMeta):
 
     def str_include(self, name):
         return "#include <" + name + "> \n"
+    
+    def str_pinMode(self, name, io):
+        ret = "pinMode(" + name + ', '
+        if io is 'i':
+            ret += "INPUT);\n"
+        else:
+            ret += "OUTPUT);\n"
+        return ret
     
     def str_define(self, var, val):
         return "#define " + var + " " + str(val) + '\n'
