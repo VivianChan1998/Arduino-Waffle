@@ -5,6 +5,7 @@ from abc import ABCMeta, abstractmethod
 class Component(metaclass=ABCMeta):
     def __init__(self, id: int):
         self.id = id
+        self.state = ''
         pass
 
     def get_include(self):
@@ -13,36 +14,38 @@ class Component(metaclass=ABCMeta):
         """
         if self.library is not None:
             return self.str_include(self.library)
-        pass
+        return ""
     
     def get_global_var(self):
         """
         The #define ... and global variables for each component
         """
-        pass
+        return ""
 
     def get_setup(self):
         """
         Code to put inside `void setup() {}`
         """
-        pass
+        return ""
     
     def get_loop_start(self):
         """
         Code to put inside `void loop {}`
         """
-        pass
+        return ""
     
     def get_loop_logic(self):
-        # TODO
-        pass
+        return ""
     
     def get_loop_end(self):
         """
         Code to put inside `void loop {}`
         """
-        pass
-    
+        return ""
+
+    def choose_state(self, state_num):
+        self.state = self.state_names[int(state_num)]
+
     def get_helper_function(self):
         return ""
 
