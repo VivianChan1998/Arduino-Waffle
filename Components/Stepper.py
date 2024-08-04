@@ -18,13 +18,11 @@ class Stepper(Component):
                                         Answer("backward", 0, follow_up)
                                     ]
                                 )
-
         self.parameter = {
             "forward": 1,
             "step": 0
         }
 
-    
     def get_global_var(self):
         ret = self.str_define("STEPS", "100")
         ret += "Stepper stepper(STEPS, 8, 9, 10, 11);\n" #TODO

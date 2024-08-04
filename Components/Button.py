@@ -17,7 +17,6 @@ class Button(Component):
                                  ]
                                  )
         self.parameter = {"state": "press"}
-
         self._pin = "button" + str(id) + "_pin"
         self._val = "button" + str(id) + "_val"
         self._prev = "button" + str(id) + "_prev"

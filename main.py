@@ -1,27 +1,26 @@
 import argparse
-from Enums import ComponentType 
 from Components.Stepper import Stepper
 from Components.Button import Button
 from Components.LED import LED
 
 def main(args):
-    # 1 internally establish components
-    #establish all usable libraries and usable components
+    # list all usable components    
+    inputs = ["button"]
+    outputs = ["stepper", "LED"]
 
+    # TODO
+    # establish component instances based on user input
+
+    # TODO
+    # initate Board component and assign pins to components
+
+    ### TEMP ###
     stepper_component = Stepper(id = 1)
     button_component = Button(id = 1)
     led_component  = LED(id = 1)
     
-    inputs = [button_component]
-    outputs = [stepper_component]
-
-
-    included_input = [button_component] #TEMP
+    included_input = [button_component]
     included_output = [led_component]
-
-    code = []
-
-    # 2 ask about what components to include in this code
 
     print("What input components do you want to include in this program?")
     for c in included_input:
@@ -31,10 +30,10 @@ def main(args):
     for c in included_output:
         print(c.name)
 
-    print("---------------")
+    print("---------------\n")
 
 
-    # 3 ask about each input, to which output?
+    # pair input and output with their behavior
 
     io_pair = []
 
@@ -53,6 +52,10 @@ def main(args):
         print('for the ' + o.name + '... ')
         o.ask_question()
 
+
+    # generate code
+
+    code = []
 
     for c in included_input:
         code.append(c.get_include())
@@ -98,13 +101,14 @@ def main(args):
 
     # TODO
     # function returned object is a string which might have multiple lines of code
-    # need to modify them to ensure each entry in `code[]` is one line of codeg
+    # need to modify them to ensure each entry in `code[]` is one line of code
+
+    # TODO
+    # fix code indent
 
     for c in code:
         print(c, end='')
 
-
-    
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="")
