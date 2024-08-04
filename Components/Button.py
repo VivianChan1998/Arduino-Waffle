@@ -9,13 +9,14 @@ class Button(Component):
         self.library = None
         self.state_names = ["when button is pressed for once", "when button is pressed down",
                             "when button is not pressed"]
+        self.parameter = [None, None, None]
 
         self._pin = "button" + str(id) + "_pin"
         self._val = "button" + str(id) + "_val"
         self._prev = "button" + str(id) + "_prev"
         
     def get_global_var(self):
-        ret = self.str_init_variable("int", self._pin, '2') #TEMP
+        ret = self.str_init_variable("const int", self._pin, '2') #TEMP
         ret += self.str_init_variable("int", self._val, '0')
         if self.state is "when button is pressed for once":
             ret += self.str_init_variable("int", self._prev, '0')

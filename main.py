@@ -3,6 +3,7 @@ import Library
 from Enums import ComponentType 
 from Components.Stepper import Stepper
 from Components.Button import Button
+from Components.LED import LED
 
 def main(args):
     # 1 internally establish components
@@ -10,6 +11,7 @@ def main(args):
     #stepper_lib = Library("<Stepper.h>")
     stepper_component = Stepper(id = 1)
     button_component = Button(id = 1)
+    led_component  = LED(id = 1)
     #button_component = Component("Button", ComponentType.INPUT_DEVICE_DIGITAL, None)
 
 
@@ -19,7 +21,7 @@ def main(args):
 
 
     included_input = [button_component] #TEMP
-    included_output = [stepper_component]
+    included_output = [led_component]
 
     code = ""
 
@@ -40,18 +42,33 @@ def main(args):
 
     io_pair = []
 
-    for c in included_input:
-        for s in c.state_names:
+    for i in included_input:
+        print("for the " + i.name + ", what does it do?")
+        for s in i.state_names:
             print(s)
         state_num = input('?\n')
-        c.choose_state(state_num)
+        i.choose_state(state_num)
 
-        print('for this input, which output component reacts to it?')
+        print('for this input component, which output component reacts to it?')
 
         for o in included_output:
             print(o.name)
         output_device_num = input('?\n')
-        io_pair.append((c, included_output[int(output_device_num)]))
+        o = included_output[int(output_device_num)]
+        io_pair.append((i, o))
+
+        print('how does this output component act?')
+
+        for s in o.state_names:
+            print(s)
+        state_num = int(input('?\n'))
+        o.choose_state(state_num)
+        if o.parameter[state_num] is not None:
+            param = o.parameter[state_num]
+            print(param['prompt'])
+            ans = input("?\n")
+            o.parameter[state_num]['val'] = ans
+            print(o.parameter)
 
 
 
@@ -91,6 +108,11 @@ def main(args):
         code += c.get_loop_end()
     
     code += "} \n\n"
+
+    for c in included_input:
+        code += c.get_helper_function()
+    for c in included_output:
+        code += c.get_helper_function()
 
     print(code)
 

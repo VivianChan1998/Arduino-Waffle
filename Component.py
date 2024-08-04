@@ -6,6 +6,7 @@ class Component(metaclass=ABCMeta):
     def __init__(self, id: int):
         self.id = id
         self.state = ''
+        self.parameter = None
         pass
 
     def get_include(self):
@@ -75,4 +76,12 @@ class Component(metaclass=ABCMeta):
             ret += str(el) + ',' #TODO handle extra comma
         ret += ');\n'
         return ret
+    
+    def __getitem__(self, key):
+        print("here")
+        return getattr(self, key)
+    
+    def __setitem__(self, key, val):
+        print("here!!")
+        self['key'] = val
     

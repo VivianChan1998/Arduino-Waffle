@@ -8,6 +8,7 @@ class Stepper(Component):
         self.device_type = ComponentType.OUTPUT_DEVICE_W_LIBRARY
         self.library = "Stepper.h"
         self.state_names = ["rotate forward 100 steps", "rotate backward 100 steps"]
+        self.parameter = [None, None]
     
     def get_global_var(self):
         ret = self.str_define("STEPS", "100")
