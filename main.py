@@ -17,7 +17,7 @@ def main(args):
 
 
     included_input = [button_component] #TEMP
-    included_output = [stepper_component]
+    included_output = [led_component]
 
     code = []
 

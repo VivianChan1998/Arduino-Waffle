@@ -8,18 +8,20 @@ class LED(Component):
         self.name = "LED"
         self.device_type = ComponentType.OUTPUT_DEVICE_W_LIBRARY
         self.library = 'Adafruit_NeoPixel.h'
+        follow_up_color = Question( self, "color", "What color shoul the LEDs turn into?",
+                                AnswerType.TEXT
+                                )
         self.question = Question( self, "mode", "What kind of pattern do you want it to show?",
                                  AnswerType.MULTI_OPTION,
                                  [
-                                    Answer("Turn into one color", "color"),
+                                    Answer("Turn into one color", "color", follow_up_color),
                                     Answer("Do a ranbow pattern circulation", "rainbow")
                                  ]
                                  )
-        self.state_names = ['turn into one color', 'do rainbow']
-        self.parameter = [{
-                'prompt': 'what color?',
-                'val': '000000'
-            }, None]
+        self.parameter = {
+            "mode": "color",
+            "color": "000000"
+        }
         self._pin = "led" + str(id) + "_pin"
         self._num = "led" + str(id) + "_num"
 
@@ -35,12 +37,12 @@ class LED(Component):
     
     
     def get_loop_logic(self):
-        match self.state:
-            case 'turn into one color':
-                color = self.parameter[0]['val']
+        match self.parameter["mode"]:
+            case "color":
+                color = self.parameter["color"]
                 print(color)
                 ret = "colorWipe(pixels.Color(" + color[0] + color[1] + ',' + color[2] + color[3] + ',' + color[4] + color[5] + "), 50);"
-            case 'do rainbow':
+            case "rainbow":
                 ret = "theaterChaseRainbow(50)"
             case _:
                 ret = ""
@@ -51,7 +53,7 @@ class LED(Component):
 
     def get_helper_function(self):
         ret = ''
-        if self.state is self.state_names[1]:
+        if self.parameter["mode"] is "rainbow":
             ret += "void theaterChaseRainbow(int wait) {\n\
                     int firstPixelHue = 0;\n\
                     for(int a=0; a<30; a++) {  // Repeat 30 times...\n\

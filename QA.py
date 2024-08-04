@@ -17,13 +17,15 @@ class Question():
             print(a.text)
         ans = input("> ")
 
-        self.set_answer(int(ans))
+        self.set_answer(ans)
         self.follow_up(int(ans))
 
-    def set_answer(self, ans: int):
+    def set_answer(self, ans: str):
         if self.answer_type == AnswerType.MULTI_OPTION:
-            self.answer = self.answer_options[ans].value
+            self.answer = self.answer_options[int(ans)].value
         elif self.answer_type == AnswerType.NUMERCIAL:
+            self.answer = int(ans)
+        elif self.answer_type == AnswerType.TEXT:
             self.answer = ans
         
         self.parent.parameter[self.parameter_keyname] = self.answer

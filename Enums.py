@@ -30,3 +30,4 @@ class AnswerType(Enum):
     BOOL = 0
     NUMERCIAL = 1
     MULTI_OPTION = 2
+    TEXT = 3
