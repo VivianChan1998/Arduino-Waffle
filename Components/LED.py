@@ -1,5 +1,6 @@
 from Component import Component
-from Enums import ComponentType
+from Enums import ComponentType, AnswerType
+from QA import Question, Answer
 
 class LED(Component):
     def __init__(self, id):
@@ -7,6 +8,13 @@ class LED(Component):
         self.name = "LED"
         self.device_type = ComponentType.OUTPUT_DEVICE_W_LIBRARY
         self.library = 'Adafruit_NeoPixel.h'
+        self.question = Question( self, "mode", "What kind of pattern do you want it to show?",
+                                 AnswerType.MULTI_OPTION,
+                                 [
+                                    Answer("Turn into one color", "color"),
+                                    Answer("Do a ranbow pattern circulation", "rainbow")
+                                 ]
+                                 )
         self.state_names = ['turn into one color', 'do rainbow']
         self.parameter = [{
                 'prompt': 'what color?',
