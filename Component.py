@@ -1,5 +1,4 @@
 from Enums import ComponentType
-import Library
 from abc import ABCMeta, abstractmethod
 
 class Component(metaclass=ABCMeta):

@@ -1,5 +1,4 @@
 import argparse
-import Library
 from Enums import ComponentType 
 from Components.Stepper import Stepper
 from Components.Button import Button
@@ -23,7 +22,7 @@ def main(args):
     included_input = [button_component] #TEMP
     included_output = [led_component]
 
-    code = ""
+    code = []
 
     # 2 ask about what components to include in this code
 
@@ -73,48 +72,54 @@ def main(args):
 
 
     for c in included_input:
-        code += c.get_include()
+        code.append(c.get_include())
     for c in included_output:
-        code += c.get_include()
+        code.append(c.get_include())
 
     for c in included_input:
-        code += c.get_global_var()
+        code.append(c.get_global_var())
     for c in included_output:
-        code += c.get_global_var()
+        code.append(c.get_global_var())
 
-    code += "void setup() {\n"
+    code.append("void setup() {\n")
     
     for c in included_input:
-        code += c.get_setup()
+        code.append(c.get_setup())
     for c in included_output:
-        code += c.get_setup()
+        code.append(c.get_setup())
 
-    code += "} \n\n"
+    code.append("} \n\n")
 
-    code += "void loop() {\n"
+    code.append("void loop() {\n")
     
     for c in included_input:
-        code += c.get_loop_start()
+        code.append(c.get_loop_start())
     for c in included_output:
-        code += c.get_loop_start()
+        code.append(c.get_loop_start())
     
     for p in io_pair:
-        code += 'if (' + p[0].get_loop_logic() + ') {\n'
-        code += p[1].get_loop_logic() + '}\n'
+        code.append('if (' + p[0].get_loop_logic() + ') {\n')
+        code.append(p[1].get_loop_logic() + '}\n')
 
     for c in included_input:
-        code += c.get_loop_end()
+        code.append(c.get_loop_end())
     for c in included_output:
-        code += c.get_loop_end()
+        code.append(c.get_loop_end())
     
-    code += "} \n\n"
+    code.append("} \n\n")
 
     for c in included_input:
-        code += c.get_helper_function()
+        code.append(c.get_helper_function())
     for c in included_output:
-        code += c.get_helper_function()
+        code.append(c.get_helper_function())
 
-    print(code)
+    # TODO
+    # function returned object is a string which might have multiple lines of code
+    # need to modify them to ensure each entry in `code[]` is one line of codeg
+
+    for c in code:
+        print(c, end='')
+
 
     
 
