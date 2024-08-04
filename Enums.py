@@ -25,3 +25,8 @@ class ComponentType(Enum):
     OUTPUT_DEVICE_DIGITAL = 3
     OUTPUT_DEVICE_ANALOG = 4
     OUTPUT_DEVICE_W_LIBRARY = 5
+
+class AnswerType(Enum):
+    BOOL = 0
+    NUMERCIAL = 1
+    MULTI_OPTION = 2

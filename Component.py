@@ -1,11 +1,13 @@
 from Enums import ComponentType
 from abc import ABCMeta, abstractmethod
+from QA import Question, Answer
 
 class Component(metaclass=ABCMeta):
     def __init__(self, id: int):
         self.id = id
         self.state = ''
         self.parameter = None
+        self.question = None
         pass
 
     def get_include(self):
@@ -77,10 +79,10 @@ class Component(metaclass=ABCMeta):
         return ret
     
     def __getitem__(self, key):
-        print("here")
         return getattr(self, key)
     
     def __setitem__(self, key, val):
-        print("here!!")
-        self['key'] = val
-    
+        self[key] = val
+
+    def ask_question(self):
+        self.question.ask()

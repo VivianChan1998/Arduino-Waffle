@@ -7,20 +7,17 @@ from Components.LED import LED
 def main(args):
     # 1 internally establish components
     #establish all usable libraries and usable components
-    #stepper_lib = Library("<Stepper.h>")
+
     stepper_component = Stepper(id = 1)
     button_component = Button(id = 1)
     led_component  = LED(id = 1)
-    #button_component = Component("Button", ComponentType.INPUT_DEVICE_DIGITAL, None)
-
-
-    #Libraries = [stepper_lib]
+    
     inputs = [button_component]
     outputs = [stepper_component]
 
 
     included_input = [button_component] #TEMP
-    included_output = [led_component]
+    included_output = [stepper_component]
 
     code = []
 
@@ -42,33 +39,19 @@ def main(args):
     io_pair = []
 
     for i in included_input:
-        print("for the " + i.name + ", what does it do?")
-        for s in i.state_names:
-            print(s)
-        state_num = input('?\n')
-        i.choose_state(state_num)
-
-        print('for this input component, which output component reacts to it?')
+        print("for the " + i.name + "... ")
+        i.ask_question()
+        print('for the ' + i.name + ', which output component reacts to it?')
 
         for o in included_output:
             print(o.name)
         output_device_num = input('?\n')
+
         o = included_output[int(output_device_num)]
         io_pair.append((i, o))
 
-        print('how does this output component act?')
-
-        for s in o.state_names:
-            print(s)
-        state_num = int(input('?\n'))
-        o.choose_state(state_num)
-        if o.parameter[state_num] is not None:
-            param = o.parameter[state_num]
-            print(param['prompt'])
-            ans = input("?\n")
-            o.parameter[state_num]['val'] = ans
-            print(o.parameter)
-
+        print('for the ' + o.name + '... ')
+        o.ask_question()
 
 
     for c in included_input:
