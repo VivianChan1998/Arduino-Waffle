@@ -5,7 +5,7 @@ class PinMode(Enum):
     OUTPUT = 1
 
 class PinType(Enum):
-    POWER = 0
+    GND = 0
     DIGITAL = 1
     ANALOG = 2
     PWM = 3
@@ -16,6 +16,9 @@ class PinType(Enum):
     SPI_MISO = 8
     SPI_MOSI = 9
     SPI_SS = 10
+    VIN = 11
+    POWER_3V3 = 12
+    POWER_5V = 13
     UNAVAILABLE = 99
 
 class ComponentType(Enum):
