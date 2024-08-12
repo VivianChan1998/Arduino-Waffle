@@ -8,14 +8,14 @@ class LED(Component):
         self.name = "LED"
         self.device_type = ComponentType.OUTPUT_DEVICE_W_LIBRARY
         self.library = 'Adafruit_NeoPixel.h'
-        follow_up_color = Question( self, "color", "What color shoul the LEDs turn into?",
+        follow_up_color = Question( self, "color", "What color should the LEDs turn into?",
                                 AnswerType.TEXT
                                 )
         self.question = Question( self, "mode", "What kind of pattern do you want it to show?",
                                  AnswerType.MULTI_OPTION,
                                  [
                                     Answer("Turn into one color", "color", follow_up_color),
-                                    Answer("Do a ranbow pattern circulation", "rainbow")
+                                    Answer("Do a rainbow pattern circulation", "rainbow")
                                  ]
                                  )
         self.parameter = {
