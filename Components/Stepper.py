@@ -9,7 +9,7 @@ class Stepper(Component):
         self.device_type = ComponentType.OUTPUT_DEVICE_W_LIBRARY
         self.library = "Stepper.h"
         follow_up = Question( self, "step", "For how many steps?",
-                                AnswerType.NUMERCIAL
+                                AnswerType.NUMERICAL
                             )
         self.question = Question( self, "forward", "Which direction do you want the stepper to rotate?",
                                     AnswerType.MULTI_OPTION,
