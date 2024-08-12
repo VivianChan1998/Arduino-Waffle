@@ -1,10 +1,10 @@
 from Component import Component
-from Enums import ComponentType, AnswerType
+from Enums import ComponentType, AnswerType, PinType
 from QA import Question, Answer
 
 class LED(Component):
-    def __init__(self, id):
-        super().__init__(id)
+    def __init__(self, id, board):
+        super().__init__(id, board)
         self.name = "LED"
         self.device_type = ComponentType.OUTPUT_DEVICE_W_LIBRARY
         self.library = 'Adafruit_NeoPixel.h'
@@ -22,12 +22,14 @@ class LED(Component):
             "mode": "color",
             "color": "000000"
         }
+        self.pin_spec = [PinType.DIGITAL]
+        self.pin_reg = self.board.register_device(self.name, self.pin_spec)
         self._pin = "led" + str(id) + "_pin"
         self._num = "led" + str(id) + "_num"
 
         
     def get_global_var(self):
-        ret = self.str_define(self._pin, '6') #TEMP
+        ret = self.str_define(self._pin, self.pin_reg[0])
         ret += self.str_define(self._num, '10') #TEMP
         ret += "Adafruit_NeoPixel pixels(" + self._num + ', ' +  self._pin + ", NEO_GRB + NEO_KHZ800);\n" #TODO
         return ret

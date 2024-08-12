@@ -1,13 +1,16 @@
 from Enums import ComponentType
 from abc import ABCMeta, abstractmethod
 from QA import Question, Answer
+from Board import Board
 
 class Component(metaclass=ABCMeta):
-    def __init__(self, id: int):
+    def __init__(self, id: int, board: Board):
         self.id = id
         self.state = ''
         self.parameter = None
         self.question = None
+        self.pin_spec = None
+        self.board = board
         pass
 
     def get_include(self):

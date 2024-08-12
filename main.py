@@ -2,6 +2,7 @@ import argparse
 from Components.Stepper import Stepper
 from Components.Button import Button
 from Components.LED import LED
+from Board import Board
 
 def main(args):
     # list all usable components    
@@ -11,16 +12,18 @@ def main(args):
     # TODO
     # establish component instances based on user input
 
-    # TODO
-    # initate Board component and assign pins to components
 
+
+    Uno = Board("ArduinoUno")
     ### TEMP ###
-    stepper_component = Stepper(id = 1)
-    button_component = Button(id = 1)
-    led_component  = LED(id = 1)
+    #stepper_component = Stepper(1, Uno)
+    #button_component = Button(1, Uno)
+    led_component  = LED(1, Uno)
     
-    included_input = [button_component]
+    included_input = []
     included_output = [led_component]
+
+    print(Uno)
 
     print("What input components do you want to include in this program?")
     for c in included_input:

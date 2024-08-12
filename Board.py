@@ -36,20 +36,31 @@ class Board():
         # https://www.electronicshub.org/arduino-uno-pinout/ 
         # TODO initiate pins from reading in a file...
 
-    def register_device(self, device_name, pin_spec) -> bool:
-
-        return True
+    def register_device(self, device_name, pin_spec) -> list:
+        ret = []
+        for p in pin_spec:
+            n = self.register_one_pin(device_name, p)
+            ret.append(n)
+        return ret
         
     def register_one_pin(self, device_name:str, required_pin_type: PinType):
         # TODO: find which pin is available for required pin type
-        pin_num = 0
+        pin_num = 8
 
-        self.pins[pin_num].set_in_use(required_pin_type)
+        self.pins[pin_num].set_in_use(required_pin_type, device_name)
         return pin_num
     
     def loop_delay(self):
         # TODO: figure out delay
         return 100
+    
+    def __str__(self):
+        print("------------------------")
+        print("name: " + self.name)
+        for p in self.pins:
+            print(p)
+        print("------------------------\n")
+        return ""
 
 
 
@@ -67,6 +78,9 @@ class Pin():
         self.in_use = True
         self.used_as = used_as
         self.device_name = device_name
+
+    def __str__(self):
+        return str(self.pin_number) + "  " + str(self.used_as) + "  " + str(self.in_use)
 
 
 
