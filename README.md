@@ -17,3 +17,12 @@
     > will look into this
 - [ ] (high) add components!
     > xiaorui working on adding the ultrasonic sensor
+
+## TODOs meeting aug 12
+- [ ] (xiaorui) IRB extension (?) or new IRB
+- [ ] (vivian) Behavior pair multiple i to multiple o
+- [ ] (xiaorui vivian) potentiometer
+- [ ] task description for rough draft
+    - [ ] create new overleaf
+    - [ ] write abstract of paper
+- [ ] start on frontend
