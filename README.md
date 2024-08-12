@@ -3,7 +3,7 @@
 
 
 ## TODOs
-> all todos are commented in the  `main.py`.
+> most todos are commented in the  `main.py`!
 > here we mark it with priority
 
 - [ ] (medium) establish component instances based on user input
