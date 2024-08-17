@@ -41,15 +41,8 @@ class UltrasonicSensor(Component):
                        "//distance in cm\n\tSerial.print(\"Distance: \");\n\tSerial.println(distance);")
     
     def get_loop_logic(self):
-        print(self.parameter["state"])
-        match self.parameter["state"]:
-            case "press":
-                ret = self._prev + " == 0 &&" + self._val + " == 1"
-            case "held":
-                ret = self._val + " == 1"
-            case "not":
-                ret = self._val + " == 0"
-            case _:
-                ret = ""
+        match self.parameter["mode"]:
+            case "binary threshold":
+                ret =  "distance > " + self.parameter["threshold"] 
             
         return ret
