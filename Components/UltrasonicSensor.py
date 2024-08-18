@@ -6,7 +6,7 @@ class UltrasonicSensor(Component):
     def __init__(self, id):
         super().__init__(id)
         self.name = "ultrasonic sensor"
-        self.device_type = ComponentType.OUTPUT_DEVICE_DIGITAL
+        self.device_type = ComponentType.INPUT_DEVICE_ANALOG
         self.library = None
         follow_up_threshold = Question(self, "threshold", "What should the binary threshold be in cm?",
                                 AnswerType.TEXT
@@ -28,7 +28,7 @@ class UltrasonicSensor(Component):
         ret = self.str_define(self._trig, '9') 
         ret += self.str_define(self._echo, '10') 
         ret += "float duration, distance;\n" 
-        ret += self.str_init_variable("int", "boundary", 50) # <--- TODO: CHANGE FROM HARDCODED
+        ret += self.str_init_variable("int", "boundary", self.parameter["threshold"]) # <--- TODO: CHANGE FROM HARDCODED
         return ret
     
     def get_setup(self):
@@ -43,6 +43,6 @@ class UltrasonicSensor(Component):
     def get_loop_logic(self):
         match self.parameter["mode"]:
             case "binary threshold":
-                ret =  "distance > " + self.parameter["threshold"] 
+                ret =  "distance > boundary"
             
         return ret
