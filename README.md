@@ -11,7 +11,6 @@
     > vivian is working on this one now!
     - [ ] Board.py, initiate board by reading from a file (?)
     - [ ] Board.py > register_one_pin(), choose available pin - depends on how the pin structure is established
-- [ ] (medium) I realized that i forgot to add Question "how many leds" in LED.py
 - [ ] (low) function returned object is a string which might have multiple lines of code, need to modify them to ensure each entry in `code[]` is one line of code
 - [ ] (low) fix code indentg
     > will look into this
@@ -20,9 +19,16 @@
 
 ## TODOs meeting aug 12
 - [x] (xiaorui) IRB extension (?) or new IRB
-- [ ] (vivian) Behavior pair multiple i to multiple o
+- [x] (vivian) Behavior pair multiple i to multiple o
+    - [ ] modify components to match
+    - [ ] "init" questions 
 - [x] (xiaorui vivian) potentiometer
-- [ ] task description for rough draft
-    - [ ] create new overleaf
+- [x] task description for rough draft
+    - [x] create new overleaf
     - [ ] write abstract of paper
 - [ ] start on frontend
+
+
+## Not too urgent
+- [ ] fix led helper function 
+- [ ] acquire components for testing (!!)
