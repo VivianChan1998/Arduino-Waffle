@@ -1,13 +1,13 @@
 from Enums import AnswerType
 
 class Question():
-    def __init__(self, parent, parameter_keyname, question_text, answer_type, answer_options = [], follow_up_question = None) -> None:
+    def __init__(self, set_param_to, parameter_keyname, question_text, answer_type, answer_options = [], follow_up_question = None) -> None:
         self.question_text = question_text
         self.answer_type = answer_type
         self.answer_options = answer_options
         #self.follow_up_question = follow_up_question
         self.answer = None
-        self.parent = parent
+        self.set_param_to = set_param_to
         self.parameter_keyname = parameter_keyname
     
     def ask(self):
@@ -27,8 +27,8 @@ class Question():
             self.answer = int(ans)
         elif self.answer_type == AnswerType.TEXT:
             self.answer = ans
-        
-        self.parent.parameter[self.parameter_keyname] = self.answer
+
+        self.set_param_to[self.parameter_keyname] = self.answer
 
     def follow_up(self, ans: int):
         if self.answer_type == AnswerType.MULTI_OPTION:

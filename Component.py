@@ -1,16 +1,16 @@
-from Enums import ComponentType
-from abc import ABCMeta, abstractmethod
-from QA import Question, Answer
 from Board import Board
 
-class Component(metaclass=ABCMeta):
+class Component():
     def __init__(self, id: int, board: Board):
         self.id = id
-        self.state = ''
         self.parameter = None
         self.question = None
         self.pin_spec = None
+        self.library = None
         self.board = board
+        self.states = []
+        self.init = {}
+        self.parameter = {}  # ONLY params associated with loop or helper functions
         pass
 
     def get_include(self):
@@ -39,7 +39,7 @@ class Component(metaclass=ABCMeta):
         """
         return ""
     
-    def get_loop_logic(self):
+    def get_loop_logic(self, state_num = 0):
         return ""
     
     def get_loop_end(self):
@@ -87,5 +87,11 @@ class Component(metaclass=ABCMeta):
     def __setitem__(self, key, val):
         self[key] = val
 
-    def ask_question(self):
+    def ask_setup_question(self):
+        self.setup_question.ask()
+
+    def ask_question(self) -> int:
         self.question.ask()
+        self.states.append(dict(self.parameter))
+        print("state num =>>>> " + str(len(self.states) - 1))
+        return (len(self.states) - 1)
