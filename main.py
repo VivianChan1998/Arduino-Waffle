@@ -27,6 +27,8 @@ def main(args):
     included_output = [led_component, led_component2]
 
     print(Uno)
+    
+    print("---------------\n")
 
     print("What input components do you want to include in this program?")
     for i in included_input_behavior:
@@ -45,7 +47,6 @@ def main(args):
         o.ask_init_question()
     
 
-
     for i in included_input_behavior:
         print("for the " + i.input_obj.name + "... ")
         i.input_obj.ask_question()
@@ -61,10 +62,6 @@ def main(args):
             o = included_output[int(n)]
             state_num = o.ask_question()
             i.add_output(o, state_num)
-
-
-
-    # generate code
 
     code = []
 
