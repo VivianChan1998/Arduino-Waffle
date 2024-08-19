@@ -2,6 +2,7 @@ import argparse
 from Components.Stepper import Stepper
 from Components.Button import Button
 from Components.LED import LED
+from Components.Potentiometer import Potentiometer
 from Board import Board
 from IOBehavior import IOBehavior
 
@@ -22,7 +23,7 @@ def main(args):
     led_component  = LED(1, Uno)
     led_component2  = LED(2, Uno)
     
-    included_input_behavior = [IOBehavior(Button(1, Uno))]
+    included_input_behavior = [IOBehavior(Button(1, Uno)), IOBehavior(Potentiometer(1, Uno))]
     included_output = [led_component, led_component2]
 
     print(Uno)
