@@ -27,7 +27,7 @@ class LED(Component):
     def get_global_var(self):
         ret = self.str_define(self._pin, self.pin_reg[0])
         ret += self.str_define(self._num, self.init["number"])
-        ret += "Adafruit_NeoPixel " + self._obj_name + "(" + self._num + ', ' +  self._pin + ", NEO_GRB + NEO_KHZ800);\n" #TODO
+        ret += "Adafruit_NeoPixel " + self._obj_name + " = Adafruit_NeoPixel(" + self._num + ', ' +  self._pin + ", NEO_GRB + NEO_KHZ800);\n" #TODO
         return ret
     
     def get_setup(self):
@@ -36,7 +36,6 @@ class LED(Component):
     
     def get_loop_logic(self, state_num = 0):
         state = self.states[state_num]
-        print(state)
         match state["mode"]:
             case "color":
                 color = state["color"]

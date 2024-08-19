@@ -106,10 +106,13 @@ def main(args):
     
     code.append("} \n\n")
 
+    '''
+
     for i in included_input_behavior:
         code.append(i.input_obj.get_helper_function())
     for o in included_output:
         code.append(o.get_helper_function())
+    ''' #TEMP: fix led helper function
 
     # TODO
     # function returned object is a string which might have multiple lines of code

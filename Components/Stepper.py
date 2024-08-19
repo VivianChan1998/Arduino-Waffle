@@ -8,30 +8,26 @@ class Stepper(Component):
         self.name = "stepper"
         self.device_type = ComponentType.OUTPUT_DEVICE_W_LIBRARY
         self.library = "Stepper.h"
-        follow_up = Question( self, "step", "For how many steps?",
-                                AnswerType.NUMERCIAL
-                            )
-        self.question = Question( self, "forward", "Which direction do you want the stepper to rotate?",
+        follow_up = Question(self.parameter, "step", "For how many steps?", AnswerType.NUMERCIAL)
+        self.question = Question(self.parameter, "forward", "Which direction do you want the stepper to rotate?",
                                     AnswerType.MULTI_OPTION,
                                     [
                                         Answer("forward", 1, follow_up),
                                         Answer("backward", 0, follow_up)
                                     ]
                                 )
-        self.parameter = {
-            "forward": 1,
-            "step": 0
-        }
-
+        self._obj_name = "stepper_" + str(id)
+        
     def get_global_var(self):
         ret = self.str_define("STEPS", "100")
-        ret += "Stepper stepper(STEPS, 8, 9, 10, 11);\n" #TODO
+        ret += "Stepper " + self._obj_name + " = stepper(STEPS, 8, 9, 10, 11);\n" #TODO
         return ret
     
     def get_setup(self):
-        return self.str_call_function("stepper", "setspeed", [30])
+        return self.str_call_function(self._obj_name, "setspeed", [30])
     
-    def get_loop_logic(self):
-        steps = int(self.parameter["step"]) if self.parameter["forward"] else -1 * int(self.parameter["step"])
-        ret = self.str_call_function("stepper", "step", [steps])
+    def get_loop_logic(self, state_num = 0):
+        state = self.states[state_num]
+        steps = int(state["step"]) if state["forward"] else -1 * int(state["step"])
+        ret = self.str_call_function(self._obj_name, "step", [steps])
         return ret
