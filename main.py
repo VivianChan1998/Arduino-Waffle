@@ -38,8 +38,11 @@ def main(args):
 
     print("---------------\n")
 
-
-    # pair input and output with their behavior
+    for i in included_input_behavior:
+        i.input_obj.ask_init_question()
+    for o in included_output:
+        o.ask_init_question()
+    
 
 
     for i in included_input_behavior:

@@ -5,6 +5,7 @@ class Component():
         self.id = id
         self.parameter = None
         self.question = None
+        self.init_question = None
         self.pin_spec = None
         self.library = None
         self.board = board
@@ -87,11 +88,13 @@ class Component():
     def __setitem__(self, key, val):
         self[key] = val
 
-    def ask_setup_question(self):
-        self.setup_question.ask()
+    def ask_init_question(self):
+        if self.init_question != None:
+            self.init_question.ask()
 
     def ask_question(self) -> int:
+        if self.question == None:
+            return -1
         self.question.ask()
         self.states.append(dict(self.parameter))
-        print("state num =>>>> " + str(len(self.states) - 1))
         return (len(self.states) - 1)

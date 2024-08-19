@@ -8,9 +8,7 @@ class LED(Component):
         self.name = "LED"
         self.device_type = ComponentType.OUTPUT_DEVICE_W_LIBRARY
         self.library = 'Adafruit_NeoPixel.h'
-        self.setup_question = Question(self.init, "number", "How many LEDs are there on this strip?", AnswerType.NUMERCIAL)
-        # TEMP!!! #
-        self.init = {"number": 23}
+        self.init_question = Question(self.init, "number", "How many LEDs are there on this strip?", AnswerType.NUMERCIAL)
         follow_up_color = Question(self.parameter, "color", "What color should the LEDs turn into?", AnswerType.TEXT)
         self.question = Question( self.parameter, "mode", "What kind of pattern do you want it to show?",
                                  AnswerType.MULTI_OPTION,
@@ -38,7 +36,6 @@ class LED(Component):
     
     def get_loop_logic(self, state_num = 0):
         state = self.states[state_num]
-        print("HERE")
         print(state)
         match state["mode"]:
             case "color":
