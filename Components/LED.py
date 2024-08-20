@@ -17,6 +17,13 @@ class LED(Component):
                                     Answer("Do a rainbow pattern circulation", "rainbow")
                                  ]
                                  )
+        self.question_analog = Question( self.parameter, "mode", "What kind of pattern do you want it to show?",
+                                 AnswerType.MULTI_OPTION,
+                                 [
+                                    Answer("Turn into one color", "color", follow_up_color),
+                                    #Answer("Do a rainbow pattern circulation", "rainbow")
+                                 ]
+                                 )
         self.pin_spec = [PinType.DIGITAL]
         self.pin_reg = self.board.register_device(self.name, self.pin_spec)
         self._pin = "led" + str(id) + "_pin"
@@ -50,7 +57,10 @@ class LED(Component):
         brightness = "int(" + str(self.analog_max) + " / " + str(param_max) + " * " + param
         if reverse:
             brightness = str(self.analog_max) + "-" + brightness
-        return self._obj_name + "strip.setBrightness(" + brightness + ");"
+        ret = self._obj_name + "strip.setBrightness(" + brightness + ");\n"
+        color = self.states[state_num]["color"]
+        ret += "colorWipe("+ self._obj_name+ ".Color(" + color[0] + color[1] + ',' + color[2] + color[3] + ',' + color[4] + color[5] + "), 50);"
+        return ret
 
     def get_helper_function(self): ## TODO change helper function to accomodate which led strip it is
         ret = ''

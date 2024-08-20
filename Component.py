@@ -97,7 +97,10 @@ class Component():
     def ask_question(self) -> int:
         if self.question == None:
             return -1
-        self.question.ask()
+        if(self.is_analog):
+            self.question_analog.ask()
+        else:
+            self.question.ask()
         self.states.append(dict(self.parameter))
         return (len(self.states) - 1)
     

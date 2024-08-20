@@ -51,19 +51,26 @@ def main(args):
     
 
     for i in included_input_behavior:
+        
         print("for the " + i.input_obj.name + "... ")
         i.input_obj.ask_question()
         print('for the ' + i.input_obj.name + ', which output component reacts to it?')
-
         for n, o in enumerate(included_output):
-            if o.device_type != ComponentType.OUTPUT_DEVICE_ONLY_DIGITAL:
+            if i.use_analog:
+                if o.device_type != ComponentType.OUTPUT_DEVICE_ONLY_DIGITAL:
+                    print(str(n) + ' ' + o.name)
+            else:
                 print(str(n) + ' ' + o.name)
+
+
         output_device_num = input('(temp: type the number next to the component)?\n')
 
         nums = output_device_num.split()
 
         for n in nums:
             o = included_output[int(n)]
+            if i.use_analog:
+                o.set_analog()
             state_num = o.ask_question()
             i.add_output(o, state_num)
 
@@ -126,6 +133,11 @@ def main(args):
 
     # TODO
     # fix code indent
+
+    # TODO
+    # get rid of redundant #include
+
+    print("-----------------\n\n")
 
     for c in code:
         print(c, end='')
