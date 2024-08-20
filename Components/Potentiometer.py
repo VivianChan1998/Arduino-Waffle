@@ -6,7 +6,7 @@ class Potentiometer(Component):
     def __init__(self, id, board):
         super().__init__(id, board)
         self.name = "potentiometer"
-        self.device_type = ComponentType.INPUT_DEVICE_ANALOG
+        self.device_type = ComponentType.INPUT_DEVICE
         follow_up_threshold = Question(self.init, "threshold", "What should the binary threshold be? (The max value a potentiometer can read is 1023)",
                                 AnswerType.NUMERCIAL
                                 )
@@ -14,11 +14,13 @@ class Potentiometer(Component):
                                  AnswerType.MULTI_OPTION,
                                  [
                                     Answer("Binary threshold with respect to an output device, one output state under threshold, one output state over threshold", "binary threshold", follow_up_threshold),
-                                    Answer("Use analog input as direct determinant for the output, each different analog value will impact state", "analog direct")
+                                    Answer("Use analog input as direct determinant for the output, each different analog value will impact state", "analog direct", callback_function = self.set_analog)
                                  ]
                                  )
         self._pin = "potPin_" + str(id)
         self._val = "potVal_" + str(id)
+        self.analog_max = 1023
+        self.analog_param_name = self._val
         
     def get_global_var(self):
         ret = self.str_init_variable("int", self._pin, "A3") # Hardcoded analog pin value

@@ -6,7 +6,7 @@ class Stepper(Component):
     def __init__(self, id):
         super().__init__(id)
         self.name = "stepper"
-        self.device_type = ComponentType.OUTPUT_DEVICE_W_LIBRARY
+        self.device_type = ComponentType.OUTPUT_DEVICE_ONLY_DIGITAL
         self.library = "Stepper.h"
         follow_up = Question(self.parameter, "step", "For how many steps?", AnswerType.NUMERCIAL)
         self.question = Question(self.parameter, "forward", "Which direction do you want the stepper to rotate?",

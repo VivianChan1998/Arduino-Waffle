@@ -6,7 +6,7 @@ class LED(Component):
     def __init__(self, id, board):
         super().__init__(id, board)
         self.name = "LED"
-        self.device_type = ComponentType.OUTPUT_DEVICE_W_LIBRARY
+        self.device_type = ComponentType.OUTPUT_DEVICE
         self.library = 'Adafruit_NeoPixel.h'
         self.init_question = Question(self.init, "number", "How many LEDs are there on this strip?", AnswerType.NUMERCIAL)
         follow_up_color = Question(self.parameter, "color", "What color should the LEDs turn into?", AnswerType.TEXT)
@@ -22,7 +22,7 @@ class LED(Component):
         self._pin = "led" + str(id) + "_pin"
         self._num = "led" + str(id) + "_num"
         self._obj_name = "pixels_" + str(id)
-
+        self.analog_max = 255
         
     def get_global_var(self):
         ret = self.str_define(self._pin, self.pin_reg[0])
@@ -39,13 +39,18 @@ class LED(Component):
         match state["mode"]:
             case "color":
                 color = state["color"]
-                print(color)
                 ret = "colorWipe("+ self._obj_name+ ".Color(" + color[0] + color[1] + ',' + color[2] + color[3] + ',' + color[4] + color[5] + "), 50);"
             case "rainbow":
                 ret = "theaterChaseRainbow("+ self._obj_name + ", 50)"
             case _:
                 ret = ""
         return ret
+    
+    def get_loop_logic_analog(self, state_num, param: str, param_max: int, reverse: bool = False) -> str: 
+        brightness = "int(" + str(self.analog_max) + " / " + str(param_max) + " * " + param
+        if reverse:
+            brightness = str(self.analog_max) + "-" + brightness
+        return self._obj_name + "strip.setBrightness(" + brightness + ");"
 
     def get_helper_function(self): ## TODO change helper function to accomodate which led strip it is
         ret = ''

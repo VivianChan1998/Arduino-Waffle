@@ -6,7 +6,7 @@ class Button(Component):
     def __init__(self, id, board):
         super().__init__(id, board)
         self.name = "button"
-        self.device_type = ComponentType.OUTPUT_DEVICE_DIGITAL
+        self.device_type = ComponentType.INPUT_DEVICE_ONLY_DIGITAL
         self.question = Question(self.init, "mode", "What kind of input does the button take?",
                                  AnswerType.MULTI_OPTION,
                                  [

@@ -12,6 +12,8 @@ class Component():
         self.states = []
         self.init = {}
         self.parameter = {}  # ONLY params associated with loop or helper functions
+        self.is_analog = False
+        self.analog_max = -1
         pass
 
     def get_include(self):
@@ -98,3 +100,8 @@ class Component():
         self.question.ask()
         self.states.append(dict(self.parameter))
         return (len(self.states) - 1)
+    
+    # ANALOG SPECIFIC #
+    def set_analog(self):
+        self.is_analog = True
+        pass

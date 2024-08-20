@@ -5,7 +5,7 @@ class Question():
         self.question_text = question_text
         self.answer_type = answer_type
         self.answer_options = answer_options
-        #self.follow_up_question = follow_up_question
+        self.follow_up_question = follow_up_question
         self.answer = None
         self.set_param_to = set_param_to
         self.parameter_keyname = parameter_keyname
@@ -32,14 +32,17 @@ class Question():
 
     def follow_up(self, ans: int):
         if self.answer_type == AnswerType.MULTI_OPTION:
-            follow_up = self.answer_options[ans].follow_up
-            if follow_up != None:
-                follow_up.ask()
+            ans = self.answer_options[ans]
+            if ans.follow_up != None:
+                ans.follow_up.ask()
+            elif ans.callback_function != None:
+                ans.callback_function()
     
 
 class Answer():
-    def __init__(self, answer_text, value, follow_up = None) -> None:
+    def __init__(self, answer_text, value, follow_up = None, callback_function = None) -> None:
         self.text = answer_text
         self.value = value
         self.follow_up = follow_up
+        self.callback_function = callback_function
         pass

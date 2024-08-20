@@ -1,4 +1,5 @@
 import argparse
+from Enums import ComponentType
 from Components.Stepper import Stepper
 from Components.Button import Button
 from Components.LED import LED
@@ -23,7 +24,7 @@ def main(args):
     led_component  = LED(1, Uno)
     led_component2  = LED(2, Uno)
     
-    included_input_behavior = [IOBehavior(Button(1, Uno)), IOBehavior(Potentiometer(1, Uno))]
+    included_input_behavior = [IOBehavior(Potentiometer(1, Uno))]
     included_output = [led_component, led_component2]
 
     print(Uno)
@@ -43,6 +44,8 @@ def main(args):
 
     for i in included_input_behavior:
         i.input_obj.ask_init_question()
+        if i.input_obj.is_analog:
+            i.set_analog()
     for o in included_output:
         o.ask_init_question()
     
@@ -52,9 +55,10 @@ def main(args):
         i.input_obj.ask_question()
         print('for the ' + i.input_obj.name + ', which output component reacts to it?')
 
-        for o in included_output:
-            print(o.name)
-        output_device_num = input('?\n')
+        for n, o in enumerate(included_output):
+            if o.device_type != ComponentType.OUTPUT_DEVICE_ONLY_DIGITAL:
+                print(str(n) + ' ' + o.name)
+        output_device_num = input('(temp: type the number next to the component)?\n')
 
         nums = output_device_num.split()
 
@@ -92,9 +96,13 @@ def main(args):
         code.append(o.get_loop_start())
     
     for i in included_input_behavior:
-        code.append('if (' + i.input_obj.get_loop_logic() + ') {\n')
-        code_temp = i.get_output_loop()
-        code.append(code_temp)
+        if i.use_analog:
+            code_temp = i.get_output_loop_analog()
+            code.append(code_temp)
+        else:
+            code.append('if (' + i.input_obj.get_loop_logic() + ') {\n')
+            code_temp = i.get_output_loop()
+            code.append(code_temp)
         code.append('\n}\n')
 
     for i in included_input_behavior:

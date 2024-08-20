@@ -6,7 +6,7 @@ class UltrasonicSensor(Component):
     def __init__(self, id, board):
         super().__init__(id, board)
         self.name = "ultrasonic sensor"
-        self.device_type = ComponentType.INPUT_DEVICE_ANALOG
+        self.device_type = ComponentType.INPUT_DEVICE
         follow_up_threshold = Question(self.init, "threshold", "What should the binary threshold be in cm?",
                                 AnswerType.NUMERCIAL
                                 )
@@ -19,6 +19,7 @@ class UltrasonicSensor(Component):
                                  )
         self._trig = "ultrasonic_trig_" + str(id) + "_pin"
         self._echo = "ultrasonic_echo_" + str(id) + "_pin"
+        self.analog_max = 1023
         
     def get_global_var(self):
         ret = self.str_define(self._trig, '9') 
