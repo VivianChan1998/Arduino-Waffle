@@ -7,7 +7,7 @@
 - [x] (high) initate Board component and assign pins to components
     - [ ] Board.py, initiate board by reading from a file (?)
     - [ ] Board.py > register_one_pin(), choose available pin - depends on how the pin structure is established
-- [ ] (high) modify other components for them to be used as analog
+- [ ] (medium) modify ultrasonic to be used as analog
 - [ ] (low) function returned object is a string which might have multiple lines of code, need to modify them to ensure each entry in `code[]` is one line of code
 - [ ] (low) fix code indent
     > will look into this
