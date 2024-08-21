@@ -25,7 +25,7 @@ class UltrasonicSensor(Component):
         ret = self.str_define(self._trig, '9') 
         ret += self.str_define(self._echo, '10') 
         ret += "float duration, distance;\n" 
-        ret += self.str_init_variable("int", "boundary", self.init["threshold"]) # <--- TODO: CHANGE FROM HARDCODED
+        ret += self.str_init_variable("int", "boundary", self.init["threshold"])
         return ret
     
     def get_setup(self):
