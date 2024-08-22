@@ -3,7 +3,7 @@ from QA import Question, Answer
 from Enums import ComponentType, AnswerType
 
 class UltrasonicSensor(Component):
-    def __init__(self, id, board):
+    def __init__(self, id, board): # can_analog = True)
         super().__init__(id, board)
         self.name = "ultrasonic sensor"
         self.device_type = ComponentType.INPUT_DEVICE
@@ -14,6 +14,7 @@ class UltrasonicSensor(Component):
                                  AnswerType.MULTI_OPTION,
                                  [
                                     Answer("Binary threshold with respect to an output device, one output state under threshold, one output state over threshold", "binary threshold", follow_up_threshold),
+                                    # if !can_analog then no analog option
                                     Answer("Use analog input as direct determinant for the output, each different analog value will impact state", "analog direct")
                                  ]
                                  )

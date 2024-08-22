@@ -4,6 +4,7 @@ from Components.Stepper import Stepper
 from Components.Button import Button
 from Components.LED import LED
 from Components.Potentiometer import Potentiometer
+from Components.UltrasonicSensor import UltrasonicSensor
 from Board import Board
 from IOBehavior import IOBehavior
 
@@ -24,7 +25,7 @@ def main(args):
     led_component  = LED(1, Uno)
     led_component2  = LED(2, Uno)
     
-    included_input_behavior = [IOBehavior(Potentiometer(1, Uno))]
+    included_input_behavior = [IOBehavior(UltrasonicSensor(1, Uno))]
     included_output = [led_component, led_component2]
 
     print(Uno)
@@ -41,6 +42,9 @@ def main(args):
         print(c.name)
 
     print("---------------\n")
+
+    # if all ouptput is ONLY_DIGITAL
+    #     input can only be used as digital
 
     for i in included_input_behavior:
         i.input_obj.ask_init_question()
