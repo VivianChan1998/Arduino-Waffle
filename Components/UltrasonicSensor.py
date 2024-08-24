@@ -15,34 +15,39 @@ class UltrasonicSensor(Component):
                                  [
                                     Answer("Binary threshold with respect to an output device, one output state under threshold, one output state over threshold", "binary threshold", follow_up_threshold),
                                     # if !can_analog then no analog option
-                                    Answer("Use analog input as direct determinant for the output, each different analog value will impact state", "analog direct")
+                                    Answer("Use analog input as direct determinant for the output, each different analog value will impact state", "analog direct", callback_function = self.set_analog)
                                  ]
                                  )
-        self._trig = "ultrasonic_trig_" + str(id) + "_pin"
-        self._echo = "ultrasonic_echo_" + str(id) + "_pin"
+        self._trig = "ultrasonicTrig_" + str(id) + "_pin"
+        self._echo = "ultrasonicEcho_" + str(id) + "_pin"
+        self._boundary = "ultrasonicBoundary_" + str(id)
+        self._duration = "duration_" + str(id)
+        self._distance = "ultrasoniceDistance_" + str(id)
         self.analog_max = 1023
+        self.analog_param_name = self._distance # is analog max the same for distance? need to check on the same 
+
         
     def get_global_var(self):
         ret = self.str_define(self._trig, '9') 
         ret += self.str_define(self._echo, '10') 
         ret += "float duration, distance;\n" 
-        ret += self.str_init_variable("int", "boundary", self.init["threshold"])
+        ret += self.str_init_variable("int", self._boundary, self.init["threshold"])
         return ret
     
     def get_setup(self):
-        return f"\n\tpinMode({self._trig}, OUTPUT);\n\tpinMode({self._echo}, INPUT);\n\tSerial.begin(9600);" # (!!) Serial Begin should not be in individual components
+        return f"\n\tpinMode({self._trig}, OUTPUT);\n\tpinMode({self._echo}, INPUT);" # (!!) Serial Begin should not be in individual components
 
     def get_loop_start(self):
-        return ("\n\tdigitalWrite(ULTRASONIC_TRIG_PIN, LOW);\n\tdelayMicroseconds(2);\n\tdigitalWrite(",
-                       "ULTRASONIC_TRIG_PIN, HIGH);\n\tdelayMicroseconds(10);\n\tdigitalWrite(ULTRASONIC_TRIG_PIN, ",
-                       "LOW);\n\tduration = pulseIn(ULTRASONIC_ECHO_PIN, HIGH);\n\tdistance = duration * 0.034 / 2; ",
-                       "//distance in cm\n\tSerial.print(\"Distance: \");\n\tSerial.println(distance);") # (!!) Serial print can be enabled separatedly
+        return [f"digitalWrite({self._trig}, LOW)", "delayMicroseconds(2)", 
+                f"digitalWrite({self._trig}, HIGH)", "delayMicroseconds(10)", 
+                f"digitalWrite({self._trig}, LOW)", f"{self._duration} = pulseIn({self._echo}, HIGH)", 
+                f"{self._distance} = {self._duration} * 0.034 / 2", 
+                f"Serial.print(\"Distance: \")", f"Serial.println({self._distance})"] 
     
     def get_loop_logic(self):
         match self.init["mode"]:
             case "binary threshold":
-                ret =  "distance > boundary"
+                ret =  f"{self._distance} > {self._boundary}"
             case "analog direct":
-                ret = "" # TODO
-            
+                ret = ""
         return ret

@@ -5,6 +5,8 @@ from Enums import ComponentType, AnswerType
 class Stepper(Component):
     def __init__(self, id):
         super().__init__(id)
+        # No analog options available! 
+
         self.name = "stepper"
         self.device_type = ComponentType.OUTPUT_DEVICE_ONLY_DIGITAL
         self.library = "Stepper.h"
@@ -16,6 +18,7 @@ class Stepper(Component):
                                         Answer("backward", 0, follow_up)
                                     ]
                                 )
+    
         self._obj_name = "stepper_" + str(id)
         
     def get_global_var(self):
@@ -27,6 +30,7 @@ class Stepper(Component):
         return self.str_call_function(self._obj_name, "setspeed", [30])
     
     def get_loop_logic(self, state_num = 0):
+
         state = self.states[state_num]
         steps = int(state["step"]) if state["forward"] else -1 * int(state["step"])
         ret = self.str_call_function(self._obj_name, "step", [steps])

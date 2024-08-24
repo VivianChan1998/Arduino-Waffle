@@ -8,15 +8,22 @@ class Buzzer(Component):
         self.name = "Buzzer"
         self.device_type = ComponentType.OUTPUT_DEVICE
         follow_up_melody = Question(self.parameter, "notes", "What notes should the buzzer play? Please input the val", AnswerType.TEXT) # could ask users to input?
-        self.question = Question( self.parameter, "mode", "What should be the behavior of the buzzer?",
+        self.question = Question(self.parameter, "mode", "What should be the behavior of the buzzer?",
                                  AnswerType.MULTI_OPTION,
                                  [
                                     Answer("Basic buzzing (one constant note)", "basic"),
-                                    Answer("Complex melody", "complex")
+                                    Answer("Complex melody", "complex") # ask sarah
                                  ]
                                  )
+        
+        self.question_analog = Question(self.paramter, "mode", "What should be the behavior of the buzzer?", 
+                                AnswerType.MULTI_OPTION, 
+                                 [
+                                    Answer("Buzzing where the frequency is controlled by the input component value", "basic")
+                                 ])
     
         self._buzzer = "buzzer" + str(id)
+        self._analog_max = 32767 # does it make sense to span the entire frequency range?
         
     def get_global_var(self, state_num = 0):
         ret = self.str_init_variable("int", self._buzzer, "9") # Hardcoded pin value for now
@@ -28,6 +35,11 @@ class Buzzer(Component):
     def get_setup(self):
         return "pinMode(" + self._buzzer + ", OUTPUT);/n" 
     
+    def get_loop_logic_analog(self, state_num, param: str, param_max: int) -> str: 
+        # has built in delay times, can remove
+        ret = [f"tone({self._buzzer}, map({param}, 0, {str(param_max)}, 0, {str(self._analog_max)}));", "delay(1000)", "noTone(buzzer)", "delay(1000)"]
+        
+        return ret 
     def get_loop_logic(self, state_num = 0):
         state = self.states[state_num]
         match state["mode"]:

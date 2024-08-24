@@ -15,9 +15,19 @@ class DCMotor(Component):
                                         Answer("counterclockwise", 0, follow_up)
                                     ]
                                 )
+        
+        self.question_analog = Question(self.parameter, "rotation", "Which direction do you want the DC motor to rotate? Since the input component has an analog relationship with this component, the pulse width modulation (speed) will be controlled by that input)", 
+                                    AnswerType.MULTI_OPTION, 
+                                    [
+                                        AnswerType("clockwise", 1),
+                                        AnswerType("counterclockwise", 0)
+                                    ]
+                                )
+        
         self._dir_pin = "directionPin_" + str(id)
         self._pwm_pin = "pwnPin_" + str(id)
         self._brake_pin = "brakePin_" + str(id)
+        self._analog_max = 255
         
     def get_global_var(self, state_num = 0):
         ret = self.str_init_variable("int", self._dir_pin, "12") # Hardcoded pin value for now
@@ -27,6 +37,19 @@ class DCMotor(Component):
 
     def get_setup(self):
         return ["pinMode(" + self._dir_pin + ", OUTPUT)", "pinMode(" + self._pwm_pin + ", OUTPUT)", "pinMode(" + self._brake_pin + ", OUTPUT)"]
+    
+    def get_loop_logic_analog(self, state_num, param: str, param_max: int) -> str: 
+        state = self.states[state_num]
+        match state["rotation"]:
+            case "clockwise":
+                ret = [f"digitalWrite({self._dir_pin}, LOW)"]
+            case "counterclockwise":
+                ret = [f"digitalWrite({self._dir_pin}, HIGH)"]
+
+        # has built in delay times, can remove to make the motor always rotate one direction
+        ret.extend([f"digitalWrite({self._brake_pin}, LOW)", f"analogWrite({self._pwm_pin}, map({param}, 0, {str(param_max)}, 0, {self.analog_max}))", "delay(2000)", f"digitalWrite({self._brake_pin}, HIGH)", "analogWrite(pwmPin, 0)", "delay(2000)"])
+        
+        return ret 
     
     def get_loop_logic(self, state_num = 0):
         state = self.states[state_num]

@@ -19,14 +19,15 @@ class Potentiometer(Component):
                                  )
         self._pin = "potPin_" + str(id)
         self._val = "potVal_" + str(id)
+        self._boundary = "potBoundary_" + str(id)
         self.analog_max = 1023
         self.analog_param_name = self._val
         
     def get_global_var(self):
         ret = self.str_init_variable("int", self._pin, "A3") # Hardcoded analog pin value
-        ret += self.str_init_variable("int", self._pin, "0")
+        ret += self.str_init_variable("int", self._val, "0")
         if self.init["mode"] == "binary threshold": # if specific mode is picked then we need to remember the threshold 
-            ret += self.str_init_variable("int", "boundary", self.init["threshold"])
+            ret += self.str_init_variable("int", self._boundary, self.init["threshold"])
         return ret
     
     def get_setup(self):
@@ -38,8 +39,8 @@ class Potentiometer(Component):
     def get_loop_logic(self):
         match self.init["mode"]:
             case "binary threshold":
-                ret =  "distance > boundary"
+                ret =  f"distance > {self._boundary}"
             case "analog direct":
                 ret = ""
-                # TODO more complex case requires knowing output code before 
+                # Solely dependent on output code
         return ret

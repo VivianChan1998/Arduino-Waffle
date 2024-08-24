@@ -20,7 +20,7 @@ class LED(Component):
         self.question_analog = Question( self.parameter, "mode", "What kind of pattern do you want it to show?",
                                  AnswerType.MULTI_OPTION,
                                  [
-                                    Answer("Turn into one color", "color", follow_up_color),
+                                    Answer("Turn into one color with brightness varied on input", "color", follow_up_color),
                                     #Answer("Do a rainbow pattern circulation", "rainbow")
                                  ]
                                  )
