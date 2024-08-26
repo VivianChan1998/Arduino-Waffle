@@ -94,6 +94,8 @@ class Component():
         if self.init_question != None:
             self.init_question.ask()
 
+
+
     def ask_question(self) -> int:
         if self.question == None:
             return -1

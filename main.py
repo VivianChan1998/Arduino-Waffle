@@ -79,6 +79,16 @@ def main(args):
             i.add_output(o, state_num)
 
     code = []
+    seen_library = []
+
+    for i in included_input_behavior:
+        if hasattr(i.input_obj, "library") and i.name not in seen_library:
+            seen_library.append(i.input_obj.name)
+            code.append(i.input_obj.str_include(i.input_obj.library))
+    for o in included_output:
+        if hasattr(o, "library") and o.name not in seen_library:
+            seen_library.append(o.name)
+            code.append(o.str_include(o.library))
 
     for i in included_input_behavior:
         code.append(i.input_obj.get_include())
@@ -92,6 +102,7 @@ def main(args):
 
     code.append("void setup() {\n")
     
+    code.append("Serial.begin(9600)")
     for i in included_input_behavior:
         code.append(i.input_obj.get_setup())
     for o in included_output:
@@ -123,13 +134,19 @@ def main(args):
     
     code.append("} \n\n")
 
-    '''
-
+    seen_helper_functions = []
+    
     for i in included_input_behavior:
-        code.append(i.input_obj.get_helper_function())
+        func, name = i.input_obj.get_helper_function()
+        if name not in seen_helper_functions:
+            seen_helper_functions.append(name)
+            code.append(func)
+        
     for o in included_output:
-        code.append(o.get_helper_function())
-    ''' #TEMP: fix led helper function
+        func, name = o.get_helper_function()
+        if name not in seen_helper_functions:
+            seen_helper_functions.append(name)
+            code.append(func)
 
     # TODO
     # function returned object is a string which might have multiple lines of code
@@ -137,9 +154,6 @@ def main(args):
 
     # TODO
     # fix code indent
-
-    # TODO
-    # get rid of redundant #include
 
     print("-----------------\n\n")
 

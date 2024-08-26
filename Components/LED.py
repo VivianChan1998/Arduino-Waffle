@@ -79,6 +79,7 @@ class LED(Component):
                     delay(wait);\n\
                     firstPixelHue += 65536 / 90;\n\
                     }\n}\n}\n"
+            return (ret, "led_rainbow")
         else:
             ret += "void colorWipe(uint32_t color, int wait) {\
                     for(int i=0; i<pixels.numPixels(); i++) { // For each pixel in strip...\n\
@@ -87,4 +88,4 @@ class LED(Component):
                     delay(wait);                           //  Pause for a moment\n\
                     }\n\
                     }\n"
-        return ret
+            return (ret, "led_color")

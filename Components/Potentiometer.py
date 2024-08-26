@@ -34,7 +34,9 @@ class Potentiometer(Component):
         return "" # To read value from potentiometer, nothing is needed in setup(), need to think about how this might change for more complex cases
 
     def get_loop_start(self):
-        return self._val + " = analogRead(" + self._pin + ");"
+        ret = [self._val + " = analogRead(" + self._pin + ")", "Serial.println(" + self._val + ")"]
+        return ret
+    
     
     def get_loop_logic(self):
         match self.init["mode"]:
