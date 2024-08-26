@@ -32,13 +32,12 @@ class LED(Component):
         self.analog_max = 255
         
     def get_global_var(self):
-        ret = self.str_define(self._pin, self.pin_reg[0])
-        ret += self.str_define(self._num, self.init["number"])
-        ret += "Adafruit_NeoPixel " + self._obj_name + " = Adafruit_NeoPixel(" + self._num + ', ' +  self._pin + ", NEO_GRB + NEO_KHZ800);\n" #TODO
-        return ret
+        return [self.str_define(self._pin, self.pin_reg[0]), 
+                self.str_define(self._num, self.init["number"]), 
+                "Adafruit_NeoPixel " + self._obj_name + " = Adafruit_NeoPixel(" + self._num + ', ' +  self._pin + ", NEO_GRB + NEO_KHZ800)"]
     
     def get_setup(self):
-        return self._obj_name + ".begin();\n"
+        return [self._obj_name + ".begin()"]
     
     
     def get_loop_logic(self, state_num = 0):
@@ -46,9 +45,9 @@ class LED(Component):
         match state["mode"]:
             case "color":
                 color = state["color"]
-                ret = "colorWipe("+ self._obj_name+ ".Color(" + color[0] + color[1] + ',' + color[2] + color[3] + ',' + color[4] + color[5] + "), 50);"
+                ret = ["colorWipe("+ self._obj_name+ ".Color(" + color[0] + color[1] + ',' + color[2] + color[3] + ',' + color[4] + color[5] + "), 50)"]
             case "rainbow":
-                ret = "theaterChaseRainbow("+ self._obj_name + ", 50)"
+                ret = ["theaterChaseRainbow("+ self._obj_name + ", 50)"]
             case _:
                 ret = ""
         return ret
@@ -57,35 +56,36 @@ class LED(Component):
         brightness = "int(" + str(self.analog_max) + " / " + str(param_max) + " * " + param
         if reverse:
             brightness = str(self.analog_max) + "-" + brightness
-        ret = self._obj_name + "strip.setBrightness(" + brightness + ");\n"
         color = self.states[state_num]["color"]
         ret += "colorWipe("+ self._obj_name+ ".Color(" + color[0] + color[1] + ',' + color[2] + color[3] + ',' + color[4] + color[5] + "), 50);"
-        return ret
+        return [self._obj_name + "strip.setBrightness(" + brightness + ")",
+                "colorWipe("+ self._obj_name+ ".Color(" + color[0] + color[1] + ',' + color[2] + color[3] + ',' + color[4] + color[5] + "), 50)"]
 
     def get_helper_function(self): ## TODO change helper function to accomodate which led strip it is
-        ret = ''
         if self.parameter["mode"] is "rainbow":
-            ret += "void theaterChaseRainbow(int wait) {\n\
-                    int firstPixelHue = 0;\n\
-                    for(int a=0; a<30; a++) {  // Repeat 30 times...\n\
-                    for(int b=0; b<3; b++) {\n\
-                    pixels.clear();\n\
-                    for(int c=b; c<pixels.numPixels(); c += 3) {\n\
-                        int hue = firstPixelHue + c * 65536L / pixels.numPixels();\n\
-                        uint32_t color = pixels.gamma32(pixels.ColorHSV(hue));\n\
-                        pixels.setPixelColor(c, color);\n\
-                    }\n\
-                    pixels.show();\n\
-                    delay(wait);\n\
-                    firstPixelHue += 65536 / 90;\n\
-                    }\n}\n}\n"
+            ret = ["void theaterChaseRainbow(int wait) {",
+                    "int firstPixelHue = 0",
+                    "for(int a=0; a<30; a++) {",
+                    "for(int b=0; b<3; b++) {",
+                    "pixels.clear()", 
+                    "for(int c=b; c<pixels.numPixels(); c += 3) {",
+                    "int hue = firstPixelHue + c * 65536L / pixels.numPixels()",
+                    "uint32_t color = pixels.gamma32(pixels.ColorHSV(hue))"
+                    "pixels.setPixelColor(c, color)",
+                    "}",
+                    "pixels.show()",
+                    "delay(wait)",
+                    "firstPixelHue += 65536 / 90",
+                    "}",
+                    "}",
+                    "}"]
             return (ret, "led_rainbow")
         else:
-            ret += "void colorWipe(uint32_t color, int wait) {\
-                    for(int i=0; i<pixels.numPixels(); i++) { // For each pixel in strip...\n\
-                    pixels.setPixelColor(i, color);         //  Set pixel's color (in RAM)\n\
-                    pixels.show();                          //  Update strip to match\n\
-                    delay(wait);                           //  Pause for a moment\n\
-                    }\n\
-                    }\n"
+            ret = ["void colorWipe(uint32_t color, int wait) {",
+                    "for(int i=0; i<pixels.numPixels(); i++) {", 
+                    "pixels.setPixelColor(i, color)",
+                    "pixels.show()",
+                    "delay(wait)",
+                    "}",
+                    "}"]
             return (ret, "led_color")

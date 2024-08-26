@@ -28,14 +28,13 @@ class UltrasonicSensor(Component):
 
         
     def get_global_var(self):
-        ret = self.str_define(self._trig, '9') 
-        ret += self.str_define(self._echo, '10') 
-        ret += "float duration, distance;\n" 
-        ret += self.str_init_variable("int", self._boundary, self.init["threshold"])
-        return ret
+        return [self.str_define(self._trig, '9'), 
+                self.str_define(self._echo, '10'), 
+                "float duration, distance", 
+                self.str_init_variable("int", self._boundary, self.init["threshold"])]
     
     def get_setup(self):
-        return f"\n\tpinMode({self._trig}, OUTPUT);\n\tpinMode({self._echo}, INPUT);" # (!!) Serial Begin should not be in individual components
+        return [f"pinMode({self._trig}, OUTPUT)", f"pinMode({self._echo}, INPUT)"]
 
     def get_loop_start(self):
         return [f"digitalWrite({self._trig}, LOW)", "delayMicroseconds(2)", 
@@ -47,7 +46,7 @@ class UltrasonicSensor(Component):
     def get_loop_logic(self):
         match self.init["mode"]:
             case "binary threshold":
-                ret =  f"{self._distance} > {self._boundary}"
+                ret =  [f"{self._distance} > {self._boundary}"]
             case "analog direct":
                 ret = ""
         return ret

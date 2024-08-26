@@ -58,30 +58,30 @@ class Component():
         return ""
 
     def str_include(self, name):
-        return "#include <" + name + "> \n"
+        return "#include <" + name + ">"
     
     def str_pinMode(self, name, io):
         ret = "pinMode(" + name + ', '
         if io is 'i':
-            ret += "INPUT);\n"
+            ret += "INPUT)"
         else:
-            ret += "OUTPUT);\n"
+            ret += "OUTPUT)"
         return ret
     
     def str_define(self, var, val):
-        return "#define " + var + " " + str(val) + '\n'
+        return "#define " + var + " " + str(val)
     
     def str_init_variable(self, var_type, var, val):
-        return var_type + " " + var + " = " + str(val) + ';\n'
+        return var_type + " " + var + " = " + str(val)
     
     def str_assign_variable(self, left, right):
-        return left + " = " + right + ";\n"
+        return left + " = " + right
     
     def str_call_function(self, obj, func_name, list_to_pass):
         ret = obj + '.' + func_name + '(' 
         for el in list_to_pass:
             ret += str(el) + ',' #TODO handle extra comma
-        ret += ');\n'
+        ret += ')'
         return ret
     
     def __getitem__(self, key):
