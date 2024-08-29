@@ -15,7 +15,7 @@ class IOBehavior():
         ret = []
         for n, o in enumerate(self.output_obj):
             state_num = self.output_obj_state_num[n]
-            ret.append(o.get_loop_logic(state_num))
+            ret.extend(o.get_loop_logic(state_num))
         return ret
     
     def set_analog(self):

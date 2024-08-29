@@ -7,6 +7,7 @@ from Components.Potentiometer import Potentiometer
 from Components.UltrasonicSensor import UltrasonicSensor
 from Board import Board
 from IOBehavior import IOBehavior
+from Utils import form_program
 
 def main(args):
     # list all usable components    
@@ -55,7 +56,6 @@ def main(args):
     
 
     for i in included_input_behavior:
-        
         print("for the " + i.input_obj.name + "... ")
         i.input_obj.ask_question()
         print('for the ' + i.input_obj.name + ', which output component reacts to it?')
@@ -82,71 +82,79 @@ def main(args):
     seen_library = []
 
     for i in included_input_behavior:
-        if hasattr(i.input_obj, "library") and i.name not in seen_library:
+        if i.input_obj.library and i.input_obj.name not in seen_library:
             seen_library.append(i.input_obj.name)
             code.append(i.input_obj.str_include(i.input_obj.library))
     for o in included_output:
-        if hasattr(o, "library") and o.name not in seen_library:
+        if o.library and o.name not in seen_library:
             seen_library.append(o.name)
             code.append(o.str_include(o.library))
 
+    # Not necessary anymore 
+    '''
     for i in included_input_behavior:
-        code.append(i.input_obj.get_include())
+        code.extend(i.input_obj.get_include())
     for o in included_output:
-        code.append(o.get_include())
-
+        code.extend(o.get_include())
+    '''
+    
     for i in included_input_behavior:
-        code.append(i.input_obj.get_global_var())
+        code.extend(i.input_obj.get_global_var())
     for o in included_output:
-        code.append(o.get_global_var())
+        code.extend(o.get_global_var())
 
-    code.append("void setup() {\n")
+    code.append("void setup() {")
     
     code.append("Serial.begin(9600)")
     for i in included_input_behavior:
-        code.append(i.input_obj.get_setup())
+        code.extend(i.input_obj.get_setup())
     for o in included_output:
-        code.append(o.get_setup())
+        code.extend(o.get_setup())
 
-    code.append("} \n\n")
+    code.append("}")
 
-    code.append("void loop() {\n")
+    code.append("void loop() {")
     
     for i in included_input_behavior:
-        code.append(i.input_obj.get_loop_start())
+        code.extend(i.input_obj.get_loop_start())
     for o in included_output:
-        code.append(o.get_loop_start())
+        code.extend(o.get_loop_start())
     
     for i in included_input_behavior:
         if i.use_analog:
             code_temp = i.get_output_loop_analog()
-            code.append(code_temp)
+            code.extend(code_temp)
         else:
-            code.append('if (' + i.input_obj.get_loop_logic() + ') {\n')
+            code.append('if (' + i.input_obj.get_loop_logic() + ') {')
             code_temp = i.get_output_loop()
-            code.append(code_temp)
-        code.append('\n}\n')
+            code.extend(code_temp)
+        code.append('}')
 
     for i in included_input_behavior:
-        code.append(i.input_obj.get_loop_end())
+        code.extend(i.input_obj.get_loop_end())
     for o in included_output:
-        code.append(o.get_loop_end())
+        code.extend(o.get_loop_end())
     
-    code.append("} \n\n")
+    code.append("}")
 
     seen_helper_functions = []
-    
+
+    # SOME ERROR ABOUT CONVERTING QUESTIONS TO STATE HERE, NOT QUITE SURE
+    '''    
     for i in included_input_behavior:
-        func, name = i.input_obj.get_helper_function()
-        if name not in seen_helper_functions:
-            seen_helper_functions.append(name)
-            code.append(func)
+        if i.input_obj.get_helper_function() != "":
+            func, name = i.input_obj.get_helper_function()
+            if name not in seen_helper_functions:
+                seen_helper_functions.append(name)
+                code.extend(func)
         
     for o in included_output:
-        func, name = o.get_helper_function()
-        if name not in seen_helper_functions:
-            seen_helper_functions.append(name)
-            code.append(func)
+        if o.get_helper_function() != "":
+            func, name = o.get_helper_function()
+            if name not in seen_helper_functions:
+                seen_helper_functions.append(name)
+                code.extend(func)
+    '''
 
     # TODO
     # function returned object is a string which might have multiple lines of code
@@ -154,8 +162,11 @@ def main(args):
 
     # TODO
     # fix code indent
+    print(code)
+    code = form_program(code)
 
     print("-----------------\n\n")
+
 
     for c in code:
         print(c, end='')

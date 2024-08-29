@@ -20,20 +20,19 @@ class Button(Component):
         self._prev = "button" + str(id) + "_prev"
         
     def get_global_var(self):
-        ret = self.str_init_variable("const int", self._pin, '2') #TEMP
-        ret += self.str_init_variable("int", self._val, '0')
+        ret = [self.str_init_variable("const int", self._pin, '2'), self.str_init_variable("int", self._val, '0')] #TEMP
         if self.init["mode"] is "press":
-            ret += self.str_init_variable("int", self._prev, '0')
+            ret.append(self.str_init_variable("int", self._prev, '0'))
         return ret
     
     def get_setup(self):
-        return self.str_pinMode(self._pin, 'o')
+        return [self.str_pinMode(self._pin, 'o')]
     
     def get_loop_start(self):
-        ret = ''
+        ret = []
         if self.init["mode"] == "press":
-            ret += self.str_assign_variable(self._prev, self._val)
-        ret += self.str_assign_variable(self._val, 'digitalRead(' + self._pin + ');')
+            ret.append(self.str_assign_variable(self._prev, self._val))
+        ret.append(self.str_assign_variable(self._val, 'digitalRead(' + self._pin + ')'))
         return ret
     
     def get_loop_logic(self, state_num = 0):
@@ -49,5 +48,4 @@ class Button(Component):
                 ret = self._val + " == 0"
             case _:
                 ret = ""
-            
         return ret

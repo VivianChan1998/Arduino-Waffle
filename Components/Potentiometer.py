@@ -24,14 +24,13 @@ class Potentiometer(Component):
         self.analog_param_name = self._val
         
     def get_global_var(self):
-        ret = self.str_init_variable("int", self._pin, "A3") # Hardcoded analog pin value
-        ret += self.str_init_variable("int", self._val, "0")
+        ret = [self.str_init_variable("int", self._pin, "A3"), self.str_init_variable("int", self._val, "0")] # Hardcoded analog pin value
         if self.init["mode"] == "binary threshold": # if specific mode is picked then we need to remember the threshold 
-            ret += self.str_init_variable("int", self._boundary, self.init["threshold"])
+            ret.append(self.str_init_variable("int", self._boundary, self.init["threshold"]))
         return ret
     
     def get_setup(self):
-        return "" # To read value from potentiometer, nothing is needed in setup(), need to think about how this might change for more complex cases
+        return [] # To read value from potentiometer, nothing is needed in setup(), need to think about how this might change for more complex cases
 
     def get_loop_start(self):
         ret = [self._val + " = analogRead(" + self._pin + ")", "Serial.println(" + self._val + ")"] 

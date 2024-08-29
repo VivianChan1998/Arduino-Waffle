@@ -30,9 +30,9 @@ class DCMotor(Component):
         self._analog_max = 255
         
     def get_global_var(self, state_num = 0):
-        ret = self.str_init_variable("int", self._dir_pin, "12") # Hardcoded pin value for now
-        ret += self.str_init_variable("int", self._pwm_pin, "3") # Hardcoded pin value for now, must be 11, 10, 9, 6, 5, 3
-        ret += self.str_init_variable("int", self._brake_pin, "9") # Hardcoded pin value for now
+        ret = [self.str_init_variable("int", self._dir_pin, "12"), # Hardcoded pin value for now 
+               self.str_init_variable("int", self._pwm_pin, "3"), # Hardcoded pin value for now, must be 11, 10, 9, 6, 5, 3
+               self.str_init_variable("int", self._brake_pin, "9")] # Hardcoded pin value for now 
         return ret
 
     def get_setup(self):

@@ -26,20 +26,20 @@ class Buzzer(Component):
         self._analog_max = 32767 # does it make sense to span the entire frequency range?
         
     def get_global_var(self, state_num = 0):
-        ret = self.str_init_variable("int", self._buzzer, "9") # Hardcoded pin value for now
+        ret = [self.str_init_variable("int", self._buzzer, "9")] # Hardcoded pin value for now
         if self.states[state_num]["mode"] == "complex":
-            ret = "#include 'pitches.h'\n" + ret
-            ret += "int melody[] = {NOTE_C4, NOTE_G3, NOTE_G3, NOTE_A3, NOTE_G3, 0, NOTE_B3, NOTE_C4};\nint noteDurations[] = {4, 8, 8, 4, 4, 4, 4, 4};\n" # need to include separate file found here: https://docs.arduino.cc/built-in-examples/digital/toneMelody/
+            ret = ["#include 'pitches.h'"] + ret
+            ret.append("int melody[] = {NOTE_C4, NOTE_G3, NOTE_G3, NOTE_A3, NOTE_G3, 0, NOTE_B3, NOTE_C4};\nint noteDurations[] = {4, 8, 8, 4, 4, 4, 4, 4}") # need to include separate file found here: https://docs.arduino.cc/built-in-examples/digital/toneMelody/
         return ret
 
     def get_setup(self):
-        return "pinMode(" + self._buzzer + ", OUTPUT);/n" 
+        return ["pinMode(" + self._buzzer + ", OUTPUT)"]
     
     def get_loop_logic_analog(self, state_num, param: str, param_max: int) -> str: 
         # has built in delay times, can remove
-        ret = [f"tone({self._buzzer}, map({param}, 0, {str(param_max)}, 0, {str(self._analog_max)}));", "delay(1000)", "noTone(buzzer)", "delay(1000)"]
-        
+        ret = [f"tone({self._buzzer}, map({param}, 0, {str(param_max)}, 0, {str(self._analog_max)}))", "delay(1000)", "noTone(buzzer)", "delay(1000)"]
         return ret 
+    
     def get_loop_logic(self, state_num = 0):
         state = self.states[state_num]
         match state["mode"]:

@@ -22,16 +22,18 @@ class UltrasonicSensor(Component):
         self._echo = "ultrasonicEcho_" + str(id) + "_pin"
         self._boundary = "ultrasonicBoundary_" + str(id)
         self._duration = "duration_" + str(id)
-        self._distance = "ultrasoniceDistance_" + str(id)
+        self._distance = "ultrasonicDistance_" + str(id)
         self.analog_max = 1023
         self.analog_param_name = self._distance # is analog max the same for distance? need to check on the same 
 
         
     def get_global_var(self):
-        return [self.str_define(self._trig, '9'), 
-                self.str_define(self._echo, '10'), 
-                "float duration, distance", 
-                self.str_init_variable("int", self._boundary, self.init["threshold"])]
+        ret = [self.str_define(self._trig, '9'), 
+               self.str_define(self._echo, '10'), 
+               "float duration, distance"]
+        if self.init["threshold"]:
+            ret.append(self.str_init_variable("int", self._boundary, self.init["threshold"]))
+        return ret
     
     def get_setup(self):
         return [f"pinMode({self._trig}, OUTPUT)", f"pinMode({self._echo}, INPUT)"]
@@ -39,14 +41,15 @@ class UltrasonicSensor(Component):
     def get_loop_start(self):
         return [f"digitalWrite({self._trig}, LOW)", "delayMicroseconds(2)", 
                 f"digitalWrite({self._trig}, HIGH)", "delayMicroseconds(10)", 
-                f"digitalWrite({self._trig}, LOW)", f"{self._duration} = pulseIn({self._echo}, HIGH)", 
+                f"digitalWrite({self._trig}, LOW)", 
+                f"{self._duration} = pulseIn({self._echo}, HIGH)", 
                 f"{self._distance} = {self._duration} * 0.034 / 2", 
                 f"Serial.print(\"Distance: \")", f"Serial.println({self._distance})"] 
     
     def get_loop_logic(self):
         match self.init["mode"]:
             case "binary threshold":
-                ret =  [f"{self._distance} > {self._boundary}"]
+                ret =  f"{self._distance} > {self._boundary}"
             case "analog direct":
                 ret = ""
         return ret

@@ -39,7 +39,6 @@ class LED(Component):
     def get_setup(self):
         return [self._obj_name + ".begin()"]
     
-    
     def get_loop_logic(self, state_num = 0):
         state = self.states[state_num]
         match state["mode"]:
@@ -57,12 +56,12 @@ class LED(Component):
         if reverse:
             brightness = str(self.analog_max) + "-" + brightness
         color = self.states[state_num]["color"]
-        ret += "colorWipe("+ self._obj_name+ ".Color(" + color[0] + color[1] + ',' + color[2] + color[3] + ',' + color[4] + color[5] + "), 50);"
         return [self._obj_name + "strip.setBrightness(" + brightness + ")",
                 "colorWipe("+ self._obj_name+ ".Color(" + color[0] + color[1] + ',' + color[2] + color[3] + ',' + color[4] + color[5] + "), 50)"]
 
-    def get_helper_function(self): ## TODO change helper function to accomodate which led strip it is
-        if self.parameter["mode"] is "rainbow":
+    def get_helper_function(self, state_num = 0): ## TODO change helper function to accomodate which led strip it is
+        state = self.states[state_num]
+        if state["mode"] is "rainbow":
             ret = ["void theaterChaseRainbow(int wait) {",
                     "int firstPixelHue = 0",
                     "for(int a=0; a<30; a++) {",

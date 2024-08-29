@@ -22,16 +22,14 @@ class Stepper(Component):
         self._obj_name = "stepper_" + str(id)
         
     def get_global_var(self):
-        ret = self.str_define("STEPS", "100")
-        ret += "Stepper " + self._obj_name + " = stepper(STEPS, 8, 9, 10, 11);\n" #TODO
+        ret = [self.str_define("STEPS", "100"), 
+               "Stepper " + self._obj_name + " = stepper(STEPS, 8, 9, 10, 11)"]
         return ret
     
     def get_setup(self):
-        return self.str_call_function(self._obj_name, "setspeed", [30])
+        return [self.str_call_function(self._obj_name, "setspeed", [30])]
     
     def get_loop_logic(self, state_num = 0):
-
         state = self.states[state_num]
         steps = int(state["step"]) if state["forward"] else -1 * int(state["step"])
-        ret = self.str_call_function(self._obj_name, "step", [steps])
-        return ret
+        return [self.str_call_function(self._obj_name, "step", [steps])]

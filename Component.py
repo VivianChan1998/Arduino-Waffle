@@ -79,8 +79,9 @@ class Component():
     
     def str_call_function(self, obj, func_name, list_to_pass):
         ret = obj + '.' + func_name + '(' 
-        for el in list_to_pass:
-            ret += str(el) + ',' #TODO handle extra comma
+        for el in list_to_pass[:-1]:
+            ret += str(el) + ',' #TODO handle extra comma. I think i fixed? - xiaorui 
+        ret += str(list_to_pass[-1])
         ret += ')'
         return ret
     
