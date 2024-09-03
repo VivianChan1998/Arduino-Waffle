@@ -12,8 +12,15 @@ from IOBehavior import IOBehavior
 input_options = ["button", "stepper"]
 output_options = ["stepper", "LED"]
 
-#included_input_behavior = [IOBehavior(UltrasonicSensor(1, Uno))]
-#included_output = [led_component, led_component2]
+included_input_behavior = []
+included_output = []
+
+### TEMP ###
+#stepper_component = Stepper(1, Uno)
+#button_component = Button(1, Uno)
+Uno = Board("ArduinoUno")
+led_component  = LED(1, Uno)
+led_component2  = LED(2, Uno)
 
 app = Flask(__name__)
 CORS(app)
@@ -29,5 +36,15 @@ def chosen_components():
     print(request)
     data = request.get_json(force=True)
     print(data)
+
+    # TODO parse component to arrays
+
+    included_input_behavior = [IOBehavior(UltrasonicSensor(1, Uno))]
+    included_output = [led_component, led_component2]
+    
+    return '{"status": "ok"}'
+
+@app.route("/get_question")
+def get_questions():
     
     return '{"status": "ok"}'
