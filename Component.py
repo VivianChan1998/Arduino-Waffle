@@ -94,6 +94,11 @@ class Component():
         if self.init_question != None:
             self.init_question.ask()
 
+    def set_init_answer(self, ans_id):
+        self.init_question.set_answer(ans_id)
+        self.init_question.follow_up(ans_id)
+        
+
     def ask_question(self) -> int:
         if self.question == None:
             return -1

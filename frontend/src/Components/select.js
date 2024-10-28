@@ -1,9 +1,13 @@
 import React from "react";
 import { useState, useEffect, useCallback } from 'react';
+import { redirect } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 export default function Select(){
-    const [components, setComponents] = useState([]);
-    const [chosen, setChosen] = useState(['button'])
+    const [components, setComponents] = useState({input: [], output: []});
+    const [selectedInputOptions, setSelectedInputOptions] = useState([]);
+    const [selectedOutputOptions, setSelectedOutputOptions] = useState([]);
+    const navigate = useNavigate();
 
    useEffect(() => {
       fetch('http://127.0.0.1:5000/list_components', {
@@ -16,16 +20,36 @@ export default function Select(){
       })
          .then((res) => res.json())
          .then((data) => {
-            console.log(data);
-            setComponents(data);
+            var temp = {
+                input: data['input'].split(','),
+                output: data['output'].split(',')
+            }
+            setComponents(temp);
          })
          .catch((err) => {
             console.log(err.message);
          });
     }, []);
 
+    const handleCheckboxChange = (event, io) => {
+        const { value, checked } = event.target;
+        if (io === 'input') {
+            if (checked) {
+                setSelectedInputOptions([...selectedInputOptions, value]);
+            } else {
+                setSelectedInputOptions(selectedInputOptions.filter((option) => option !== value));
+            }
+        } else {
+            if (checked) {
+                setSelectedOutputOptions([...selectedOutputOptions, value]);
+            } else {
+                setSelectedOutputOptions(selectedOutputOptions.filter((option) => option !== value));
+            }
+        }
+    };
+
     const [isSending, setIsSending] = useState(false)
-    const sendRequest = useCallback(async () => {
+    const sendRequest = useCallback(async str => {
         if (isSending) return
         setIsSending(true)
 
@@ -36,11 +60,14 @@ export default function Select(){
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
             },
-            body: JSON.stringify({components: chosen})
+            body: str
         })
         .then((res) => res.json())
         .then((data) => {
-            console.log(data);
+            if (data["status"] === "ok") {
+                console.log("here")
+                navigate("/init_question", { replace: true });
+            }
         })
         .catch((err) => {
             console.log(err.message);
@@ -50,14 +77,33 @@ export default function Select(){
         setIsSending(false)
     }, [isSending])
 
-
     
    return(
             <div>
-                {components['input']}
+                {components['input'].map((option, index) => (
+                    <div key={index}>
+                    <input
+                        type="checkbox"
+                        id={`checkbox-${index}`}
+                        value={option}
+                        onChange={e => handleCheckboxChange(e, 'input')}
+                    />
+                    <label htmlFor={`checkbox-${index}`}>{option}</label>
+                    </div>
+                ))}
                 <br/>
-                {components['output']}
-                <input type="button" disabled={isSending} onClick={sendRequest} />
+                {components['output'].map((option, index) => (
+                    <div key={index}>
+                    <input
+                        type="checkbox"
+                        id={`checkbox-${index}`}
+                        value={option}
+                        onChange={e => handleCheckboxChange(e, 'output')}
+                    />
+                    <label htmlFor={`checkbox-${index}`}>{option}</label>
+                    </div>
+                ))}
+                <input type="button" disabled={isSending} onClick={() => sendRequest(JSON.stringify({input: selectedInputOptions, output: selectedOutputOptions}))} value="Send" />
             </div>
         )
 }

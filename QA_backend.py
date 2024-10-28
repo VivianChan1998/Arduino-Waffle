@@ -11,16 +11,7 @@ class Question():
         self.parameter_keyname = parameter_keyname
     
     def ask(self):
-        print(self.question_text)
-        ret = self.question_text
-        for a in self.answer_options:
-            print(a.text)
-            ret += "\n"
-            ret += a.text
-        return ret
-
-        #self.set_answer(ans)
-        #self.follow_up(int(ans))
+        
 
     def set_answer(self, ans: str):
         if self.answer_type == AnswerType.MULTI_OPTION:
@@ -36,11 +27,8 @@ class Question():
         if self.answer_type == AnswerType.MULTI_OPTION:
             ans = self.answer_options[ans]
             if ans.follow_up != None:
-                question = ans.follow_up.ask()
-                return question
-            
-            if ans.callback_function != None:
-                print("callback")
+                ans.follow_up.ask()
+            elif ans.callback_function != None:
                 ans.callback_function()
     
 

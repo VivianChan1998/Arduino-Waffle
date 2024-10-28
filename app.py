@@ -15,6 +15,9 @@ output_options = ["stepper", "LED"]
 included_input_behavior = []
 included_output = []
 
+included_input_behavior_it = 0
+included_output_it = 0
+
 ### TEMP ###
 #stepper_component = Stepper(1, Uno)
 #button_component = Button(1, Uno)
@@ -44,7 +47,25 @@ def chosen_components():
     
     return '{"status": "ok"}'
 
-@app.route("/get_question")
-def get_questions():
-    
-    return '{"status": "ok"}'
+
+def get_next_question():
+    for i in included_input_behavior:
+        i.input_obj.ask_init_question()
+        if i.input_obj.is_analog:
+            i.set_analog()
+    for o in included_output:
+        o.ask_init_question()
+
+@app.route("/init_question")
+def init_question():
+    question =  included_input_behavior[included_input_behavior_it].input_obj.ask_init_question()
+    return '{"question":' + question + '}'
+
+@app.route("init_answer")
+def init_answer():
+    data = request.get_json(force=True)
+    print(data)
+
+    included_input_behavior[included_input_behavior_it].input_obj.set_answer
+
+
