@@ -24,7 +24,4 @@ def form_program(program: list[str]) -> str:
 
     return formatted_program
 
-test = ["#define x 1", "void myFunction() {", "printf('I just got executed!')", "}", "int main() {", "myFunction()", "return 0", "}"]
-
-print(form_program(test))
 

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Application</title>
+    <link rel="stylesheet" href="https://stackpath.boostrapcdn.com/bootstrapcdn.com/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Quiz</h1>
+        <form method="post">
+            <h3> {{question.text}}</h3>
+            <div class="form-group">
+                {% for option in question.options %}
+                    <div class="form-check">
+                    <input type="radio" class="form-check-input" name="option" id="option{{ loop.index0 }}" value="{{ loop.index0 }}" required>
+                    <label for="option{{ loop.index0 }}" class="form-check-label">{{ option }} </label>
+                {% endfor %}
+            </div>
+            <button type="submit" class="btn btn-primary">Next</button>
+        </form>
+        <p class="mt-3">Question {{ question_index }} of {{ total_questions }} </p>
+    </div>
+</body>
+</html>
