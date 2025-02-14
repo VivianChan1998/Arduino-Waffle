@@ -13,8 +13,40 @@ class Question extends React.Component {
             <div>
                 <p>{this.props.questionText}</p>
                 {
+                    this.props.answerType === AnswerType.BOOL ?
+                        <>
+                            <label>
+                                <input type= "radio" id = "1" value= "true" onChange={e => this.props.handleAnswer(e.target.value)} />
+                                <label for= "boolChoice1"> True </label>
+                            </label>
+                            <label>
+                                <input type= "radio" id = "0" value= "false" onChange={e => this.props.handleAnswer(e.target.value)} />
+                                <label form= "boolChoice2"> False </label>
+                            </label>
+                        </> : ""
+                }
+                {
                     this.props.answerType === AnswerType.NUMERICAL ?
-                    <input type="text" onChange={ e => this.props.handleAnswer(e.target.value)} /> : "" //TODO more answer types
+                        <input type="text" onChange={e => this.props.handleAnswer(e.target.value)} /> : ""
+                }
+                {
+                    this.props.answerType === AnswerType.MULTI_OPTION ?
+                    this.props.answerOption.map((option, index) => (
+                        <label key={index}>
+                            <input 
+                                type="radio" 
+                                id = {index}
+                                value={option.value} 
+                                onChange={e => this.props.handleAnswer(e.target.value)} 
+                            /> 
+                            <label form= {index}> {option.text} </label>
+                        </label>
+                    )) 
+                    : "" 
+                }
+                {
+                    this.props.answerType === AnswerType.TEXT ?
+                        <input type="text" onChange={e => this.props.handleAnswer(e.target.value)} /> : ""
                 }
             </div>
         );

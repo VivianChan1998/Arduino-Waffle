@@ -10,7 +10,7 @@ class UltrasonicSensor(Component):
         follow_up_threshold = Question(self.init, "threshold", "What should the binary threshold be in cm?",
                                 AnswerType.NUMERCIAL
                                 )
-        self.init_question = Question(self.init, "mode", "What do you what to use the ultrasonic sensor for?",
+        self.init_question = Question(self.init, "mode", "What do you want to use the ultrasonic sensor for?",
                                  AnswerType.MULTI_OPTION,
                                  [
                                     Answer("Binary threshold with respect to an output device, one output state under threshold, one output state over threshold", "binary threshold", follow_up_threshold),
