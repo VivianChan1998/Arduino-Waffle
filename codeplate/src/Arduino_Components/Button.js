@@ -19,7 +19,7 @@ class Button extends Component {
                                             Answer("when button is not pressed", "not")
                                         ]
                                     }
-                                    />
+                                    />,
         }
     }
 

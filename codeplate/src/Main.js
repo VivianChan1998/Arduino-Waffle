@@ -6,7 +6,8 @@ const STAGE = Object.freeze({
     CHOOSE_COMPONENT: 0,
     INIT_QUESTION: 1,
     IO_PAIRING: 2,
-    RENDER_CODE: 3
+    DEFINE_BEHAVIOR: 3,
+    RENDER_CODE: 4
 });
 
 export default class Main extends React.Component {
@@ -21,7 +22,7 @@ export default class Main extends React.Component {
             chosenOutputComponentsNames: ["LED"], //temp
             chosenOutputComponents: [<LED/>], //temp
             ioPairingId: 0,
-            ioPairs: [[], []] //temp
+            ioPairs: [[], []], //temp
         }
     }
     handleChoseInputComponent = (component) => {
@@ -64,7 +65,12 @@ export default class Main extends React.Component {
                 <div>
                     i/o pairing
                     <div>
-                        for the {this.state.chosenInputComponentsNames[this.state.ioPairingId]} component, which output component would you like to pair it with?
+                        for the {this.state.chosenInputComponentsNames[this.state.ioPairingId]} component:
+                        {
+                            this.state.chosenInputComponents[this.state.ioPairingId]
+                        }
+                        
+                        which output component would you like to pair it with?
                         {
                             this.state.chosenOutputComponents.map((el, index) => {
                                 return <button key={index} onClick={() => {
@@ -77,7 +83,31 @@ export default class Main extends React.Component {
                             })
                         }
                     </div>
-                    <button onClick = {() => this.setState({stage: STAGE.RENDER_CODE})}> next </button>
+                    {
+                        this.state.ioPairingId < this.state.chosenInputComponents.length - 1 ?
+                        <button onClick = {() => this.setState({ioPairingId: this.state.ioPairingId + 1})}> next </button> :
+                        <button onClick = {() => {
+                            this.setState({stage: STAGE.DEFINE_BEHAVIOR})
+                            this.setState({ioPairingId: 0})
+                        }}> next </button>
+                    }
+                </div>
+            );
+        }
+        else if (this.state.stage === STAGE.DEFINE_BEHAVIOR) {
+            console.log(this.state.ioPairingId)
+            console.log(this.state.ioPairs[this.state.ioPairingId])
+            return (
+                <div>
+                    define behavior
+                    for the {this.state.chosenInputComponentsNames[this.state.ioPairingId]} component:
+                    {
+                        this.state.ioPairs[this.state.ioPairingId].map((idx, index) => {
+                            return this.state.chosenOutputComponents[idx]
+                        })
+                    }
+
+
                 </div>
             );
         }
