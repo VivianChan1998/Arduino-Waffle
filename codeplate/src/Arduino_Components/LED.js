@@ -12,7 +12,12 @@ class LED extends Component {
             init: 0,
             initQuestion: <Question handleAnswer={this.updateInit}
                                     questionText="How many LEDs are there on this strip?"
-                                    answerType = {AnswerType.NUMERICAL} />
+                                    answerType = {AnswerType.NUMERICAL} />,
+            question: <Question handleAnswer = {this.updateAnswer}
+                                questionText="What pattern"
+                                answerType={AnswerType.NUMERCIAL}/>, //temp
+            isInit: false,
+            isAnswered: false
         }
     }
 
@@ -23,10 +28,19 @@ class LED extends Component {
     getName = () => { return "LED" }
 
     render() {
+        if (!this.state.isInit) {
+            return (
+                <div>
+                    {this.state.initQuestion}
+                    {this.state.init}
+                    <button onClick={() => this.setState({isInit: true})}>ok!</button>
+                </div>
+            );
+        }
         return (
             <div>
-                {this.state.initQuestion}
-                {this.state.init}
+                {this.state.question}
+                <button onClick={() => this.setState({isAnswered: true})}>ok!</button>
             </div>
         );
     }
