@@ -16,8 +16,7 @@ class LED extends Component {
             question: <Question handleAnswer = {this.updateAnswer}
                                 questionText="What pattern"
                                 answerType={AnswerType.NUMERCIAL}/>, //temp
-            isInit: false,
-            isAnswered: false
+            p: {}
         }
     }
 
@@ -27,20 +26,39 @@ class LED extends Component {
 
     getName = () => { return "LED" }
 
+    handleAnswer = p => {
+        console.log("here")
+        this.props.handlePropsChange(p, this.props.id, "OUTPUT")
+    }
+
     render() {
-        if (!this.state.isInit) {
+        if (this.props.isInit()) {
             return (
                 <div>
                     {this.state.initQuestion}
                     {this.state.init}
-                    <button onClick={() => this.setState({isInit: true})}>ok!</button>
+                    <button onClick={() => {
+                        var p = {
+                            init: this.state.init,
+                            answer: this.state.answer
+                        }
+                        this.setState({ p: p })
+                        this.handleAnswer(p)
+                    }}>ok!</button>
                 </div>
             );
         }
         return (
             <div>
                 {this.state.question}
-                <button onClick={() => this.setState({isAnswered: true})}>ok!</button>
+                <button onClick={() => {
+                    var p = {
+                        init: this.state.init,
+                        answer: this.state.answer
+                    }
+                    this.setState({ p: p })
+                    this.handleAnswer(p)
+            }}>ok!</button>
             </div>
         );
     }

@@ -15,26 +15,56 @@ export default class Main extends React.Component {
         super(props);
         this.state = {
             stage: STAGE.CHOOSE_COMPONENT,
-            availableInputComponents: [],
+            availableInputComponents: ["button"],
             availableOutputComponents: ['LED'],
             chosenInputComponentsNames: ["button"], /* TODO: update this when chosing */
             chosenInputComponents: [<Button/>, <Button/>], //temp
             chosenOutputComponentsNames: ["LED"], //temp
-            chosenOutputComponents: [<LED/>], //temp
+            chosenOutputComponents: [], //temp
+            inputProps: [],
+            outputProps: [],
             ioPairingId: 0,
             ioPairs: [[], []], //temp
         }
     }
     handleChoseInputComponent = (component) => {
+        var arr = this.state.inputProps
+        arr.push(new Array())
         this.setState  ({
             chosenInputComponents: this.state.chosenInputComponents.concat([component]), 
-            ioPairs: this.state.ioPairs.push([[]])
+            inputProps: arr
         }) 
     }
     handleChoseOutputComponent = (component) => {
+        var arr = this.state.outputProps
+        arr.push(new Array())
         this.setState  ({
-            chosenOutputComponents: this.state.chosenOutputComponents.concat([component])
+            chosenOutputComponents: this.state.chosenOutputComponents.concat([component]),
+            outputProps: arr
         }) 
+    }
+    handlePropsChange = (p, id, io) => {
+        console.log(this.state.outputProps)
+        if (io == 'INPUT') {
+            console.log(p)
+            var inputProps = this.state.inputProps
+            inputProps[id] = p
+            this.setState  ({
+                inputProps: inputProps
+            })
+        }
+        else {
+            console.log(p)
+            var outputProps = this.state.outputProps
+            outputProps[id] = p
+            this.setState  ({
+                outputProps: outputProps
+            })
+
+        }
+    }
+    isInit = () => {
+        return this.state.stage == STAGE.INIT_QUESTION
     }
     render() {
         if (this.state.stage === STAGE.CHOOSE_COMPONENT) {
@@ -44,6 +74,8 @@ export default class Main extends React.Component {
                                     availableOutputComponents={this.state.availableOutputComponents}
                                     handleChoseInputComponent={this.handleChoseInputComponent}
                                     handleChoseOutputComponent={this.handleChoseOutputComponent}
+                                    handlePropsChange={this.handlePropsChange}
+                                    isInit={this.isInit}
                                     />
                     <button onClick = {() => this.setState({stage: STAGE.INIT_QUESTION})}> next </button>
                 </div>
@@ -95,8 +127,6 @@ export default class Main extends React.Component {
             );
         }
         else if (this.state.stage === STAGE.DEFINE_BEHAVIOR) {
-            console.log(this.state.ioPairingId)
-            console.log(this.state.ioPairs[this.state.ioPairingId])
             return (
                 <div>
                     define behavior
@@ -122,15 +152,53 @@ class ChooseComponent extends React.Component {
             chosenInput: []
         }
     }
-    handleChoseOutput = (obj, el) => {
-        this.props.handleChoseOutputComponent(obj)
+    handleChoseOutput = (el) => {
         this.setState({
             chosenOutput: this.state.chosenOutput.concat([el])
-        })  
+        })
+        var obj = null
+        switch (el) {
+            case 'LED':
+                obj = <LED handlePropsChange={this.props.handlePropsChange} id={this.state.chosenOutput.length} isInit={this.props.isInit}/>
+                break;
+                /* TODO: add more objects */
+            default:
+                console.log("error")
+        }
+        this.props.handleChoseOutputComponent(obj)
+    }
+
+    handleChoseInput = (el) => {
+        this.setState({
+            chosenInput: this.state.chosenInput.concat([el])
+        })
+        var obj = null
+        switch (el) {
+            case 'button':
+                obj = <Button handlePropsChange={this.props.handlePropsChange} id={this.state.chosenInput.length} isInit={this.props.isInit}/>
+                break;
+                /* TODO: add more objects */
+            default:
+                console.log("error")
+        }
+        this.props.handleChoseInputComponent(obj)
     }
     render() {
         return (
             <div>
+
+                <h2>Chosen Input Components</h2>
+                {
+                    this.state.chosenInput.map( (name, idx) => <p key={idx}> {name} </p>)
+                }
+                <div>
+                    {
+                        this.props.availableInputComponents.map((el, index) => {
+                            return <button key={index} onClick={ () => this.handleChoseInput(el)} > {el} </button>
+                        }) /* TODO: new an object based on name */
+                    }
+                </div>
+
                 <h2>Chosen Output Components</h2>
                 {
                     this.state.chosenOutput.map( (name, idx) => <p key={idx}> {name} </p>)
@@ -138,7 +206,7 @@ class ChooseComponent extends React.Component {
                 <div>
                     {
                         this.props.availableOutputComponents.map((el, index) => {
-                            return <button key={index} onClick={ () => this.handleChoseOutput(<LED/>, el)} > {el} </button>
+                            return <button key={index} onClick={ () => this.handleChoseOutput(el)} > {el} </button>
                         }) /* TODO: new an object based on name */
                     }
                 </div>
