@@ -14,9 +14,21 @@ class Button extends Component {
                                     answerType = {AnswerType.MULTI_OPTION}
                                     answerOption = {
                                         [
-                                            Answer("when button is pressed for once", "press"),
-                                            Answer("when button is held down", "held"),
-                                            Answer("when button is not pressed", "not")
+                                            {
+                                                text: "when button is pressed for once",
+                                                value: "press",
+                                                followup: ""
+                                            },
+                                            {
+                                                text: "when button is held down",
+                                                value: "held",
+                                                followup: ""
+                                            },
+                                            {
+                                                text: "when button is not pressed",
+                                                value: "not",
+                                                followup: ""
+                                            }
                                         ]
                                     }
                                     />,
@@ -30,10 +42,17 @@ class Button extends Component {
     }
 
     render() {
+        console.log(this.props.handlePropsChange)
         return (
             <div>
                 {this.state.question}
                 {this.state.mode}
+                <button onClick={() => {
+                    var p = {
+                        mode: this.state.mode
+                    }
+                    this.props.handlePropsChange(p, this.props.id, "INPUT")
+                }}>ok!</button>
             </div>
         );
     }

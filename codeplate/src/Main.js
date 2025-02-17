@@ -17,29 +17,31 @@ export default class Main extends React.Component {
             stage: STAGE.CHOOSE_COMPONENT,
             availableInputComponents: ["button"],
             availableOutputComponents: ['LED'],
-            chosenInputComponentsNames: ["button"], /* TODO: update this when chosing */
-            chosenInputComponents: [<Button/>, <Button/>], //temp
-            chosenOutputComponentsNames: ["LED"], //temp
-            chosenOutputComponents: [], //temp
+            chosenInputComponentsNames: [],
+            chosenInputComponents: [],
+            chosenOutputComponentsNames: [],
+            chosenOutputComponents: [], 
             inputProps: [],
             outputProps: [],
             ioPairingId: 0,
             ioPairs: [[], []], //temp
         }
     }
-    handleChoseInputComponent = (component) => {
+    handleChoseInputComponent = (component, cname) => {
         var arr = this.state.inputProps
         arr.push(new Array())
         this.setState  ({
             chosenInputComponents: this.state.chosenInputComponents.concat([component]), 
+            chosenInputComponentsNames: this.state.chosenInputComponentsNames.concat([cname]),
             inputProps: arr
         }) 
     }
-    handleChoseOutputComponent = (component) => {
+    handleChoseOutputComponent = (component, cname) => {
         var arr = this.state.outputProps
         arr.push(new Array())
         this.setState  ({
             chosenOutputComponents: this.state.chosenOutputComponents.concat([component]),
+            chosenOutputComponentsNames: this.state.chosenOutputComponentsNames.concat([cname]),
             outputProps: arr
         }) 
     }
@@ -130,16 +132,34 @@ export default class Main extends React.Component {
             return (
                 <div>
                     define behavior
-                    for the {this.state.chosenInputComponentsNames[this.state.ioPairingId]} component:
+                    <br/>
+                    The {this.state.chosenInputComponentsNames[this.state.ioPairingId]} component: {/*TODO write the sentence in a better way*/}
+                    <br/>
                     {
-                        this.state.ioPairs[this.state.ioPairingId].map((idx, index) => {
-                            return this.state.chosenOutputComponents[idx]
-                        })
+                        
+                        this.state.ioPairs[this.state.ioPairingId].map((idx, index) => 
+                            <>
+                                for the {this.state.chosenOutputComponentsNames[idx]} component:
+                                <br/>
+                                {this.state.chosenOutputComponents[idx]}
+                            </>
+                        
+                        )
                     }
-
-
+                    {
+                        this.state.ioPairingId < this.state.chosenInputComponents.length - 1 ?
+                        <button onClick = {() => {this.setState({ioPairingId: this.state.ioPairingId + 1})}}> next </button> :
+                        <button onClick = {() => this.setState({stage: STAGE.RENDER_CODE})}> next </button>
+                    }
                 </div>
-            );
+            )
+        }
+        else if (this.state.stage === STAGE.RENDER_CODE) {
+            return (
+                <div>
+                    render code
+                </div>
+            )
         }
     }
 }
@@ -165,7 +185,7 @@ class ChooseComponent extends React.Component {
             default:
                 console.log("error")
         }
-        this.props.handleChoseOutputComponent(obj)
+        this.props.handleChoseOutputComponent(obj, el)
     }
 
     handleChoseInput = (el) => {
@@ -181,7 +201,7 @@ class ChooseComponent extends React.Component {
             default:
                 console.log("error")
         }
-        this.props.handleChoseInputComponent(obj)
+        this.props.handleChoseInputComponent(obj, el)
     }
     render() {
         return (
@@ -195,7 +215,7 @@ class ChooseComponent extends React.Component {
                     {
                         this.props.availableInputComponents.map((el, index) => {
                             return <button key={index} onClick={ () => this.handleChoseInput(el)} > {el} </button>
-                        }) /* TODO: new an object based on name */
+                        })
                     }
                 </div>
 
@@ -207,7 +227,7 @@ class ChooseComponent extends React.Component {
                     {
                         this.props.availableOutputComponents.map((el, index) => {
                             return <button key={index} onClick={ () => this.handleChoseOutput(el)} > {el} </button>
-                        }) /* TODO: new an object based on name */
+                        })
                     }
                 </div>
                 {/* TODO: do the same thing for chose input components */}

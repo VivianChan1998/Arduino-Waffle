@@ -14,14 +14,37 @@ class LED extends Component {
                                     questionText="How many LEDs are there on this strip?"
                                     answerType = {AnswerType.NUMERICAL} />,
             question: <Question handleAnswer = {this.updateAnswer}
-                                questionText="What pattern"
-                                answerType={AnswerType.NUMERCIAL}/>, //temp
+                                questionText="What kind of pattern do you want it to show?"
+                                answerType={AnswerType.MULTI_OPTION}
+                                answerOption={[
+                                    {
+                                        text: "Turn into one color",
+                                        value: "color",
+                                        followup: <Question handleAnswer = {this.updateColor}
+                                                            questionText="What color do you want?"
+                                                            answerType={AnswerType.TEXT} />
+                                    },
+                                    {
+                                        text: "Do a rainbow pattern circulation",
+                                        value: "rainbow",
+                                        followup: ""
+                                    }
+                                ]} />, 
             p: {}
         }
     }
 
     updateInit = (answer) => {
         this.setState({init: answer})
+    }
+    updateAnswer = (answer, hasFollowup, followUp) => {
+        this.setState({answer: answer})
+        if (hasFollowup) {
+            this.setState({question: followUp})
+        }
+    }
+    updateColor = (answer) => {
+        this.setState({color: answer})
     }
 
     getName = () => { return "LED" }
