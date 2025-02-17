@@ -42,7 +42,6 @@ class Button extends Component {
     }
 
     render() {
-        console.log(this.props.handlePropsChange)
         return (
             <div>
                 {this.state.question}

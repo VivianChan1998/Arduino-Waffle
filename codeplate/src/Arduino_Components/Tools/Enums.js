@@ -35,4 +35,12 @@ const AnswerType = Object.freeze({
     TEXT: 3
 });
 
-export { PinMode, PinType, ComponentType, AnswerType };
+const STAGE = Object.freeze({
+    CHOOSE_COMPONENT: 0,
+    INIT_QUESTION: 1,
+    IO_PAIRING: 2,
+    DEFINE_BEHAVIOR: 3,
+    RENDER_CODE: 4
+});
+
+export { PinMode, PinType, ComponentType, AnswerType, STAGE };

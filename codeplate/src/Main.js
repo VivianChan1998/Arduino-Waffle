@@ -1,14 +1,8 @@
 import React from 'react';
 import LED from './Arduino_Components/LED';
 import Button from './Arduino_Components/Button';
+import { STAGE } from './Arduino_Components/Tools/Enums';
 
-const STAGE = Object.freeze({
-    CHOOSE_COMPONENT: 0,
-    INIT_QUESTION: 1,
-    IO_PAIRING: 2,
-    DEFINE_BEHAVIOR: 3,
-    RENDER_CODE: 4
-});
 
 export default class Main extends React.Component {
     constructor (props) {
@@ -25,6 +19,10 @@ export default class Main extends React.Component {
             outputProps: [],
             ioPairingId: 0,
             ioPairs: [[], []], //temp
+            codeGlobal: [],
+            codeSetup: [],
+            codeLoop: [],
+            codeHelperFunction: []
         }
     }
     handleChoseInputComponent = (component, cname) => {
@@ -48,25 +46,27 @@ export default class Main extends React.Component {
     handlePropsChange = (p, id, io) => {
         console.log(this.state.outputProps)
         if (io == 'INPUT') {
-            console.log(p)
             var inputProps = this.state.inputProps
-            inputProps[id] = p
+            inputProps[id] = {...inputProps[id], ...p}
             this.setState  ({
                 inputProps: inputProps
             })
         }
         else {
-            console.log(p)
             var outputProps = this.state.outputProps
-            outputProps[id] = p
+            outputProps[id] = {...outputProps[id], ...p}
             this.setState  ({
                 outputProps: outputProps
             })
 
         }
     }
-    isInit = () => {
-        return this.state.stage == STAGE.INIT_QUESTION
+    getStage = () => {
+        return this.state.stage
+    }
+    handleCode = (global, setup, looplogic, helper) => {
+        console.log("IN HANDLE CODE")
+        //this.props.handleCode(this.getGlobalVar(), this.getSetup(), this.getLoopLogic(), this.getHelperFunction());
     }
     render() {
         if (this.state.stage === STAGE.CHOOSE_COMPONENT) {
@@ -77,7 +77,8 @@ export default class Main extends React.Component {
                                     handleChoseInputComponent={this.handleChoseInputComponent}
                                     handleChoseOutputComponent={this.handleChoseOutputComponent}
                                     handlePropsChange={this.handlePropsChange}
-                                    isInit={this.isInit}
+                                    getStage={this.getStage}
+                                    handleCode={this.handleCode}
                                     />
                     <button onClick = {() => this.setState({stage: STAGE.INIT_QUESTION})}> next </button>
                 </div>
@@ -158,6 +159,8 @@ export default class Main extends React.Component {
             return (
                 <div>
                     render code
+                    {this.state.chosenOutputComponents.map(el => el)}
+                    {this.state.chosenInputComponents.map(el => el)}
                 </div>
             )
         }
@@ -179,9 +182,13 @@ class ChooseComponent extends React.Component {
         var obj = null
         switch (el) {
             case 'LED':
-                obj = <LED handlePropsChange={this.props.handlePropsChange} id={this.state.chosenOutput.length} isInit={this.props.isInit}/>
+                obj = <LED handlePropsChange={this.props.handlePropsChange}
+                        id={this.state.chosenOutput.length}
+                        getStage={this.props.getStage}
+                        handleCode={this.props.handleCode}
+                        />
                 break;
-                /* TODO: add more objects */
+                /*TODO : add more objects */
             default:
                 console.log("error")
         }
@@ -195,9 +202,9 @@ class ChooseComponent extends React.Component {
         var obj = null
         switch (el) {
             case 'button':
-                obj = <Button handlePropsChange={this.props.handlePropsChange} id={this.state.chosenInput.length} isInit={this.props.isInit}/>
+                obj = <Button handlePropsChange={this.props.handlePropsChange} id={this.state.chosenInput.length} getStage={this.props.getStage}/>
                 break;
-                /* TODO: add more objects */
+                /*TODO : add more objects */
             default:
                 console.log("error")
         }
@@ -230,7 +237,6 @@ class ChooseComponent extends React.Component {
                         })
                     }
                 </div>
-                {/* TODO: do the same thing for chose input components */}
             </div>
         );
     }
