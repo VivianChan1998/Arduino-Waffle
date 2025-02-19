@@ -66,7 +66,15 @@ export default class Main extends React.Component {
     }
     handleCode = (global, setup, looplogic, helper) => {
         console.log("IN HANDLE CODE")
+        console.log(global)
+        console.log(this.state.codeGlobal.concat(global))
         //this.props.handleCode(this.getGlobalVar(), this.getSetup(), this.getLoopLogic(), this.getHelperFunction());
+        this.setState({
+            codeGlobal: this.state.codeGlobal.concat(global),
+            codeSetup: this.state.codeSetup.concat(setup),
+            codeLoop: this.state.codeLoop.concat(looplogic),
+            codeHelperFunction: this.state.codeHelperFunction.concat(helper)
+        })
     }
     render() {
         if (this.state.stage === STAGE.CHOOSE_COMPONENT) {
@@ -78,7 +86,7 @@ export default class Main extends React.Component {
                                     handleChoseOutputComponent={this.handleChoseOutputComponent}
                                     handlePropsChange={this.handlePropsChange}
                                     getStage={this.getStage}
-                                    handleCode={this.handleCode}
+                                    handleCode={this.handleCode}m
                                     />
                     <button onClick = {() => this.setState({stage: STAGE.INIT_QUESTION})}> next </button>
                 </div>
@@ -156,11 +164,49 @@ export default class Main extends React.Component {
             )
         }
         else if (this.state.stage === STAGE.RENDER_CODE) {
+            console.log(this.state.codeGlobal)
+            console.log(this.state.codeSetup)
+            console.log(this.state.codeLoop)
+            console.log(this.state.codeHelperFunction)
             return (
                 <div>
                     render code
-                    {this.state.chosenOutputComponents.map(el => el)}
-                    {this.state.chosenInputComponents.map(el => el)}
+                    <br/>
+
+                    {/*TODO: format code */}
+
+                    {this.state.codeGlobal.map(el => {
+                        return (
+                            <>
+                            <br/> 
+                            {el}
+                            </>
+                        )
+                    })}
+                    {this.state.codeSetup.map(el => {
+                        return (
+                            <>
+                            <br/>
+                            {el}
+                            </>
+                        )
+                    })}
+                    {this.state.codeLoop.map(el => {
+                        return (
+                            <>
+                            <br/>
+                            {el}
+                            </>
+                        )
+                    })}
+                    {this.state.codeHelperFunction.map(el => {
+                        return (
+                            <>
+                            <br/>
+                            {el}
+                            </>
+                        )
+                    })}
                 </div>
             )
         }
@@ -202,7 +248,11 @@ class ChooseComponent extends React.Component {
         var obj = null
         switch (el) {
             case 'button':
-                obj = <Button handlePropsChange={this.props.handlePropsChange} id={this.state.chosenInput.length} getStage={this.props.getStage}/>
+                obj = <Button handlePropsChange={this.props.handlePropsChange}
+                                id={this.state.chosenInput.length}
+                                getStage={this.props.getStage}
+                                handleCode={this.props.handleCode}
+                                />
                 break;
                 /*TODO : add more objects */
             default:

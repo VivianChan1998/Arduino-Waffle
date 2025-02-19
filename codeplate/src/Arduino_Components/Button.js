@@ -1,6 +1,6 @@
 import React from "react";
 import Component from "./Components.js";
-import { ComponentType, AnswerType, PinType } from "./Tools/Enums.js";
+import { ComponentType, AnswerType, STAGE } from "./Tools/Enums.js";
 import { Question, Answer } from "./Tools/QA.js";
 
 class Button extends Component {
@@ -41,7 +41,26 @@ class Button extends Component {
         this.setState({mode: answer})
     }
 
+    getGlobalVar() {
+        return []
+    }
+    getSetup() {
+        return []
+    }
+    getLoopLogic() {
+        return []
+    }
+    getHelperFunction() {
+        return []
+    }
+
     render() {
+        if (this.props.getStage() === STAGE.RENDER_CODE) {
+            return (
+                <>
+                </>
+            )
+        }
         return (
             <div>
                 {this.state.question}
@@ -51,6 +70,7 @@ class Button extends Component {
                         mode: this.state.mode
                     }
                     this.props.handlePropsChange(p, this.props.id, "INPUT")
+                    this.props.handleCode(this.getGlobalVar(), this.getSetup(), this.getLoopLogic(), this.getHelperFunction())
                 }}>ok!</button>
             </div>
         );

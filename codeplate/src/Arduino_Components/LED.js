@@ -31,7 +31,8 @@ class LED extends Component {
                                     }
                                 ]} />, 
             _pin: `led${props.id}_pin`,
-            _num: `led${props.id}_num`
+            _num: `led${props.id}_num`,
+            code: new Code()
         }
     }
 
@@ -54,19 +55,19 @@ class LED extends Component {
         this.props.handlePropsChange(p, this.props.id, "OUTPUT")
     }
 
-    getGlobalVar() {
+    getGlobalVar = () => {
         return [
-            Code.strDefine(this.state._pin, 9), //temp
-            Code.strDefine(this.state._num, this.state.init),
+            this.state.code.strDefine(this.state._pin, 9), //temp
+            this.state.code.strDefine(this.state._num, this.state.init),
             `Adafruit_NeoPixel ${this.state._objName} = Adafruit_NeoPixel(${this.state._num}, ${this.state._pin}, NEO_GRB + NEO_KHZ800);`
         ];
     }
 
-    getSetup() {
+    getSetup = () => {
         return [`${this.state._objName}.begin();`];
     }
 
-    getLoopLogic(stateNum = 0) {
+    getLoopLogic = () => {
         switch (this.state.mode) {
             case "color":
                 const color = this.state.color;
@@ -147,11 +148,10 @@ class LED extends Component {
         }
         
         if (this.props.getStage() == STAGE.RENDER_CODE) {
-            this.props.handleCode(this.getGlobalVar(), this.getSetup(), this.getLoopLogic(), this.getHelperFunction());
+            
             return (
-                <div>
-                    <p>LED code</p>
-                </div>
+                <>
+                </>
             );
         }
 
@@ -164,6 +164,7 @@ class LED extends Component {
                         color: this.state.color
                     }
                     this.handleAnswer(p)
+                    this.props.handleCode(this.getGlobalVar(), this.getSetup(), this.getLoopLogic(), this.getHelperFunction())
             }}>ok!</button>
             </div>
         );
