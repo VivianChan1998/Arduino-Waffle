@@ -2,6 +2,7 @@ import React from 'react';
 import LED from './Arduino_Components/LED';
 import Button from './Arduino_Components/Button';
 import { STAGE } from './Arduino_Components/Tools/Enums';
+import './index.css'
 
 
 export default class Main extends React.Component {
@@ -79,7 +80,8 @@ export default class Main extends React.Component {
     render() {
         if (this.state.stage === STAGE.CHOOSE_COMPONENT) {
             return (
-                <div>
+                <div className="main-wrapper">
+                    <h2>Chose components to include</h2>
                     <ChooseComponent availableInputComponents={this.state.availableInputComponents}
                                     availableOutputComponents={this.state.availableOutputComponents}
                                     handleChoseInputComponent={this.handleChoseInputComponent}
@@ -88,32 +90,35 @@ export default class Main extends React.Component {
                                     getStage={this.getStage}
                                     handleCode={this.handleCode}m
                                     />
-                    <button onClick = {() => this.setState({stage: STAGE.INIT_QUESTION})}> next </button>
+                    <button className='next-step-button' onClick = {() => this.setState({stage: STAGE.INIT_QUESTION})}> next </button>
                 </div>
             )
         }
         else if (this.state.stage === STAGE.INIT_QUESTION) {
             return (
-                <div>
-                    init questions
+                <div className="main-wrapper">
+                    <h2>Initializing components</h2>
                     <div>
                         {this.state.chosenOutputComponents.map(el => el)}
                     </div>
-                    <button onClick = {() => this.setState({stage: STAGE.IO_PAIRING})}> next </button>
+                    <button className='next-step-button' onClick = {() => this.setState({stage: STAGE.IO_PAIRING})}> next </button>
                 </div>
             );
         }
         else if (this.state.stage === STAGE.IO_PAIRING) {
             return (
-                <div>
-                    i/o pairing
+                <div className="main-wrapper">
+                    <h2>Pairing inputs and outputs</h2>
                     <div>
-                        for the {this.state.chosenInputComponentsNames[this.state.ioPairingId]} component:
+                        For the {this.state.chosenInputComponentsNames[this.state.ioPairingId]} {[this.state.ioPairingId]} component:
                         {
                             this.state.chosenInputComponents[this.state.ioPairingId]
                         }
                         
-                        which output component would you like to pair it with?
+                        Which output component would you like to pair it with?
+                        {
+                            this.state.ioPairs[this.state.ioPairingId].map(el => <p>{this.state.chosenOutputComponentsNames[el]}</p>)
+                        }
                         {
                             this.state.chosenOutputComponents.map((el, index) => {
                                 return <button key={index} onClick={() => {
@@ -122,8 +127,8 @@ export default class Main extends React.Component {
                                     this.setState({
                                         ioPairs: temp
                                     })
-                                }}> {this.state.chosenOutputComponentsNames[this.state.ioPairingId]} </button>
-                            })
+                                }}> {this.state.chosenOutputComponentsNames[this.state.ioPairingId] + ' ' + this.state.ioPairingId} </button>
+                            }) /* TODO potential bug here?? */
                         }
                     </div>
                     {
@@ -132,15 +137,15 @@ export default class Main extends React.Component {
                         <button onClick = {() => {
                             this.setState({stage: STAGE.DEFINE_BEHAVIOR})
                             this.setState({ioPairingId: 0})
-                        }}> next </button>
+                        }} className='next-step-button'> next </button>
                     }
                 </div>
             );
         }
         else if (this.state.stage === STAGE.DEFINE_BEHAVIOR) {
             return (
-                <div>
-                    define behavior
+                <div className="main-wrapper">
+                    <h2>Define behavior</h2>
                     <br/>
                     The {this.state.chosenInputComponentsNames[this.state.ioPairingId]} component: {/*TODO write the sentence in a better way*/}
                     <br/>
@@ -157,8 +162,8 @@ export default class Main extends React.Component {
                     }
                     {
                         this.state.ioPairingId < this.state.chosenInputComponents.length - 1 ?
-                        <button onClick = {() => {this.setState({ioPairingId: this.state.ioPairingId + 1})}}> next </button> :
-                        <button onClick = {() => this.setState({stage: STAGE.RENDER_CODE})}> next </button>
+                        <button className='next-step-button' onClick = {() => {this.setState({ioPairingId: this.state.ioPairingId + 1})}}> next </button> :
+                        <button className='next-step-button' onClick = {() => this.setState({stage: STAGE.RENDER_CODE})}> next </button>
                     }
                 </div>
             )
@@ -169,44 +174,47 @@ export default class Main extends React.Component {
             console.log(this.state.codeLoop)
             console.log(this.state.codeHelperFunction)
             return (
-                <div>
-                    render code
+                <div className="main-wrapper">
+                    <h2>Render code</h2>
                     <br/>
 
                     {/*TODO: format code */}
+                    <code>
+                        {this.state.codeGlobal.map(el => {
+                            return (
+                                <>
+                                <br/> 
+                                {el}
+                                </>
+                            )
+                        })}
+                        {this.state.codeSetup.map(el => {
+                            return (
+                                <>
+                                <br/>
+                                {el}
+                                </>
+                            )
+                        })}
+                        {this.state.codeLoop.map(el => {
+                            return (
+                                <>
+                                <br/>
+                                {el}
+                                </>
+                            )
+                        })}
+                        {this.state.codeHelperFunction.map(el => {
+                            return (
+                                <>
+                                <br/>
+                                {el}
+                                </>
+                            )
+                        })}
+                    </code>
 
-                    {this.state.codeGlobal.map(el => {
-                        return (
-                            <>
-                            <br/> 
-                            {el}
-                            </>
-                        )
-                    })}
-                    {this.state.codeSetup.map(el => {
-                        return (
-                            <>
-                            <br/>
-                            {el}
-                            </>
-                        )
-                    })}
-                    {this.state.codeLoop.map(el => {
-                        return (
-                            <>
-                            <br/>
-                            {el}
-                            </>
-                        )
-                    })}
-                    {this.state.codeHelperFunction.map(el => {
-                        return (
-                            <>
-                            <br/>
-                            {el}
-                            </>
-                        )
-                    })}
+                    
                 </div>
             )
         }
@@ -264,8 +272,10 @@ class ChooseComponent extends React.Component {
         return (
             <div>
 
-                <h2>Chosen Input Components</h2>
+                <h3>Chose Input Components</h3>
                 {
+                    this.state.chosenInput.length == 0?
+                    <p>click on buttons to add components.</p> :
                     this.state.chosenInput.map( (name, idx) => <p key={idx}> {name} </p>)
                 }
                 <div>
@@ -276,8 +286,10 @@ class ChooseComponent extends React.Component {
                     }
                 </div>
 
-                <h2>Chosen Output Components</h2>
+                <h3>Chose Output Components</h3>
                 {
+                    this.state.chosenOutput.length == 0?
+                    <p>click on buttons to add components.</p> :
                     this.state.chosenOutput.map( (name, idx) => <p key={idx}> {name} </p>)
                 }
                 <div>

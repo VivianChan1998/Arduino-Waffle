@@ -10,7 +10,7 @@ class Question extends React.Component {
     }
     render() {
         return (
-            <div>
+            <div id="question-wrapper">
                 <p>{this.props.questionText}</p>
                 {
                     this.props.answerType === AnswerType.BOOL ?
@@ -32,7 +32,7 @@ class Question extends React.Component {
                 {
                     this.props.answerType === AnswerType.MULTI_OPTION ?
                     this.props.answerOption.map((option, index) => (
-                        <label key={index}>
+                        <label key={index} className="question-options">
                             <input 
                                 type="radio" 
                                 id = {index}

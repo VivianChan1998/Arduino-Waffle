@@ -136,13 +136,12 @@ class LED extends Component {
             return (
                 <div>
                     {this.state.initQuestion}
-                    {this.state.init}
                     <button onClick={() => {
                         var p = {
                             init: this.state.init
                         }
                         this.handleAnswer(p)
-                    }}>ok!</button>
+                    }} className="question-confirm-button">ok!</button>
                 </div>
             );
         }
@@ -165,7 +164,7 @@ class LED extends Component {
                     }
                     this.handleAnswer(p)
                     this.props.handleCode(this.getGlobalVar(), this.getSetup(), this.getLoopLogic(), this.getHelperFunction())
-            }}>ok!</button>
+            }} className="question-confirm-button">ok!</button>
             </div>
         );
     }

@@ -64,7 +64,7 @@ class Button extends Component {
         return (
             <div>
                 {this.state.question}
-                {this.state.mode}
+                {/*this.state.mode*/}
                 <button onClick={() => {
                     var p = {
                         mode: this.state.mode
