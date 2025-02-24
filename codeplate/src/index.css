@@ -10,4 +10,54 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+  font-size: 1.2rem;
+}
+
+h2 {
+  margin-bottom: 5vh;
+  color:aqua
+}
+
+h3 {
+  margin: 5vh 0 2vh 0;
+  font-size: 1.5rem;
+}
+
+p {
+  display: inline-block;
+  white-space: nowrap;
+  margin: 2vh 20px 2vh 0;
+  font-size: 1.2rem
+}
+
+.main-wrapper {
+  width: 75vw;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+button {
+  margin: 1vh 1vh 1vh 0;
+  background: none;
+  border: 2px solid white;
+  border-radius: 8px;
+  padding: 5px 10px;
+  color: white;
+}
+
+.next-step-button {
+  background: white;
+  color: black;
+  margin-top: 3vh;
+}
+
+#question-wrapper p {
+  display: block;
+  margin-bottom: 1vh;
+}
+
+.question-options {
+  display: block;
+  font-size: 1.2rem;
+  margin: 1vh 1vh 1vh 0;
 }
