@@ -14,8 +14,19 @@ class Ultrasonic extends Component {
                                     answerType = {AnswerType.MULTI_OPTION} 
                                     answerOption = {
                                         [
-                                            Answer("Binary threshold with respect to an output device, one output state under threshold, one output state over threshold.", "binary threshold"), // add followup threshold
-                                            Answer("Use analog input for determining for the output, each different analog value will differently impact state.", "analog direct") // add callback function (.set_analog)
+                                            {
+                                                text: "Binary threshold with respect to an output device, one output state under threshold, one output state over threshold.", 
+                                                value: "binary threshold",
+                                                followup: <Question handleAnswer = {this.updateThreshold}
+                                                                    questionText="What threshold value do you want?"
+                                                                    answerType={AnswerType.NUMERICAL} />
+                                            },
+                                            {
+                                                text: "Use analog input for determining for the output, each different analog value will differently impact state.",
+                                                value: "analog direct",
+                                                followup: "",
+                                                analog: <Question handleAnswer = {this.updateAnalog} />
+                                            }
                                         ]
                                     }/>
                                 
@@ -27,6 +38,20 @@ class Ultrasonic extends Component {
         this.setState({init: answer})
     }
 
+    updateAnswer = (answer, hasFollowup, followUp) => {
+        this.setState({mode: answer})
+        if (hasFollowup) {
+            this.setState({question: followUp})
+        }
+    }
+
+    updateThreshold = (answer) => {
+        this.setState({threshold: answer})
+    }
+
+    updateAnalog = (answer) => {
+        this.setState({analog: answer})
+    }
     getName = () => { return "Ultrasonic" }
 
     render() {
