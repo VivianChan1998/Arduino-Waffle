@@ -110,15 +110,16 @@ export default class Main extends React.Component {
                 <div className="main-wrapper">
                     <h2>Pairing inputs and outputs</h2>
                     <div>
-                        For the {this.state.chosenInputComponentsNames[this.state.ioPairingId]} {[this.state.ioPairingId]} component:
+                        <h3>For the {this.state.chosenInputComponentsNames[this.state.ioPairingId]} {[this.state.ioPairingId]} component:</h3>
                         {
                             this.state.chosenInputComponents[this.state.ioPairingId]
                         }
                         
-                        Which output component would you like to pair it with?
+                        <h3>Which output component would you like to pair it with?</h3>
                         {
                             this.state.ioPairs[this.state.ioPairingId].map(el => <p>{this.state.chosenOutputComponentsNames[el]}</p>)
                         }
+                        <br/>
                         {
                             this.state.chosenOutputComponents.map((el, index) => {
                                 return <button key={index} onClick={() => {
@@ -147,14 +148,12 @@ export default class Main extends React.Component {
                 <div className="main-wrapper">
                     <h2>Define behavior</h2>
                     <br/>
-                    The {this.state.chosenInputComponentsNames[this.state.ioPairingId]} component: {/*TODO write the sentence in a better way*/}
-                    <br/>
+                    <h3>For the {this.state.chosenInputComponentsNames[this.state.ioPairingId] + ' ' + this.state.ioPairingId} component: </h3> {/*TODO write the sentence in a better way*/}
                     {
                         
                         this.state.ioPairs[this.state.ioPairingId].map((idx, index) => 
                             <>
-                                for the {this.state.chosenOutputComponentsNames[idx]} component:
-                                <br/>
+                                <h4> The {this.state.chosenOutputComponentsNames[idx]}: </h4>
                                 {this.state.chosenOutputComponents[idx]}
                             </>
                         
