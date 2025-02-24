@@ -18,7 +18,7 @@ class Ultrasonic extends Component {
                                                 text: "Binary threshold with respect to an output device, one output state under threshold, one output state over threshold.", 
                                                 value: "binary threshold",
                                                 followup: <Question handleAnswer = {this.updateThreshold}
-                                                                    questionText="What threshold value do you want?"
+                                                                    questionText="What threshold value do you want in centimeters?"
                                                                     answerType={AnswerType.NUMERICAL} />
                                             },
                                             {
@@ -35,7 +35,7 @@ class Ultrasonic extends Component {
             _duration: `ultrasonicDuration_${props.id}`,
             _distance:`ultrasonicDistance_${props.id}`,
             analog_max: 1023,
-            analog_param_name: self._distance // is analog max the same for distance? need to check on the same                 
+            analog_param_name: this.state._distance // is analog max the same for distance? need to check on the same                 
                                     
         }
     }
@@ -56,8 +56,9 @@ class Ultrasonic extends Component {
     }
 
     updateAnalog = (answer) => {
-        this.setState({analog: answer})
+        this.setState({analog: Boolean(true)})
     }
+
     getName = () => { return "Ultrasonic" }
 
     handleAnswer = p => {
@@ -71,7 +72,7 @@ class Ultrasonic extends Component {
             `float duration, distance`
         ];
         if (this.state._threshold) {
-            codeBlock.push(this.state.code.strInitVariable("int", this.state._boundary, this.state._threshold));
+            codeBlock.push(this.state.code.strInitVariable("int", this.state._boundary, this.state.threshold));
         } 
         return codeBlock;
     }
