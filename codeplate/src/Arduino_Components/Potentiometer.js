@@ -33,8 +33,8 @@ class Potentiometer extends Component {
             _val: `potentiometerVal_ ${props.id}`,
             _boundary:  `potentiometer_I/O_Boundary_${props.id}`,
             _analog_max: 1023,
-            _analog_param_name: this.state._val
-                    
+            _analog_param_name: this.state._val,
+            code: new Code()
         }
     }
 

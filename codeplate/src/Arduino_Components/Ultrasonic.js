@@ -35,8 +35,8 @@ class Ultrasonic extends Component {
             _duration: `ultrasonicDuration_${props.id}`,
             _distance:`ultrasonicDistance_${props.id}`,
             analog_max: 1023,
-            analog_param_name: this.state._distance // is analog max the same for distance? need to check on the same                 
-                                    
+            analog_param_name: this.state._distance, // is analog max the same for distance? need to check on the same                 
+            code: new Code()                 
         }
     }
 
