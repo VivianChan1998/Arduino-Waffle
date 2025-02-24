@@ -23,6 +23,11 @@ h3 {
   font-size: 1.5rem;
 }
 
+h4 {
+  margin: 1vh 0 1vh 0;
+  font-size: 1.2rem;
+}
+
 p {
   display: inline-block;
   white-space: nowrap;
