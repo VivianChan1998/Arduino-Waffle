@@ -16,14 +16,14 @@ class Servo extends Component {
                                     {
                                         text: "Shift the Servo motor prong to a fixed position.",
                                         value: "position",
-                                        followup: <Question handleAnswer = {this.position}
+                                        followup: <Question handleAnswer = {this.updatePosition}
                                                             questionText="What should the position of the Servo be? The expected range of values is 0 - 180."
                                                             answerType={AnswerType.NUMERICAL} />
                                     },
                                     {
                                         text: "Sweep the Servo prong 180 degrees.",
                                         value: "sweep",
-                                        followup: <Question handleAnswer = {this.pwm}
+                                        followup: <Question handleAnswer = {this.updatePwm}
                                                             questionText="What should the PWM (speed) of the Servo sweep be?"
                                                             answerType={AnswerType.NUMERICAL} />
                                     }
@@ -49,18 +49,23 @@ class Servo extends Component {
         }
     }
 
-    updateInit = (answer) => { // fix
-        this.setState({init: answer})
-    }
-
     updateAnalog = (answer) => { // fix
         this.setState({init: answer})
     }
-    updateAnswer = (answer, hasFollowup, followUp) => {
+
+    updateInit = (answer, hasFollowup, followUp) => {
         this.setState({mode: answer})
         if (hasFollowup) {
             this.setState({question: followUp})
         }
+    }
+
+    updatePosition = (answer) => {
+        this.setState({position: answer})
+    }
+
+    updatePWM = (answer) => {
+        this.setState({pwm: answer})
     }
 
     getName = () => { return "Servo" }
@@ -86,18 +91,6 @@ class Servo extends Component {
 
     }
     */
-
-    getLoopLogic = () => {
-        switch (this.state.mode) {
-            case "color":
-                const color = this.state.color;
-                return [`colorWipe(${this.state._objName}.Color(${color[0]}${color[1]}, ${color[2]}${color[3]}, ${color[4]}${color[5]}), 50);`];
-            case "rainbow":
-                return [`theaterChaseRainbow(${this.state._objName}, 50);`];
-            default:
-                return "";
-        }
-    }
 
     /* TODO
 

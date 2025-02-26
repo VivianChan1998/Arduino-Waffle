@@ -38,11 +38,8 @@ class Potentiometer extends Component {
         }
     }
 
-    updateInit = (answer) => {
-        this.setState({init: answer})
-    }
 
-    updateAnswer = (answer, hasFollowup, followUp) => {
+    updateInit = (answer, hasFollowup, followUp) => {
         this.setState({mode: answer})
         if (hasFollowup) {
             this.setState({question: followUp})
@@ -79,9 +76,9 @@ class Potentiometer extends Component {
     }
 
     getLoopLogic = () => {
-        if (this.state._init == "binary threshold") {
+        if (this.state.mode == "binary threshold") {
             let code = `${this.state._val} > ${this.state._boundary}`; 
-        } else if (this.state._init == "analog direct") {
+        } else if (this.state.mode == "analog direct") {
             let code = ``;
         } 
         return code;
