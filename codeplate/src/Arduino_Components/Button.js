@@ -38,7 +38,9 @@ class Button extends Component {
     getName = () => { return "Button" }
 
     updateAnswer = (answer) => {
-        this.setState({mode: answer})
+        this.setState()
+        this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
+        this.props.handleCode(this.getGlobalVar(), this.getSetup(), this.getLoopLogic(), this.getHelperFunction())
     }
 
     getGlobalVar() {
@@ -64,14 +66,6 @@ class Button extends Component {
         return (
             <div>
                 {this.state.question}
-                {/*this.state.mode*/}
-                <button onClick={() => {
-                    var p = {
-                        mode: this.state.mode
-                    }
-                    this.props.handlePropsChange(p, this.props.id, "INPUT")
-                    this.props.handleCode(this.getGlobalVar(), this.getSetup(), this.getLoopLogic(), this.getHelperFunction())
-                }}>ok!</button>
             </div>
         );
     }

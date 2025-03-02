@@ -67,8 +67,9 @@ export default class Main extends React.Component {
     }
     handleCode = (global, setup, looplogic, helper) => {
         console.log("IN HANDLE CODE")
-        console.log(global)
-        console.log(this.state.codeGlobal.concat(global))
+
+        //todo change this to each component <-> code
+
         //this.props.handleCode(this.getGlobalVar(), this.getSetup(), this.getLoopLogic(), this.getHelperFunction());
         this.setState({
             codeGlobal: this.state.codeGlobal.concat(global),
@@ -117,7 +118,7 @@ export default class Main extends React.Component {
                         
                         <h3>Which output component would you like to pair it with?</h3>
                         {
-                            this.state.ioPairs[this.state.ioPairingId].map(el => <p>{this.state.chosenOutputComponentsNames[el]}</p>)
+                            this.state.ioPairs[this.state.ioPairingId].map((el,index) => <p>{this.state.chosenOutputComponentsNames[el]}{index}</p>)
                         }
                         <br/>
                         {
@@ -128,7 +129,7 @@ export default class Main extends React.Component {
                                     this.setState({
                                         ioPairs: temp
                                     })
-                                }}> {this.state.chosenOutputComponentsNames[this.state.ioPairingId] + ' ' + this.state.ioPairingId} </button>
+                                }}> {this.state.chosenOutputComponentsNames[this.state.ioPairingId] + ' ' + index} </button>
                             }) /* TODO potential bug here?? */
                         }
                     </div>
