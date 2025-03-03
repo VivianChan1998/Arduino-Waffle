@@ -20,28 +20,32 @@ export default class Main extends React.Component {
             outputProps: [],
             ioPairingId: 0,
             ioPairs: [[], []], //temp
-            codeGlobal: [],
-            codeSetup: [],
-            codeLoop: [],
-            codeHelperFunction: []
+            codeInput: [],
+            codeOutput: []
         }
     }
     handleChoseInputComponent = (component, cname) => {
         var arr = this.state.inputProps
         arr.push(new Array())
+        var code_arr = this.state.codeInput
+        code_arr.push({}) 
         this.setState  ({
             chosenInputComponents: this.state.chosenInputComponents.concat([component]), 
             chosenInputComponentsNames: this.state.chosenInputComponentsNames.concat([cname]),
-            inputProps: arr
+            inputProps: arr,
+            cadeInput: code_arr
         }) 
     }
     handleChoseOutputComponent = (component, cname) => {
         var arr = this.state.outputProps
         arr.push(new Array())
+        var code_arr = this.state.codeOutput
+        code_arr.push({}) 
         this.setState  ({
             chosenOutputComponents: this.state.chosenOutputComponents.concat([component]),
             chosenOutputComponentsNames: this.state.chosenOutputComponentsNames.concat([cname]),
-            outputProps: arr
+            outputProps: arr,
+            codeOutput: code_arr
         }) 
     }
     handlePropsChange = (p, id, io) => {
@@ -65,20 +69,33 @@ export default class Main extends React.Component {
     getStage = () => {
         return this.state.stage
     }
-    handleCode = (global, setup, looplogic, helper) => {
-        console.log("IN HANDLE CODE")
+    handleCode = (io, id, global, setup, looplogic, helper) => {
+        if (io === "INPUT") {
+            var code_temp = this.state.codeInput
+            code_temp[id] = {
+                codeGlobal: global,
+                codeSetup: setup,
+                codeLoop: looplogic,
+                codeHelperFunction: helper
+            }
+            this.setState({codeInput: code_temp})
+        }
+        else{
+            var code_temp = this.state.codeOutput
+            code_temp[id] = {
+                codeGlobal: global,
+                codeSetup: setup,
+                codeLoop: looplogic,
+                codeHelperFunction: helper
+            }
+            this.setState({codeOutput: code_temp})
+        }
 
-        //todo change this to each component <-> code
-
-        //this.props.handleCode(this.getGlobalVar(), this.getSetup(), this.getLoopLogic(), this.getHelperFunction());
-        this.setState({
-            codeGlobal: this.state.codeGlobal.concat(global),
-            codeSetup: this.state.codeSetup.concat(setup),
-            codeLoop: this.state.codeLoop.concat(looplogic),
-            codeHelperFunction: this.state.codeHelperFunction.concat(helper)
-        })
+        
     }
     render() {
+        console.log(this.state.codeInput)
+        console.log(this.state.codeOutput)
         if (this.state.stage === STAGE.CHOOSE_COMPONENT) {
             return (
                 <div className="main-wrapper">
@@ -89,7 +106,7 @@ export default class Main extends React.Component {
                                     handleChoseOutputComponent={this.handleChoseOutputComponent}
                                     handlePropsChange={this.handlePropsChange}
                                     getStage={this.getStage}
-                                    handleCode={this.handleCode}m
+                                    handleCode={this.handleCode}
                                     />
                     <button className='next-step-button' onClick = {() => this.setState({stage: STAGE.INIT_QUESTION})}> next </button>
                 </div>
@@ -154,7 +171,7 @@ export default class Main extends React.Component {
                         
                         this.state.ioPairs[this.state.ioPairingId].map((idx, index) => 
                             <>
-                                <h4> The {this.state.chosenOutputComponentsNames[idx]}: </h4>
+                                <h4> Output {this.state.chosenOutputComponentsNames[idx] + index}: </h4>
                                 {this.state.chosenOutputComponents[idx]}
                             </>
                         
@@ -169,10 +186,6 @@ export default class Main extends React.Component {
             )
         }
         else if (this.state.stage === STAGE.RENDER_CODE) {
-            console.log(this.state.codeGlobal)
-            console.log(this.state.codeSetup)
-            console.log(this.state.codeLoop)
-            console.log(this.state.codeHelperFunction)
             return (
                 <div className="main-wrapper">
                     <h2>Render code</h2>
@@ -180,38 +193,81 @@ export default class Main extends React.Component {
 
                     {/*TODO: format code */}
                     <code>
-                        {this.state.codeGlobal.map(el => {
-                            return (
-                                <>
-                                <br/> 
-                                {el}
-                                </>
+                        {/* GLOBAL */}
+                        {
+                            this.state.codeInput.map(el =>{
+                                return el.codeGlobal.map(
+                                    code => {
+                                        console.log(code)
+                                        return <>{code} <br/> </>
+                                    }
+                                )}
                             )
-                        })}
-                        {this.state.codeSetup.map(el => {
-                            return (
-                                <>
-                                <br/>
-                                {el}
-                                </>
+                        }
+                        {
+                            this.state.codeOutput.map(el =>{
+                                return el.codeGlobal.map(
+                                    code => {
+                                        console.log(code)
+                                        return <>{code} <br/> </>
+                                    }
+                                )}
                             )
-                        })}
-                        {this.state.codeLoop.map(el => {
-                            return (
-                                <>
-                                <br/>
-                                {el}
-                                </>
+                        }
+
+                        {/* SETUP */}
+
+                        <> void setup{'() {'}</>
+                        <br/>
+                        {
+                            this.state.codeInput.map(el =>{
+                                return el.codeSetup.map(
+                                    code => {
+                                        console.log(code)
+                                        return <>{code} <br/> </>
+                                    }
+                                )}
                             )
-                        })}
-                        {this.state.codeHelperFunction.map(el => {
-                            return (
-                                <>
-                                <br/>
-                                {el}
-                                </>
+                        }
+                        {
+                            this.state.codeOutput.map(el =>{
+                                return el.codeSetup.map(
+                                    code => {
+                                        console.log(code)
+                                        return <>{code} <br/> </>
+                                    }
+                                )}
                             )
-                        })}
+                        }
+                        <>{'}'}</>
+                        <br/>
+
+                        {/* LOOP */}
+
+                        <> void loop{'() {\n\n'}</>
+                        <br/>
+                        {
+                            this.state.codeInput.map(el =>{
+                                return el.codeLoop.map(
+                                    code => {
+                                        console.log(code)
+                                        return <>{code} <br/> </>
+                                    }
+                                )}
+                            )
+                        }
+                        {
+                            this.state.codeOutput.map(el =>{
+                                return el.codeLoop.map(
+                                    code => {
+                                        console.log(code)
+                                        return <>{code} <br/> </>
+                                    }
+                                )}
+                            )
+                        }
+                        <>{'}'}</>
+                        <br/>
                     </code>
 
                     

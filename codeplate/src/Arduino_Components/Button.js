@@ -2,6 +2,7 @@ import React from "react";
 import Component from "./Components.js";
 import { ComponentType, AnswerType, STAGE } from "./Tools/Enums.js";
 import { Question, Answer } from "./Tools/QA.js";
+import Code from "./Tools/Code.js";
 
 class Button extends Component {
     constructor(props){
@@ -32,27 +33,54 @@ class Button extends Component {
                                         ]
                                     }
                                     />,
+            _pin: "button" + props.id + "_pin",
+            _val: "button" + props.id + "_val",
+            _prev: "button" + props.id + "_prev",
+            code: new Code(),
         }
     }
 
     getName = () => { return "Button" }
 
-    updateAnswer = (answer) => {
-        this.setState()
+    updateAnswer = (answer, option) => {
+        console.log(answer)
+        console.log(this.props.id)
+        this.setState({mode: answer})
         this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
-        this.props.handleCode(this.getGlobalVar(), this.getSetup(), this.getLoopLogic(), this.getHelperFunction())
+        console.log("here")
+        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), this.getSetup(), this.getLoopLogic(), this.getHelperFunction())
     }
 
-    getGlobalVar() {
-        return []
+    getGlobalVar = () => {
+        var ret = [this.state.code.strInitVariable("const int", this.state._pin, '2'), this.state.code.strInitVariable("int", this.state._val, '0')]
+        if (this.state.mode === "press")
+            ret.push(this.state.code.strInitVariable("int", this.state._prev, '0'))
+        console.log(ret)
+        return ret
     }
-    getSetup() {
-        return []
+    getSetup = () => {
+        return [this.state.code.strPinMode(this.state._pin, 'o')]
     }
-    getLoopLogic() {
-        return []
+    getLoopStart = () => {
+        var ret = []
+        if (this.state.mode == "press")
+            ret.push(this.state.code.strAssignVariable(this.state._prev, this.state._val))
+        ret.push(this.state.code.strAssignVariable(this.state._val, 'digitalRead(' + this.state._pin + ')'))
+        return ret
+    } //TODO
+    getLoopLogic = () => {
+        var ret = []
+        switch (this.state.mode){
+            case "press":
+                ret.push(this.state._prev + " == 0 &&" + this.state._val + " == 1")
+            case "held":
+                ret.push(this.state._val + " == 1")
+            case "not":
+                ret.push(this.state._val + " == 0")
+        }
+        return ret
     }
-    getHelperFunction() {
+    getHelperFunction = () => {
         return []
     }
 

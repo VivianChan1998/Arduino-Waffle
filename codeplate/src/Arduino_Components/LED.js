@@ -51,12 +51,12 @@ class LED extends Component {
             this.setState({question: followUp})
         }
         this.props.handlePropsChange({mode: answer}, this.props.id, "OUTPUT")
-        this.props.handleCode(this.getGlobalVar(), this.getSetup(), this.getLoopLogic(), this.getHelperFunction())
+        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), this.getLoopLogic(), this.getHelperFunction())
     }
     updateColor = (answer) => {
         this.setState({color: answer})
         this.props.handlePropsChange({color: answer}, this.props.id, "OUTPUT")
-        this.props.handleCode(this.getGlobalVar(), this.getSetup(), this.getLoopLogic(), this.getHelperFunction())
+        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), this.getLoopLogic(), this.getHelperFunction())
     }
 
     getName = () => { return "LED" }
@@ -85,7 +85,7 @@ class LED extends Component {
             case "rainbow":
                 return [`theaterChaseRainbow(${this.state._objName}, 50);`];
             default:
-                return "";
+                return [];
         }
     }
 
