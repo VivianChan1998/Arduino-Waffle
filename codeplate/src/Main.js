@@ -69,12 +69,13 @@ export default class Main extends React.Component {
     getStage = () => {
         return this.state.stage
     }
-    handleCode = (io, id, global, setup, looplogic, helper) => {
+    handleCode = (io, id, global, setup, loopstart, looplogic, helper) => {
         if (io === "INPUT") {
             var code_temp = this.state.codeInput
             code_temp[id] = {
                 codeGlobal: global,
                 codeSetup: setup,
+                codeLoopStart: loopstart,
                 codeLoop: looplogic,
                 codeHelperFunction: helper
             }
@@ -85,6 +86,7 @@ export default class Main extends React.Component {
             code_temp[id] = {
                 codeGlobal: global,
                 codeSetup: setup,
+                codeLoopStart: loopstart,
                 codeLoop: looplogic,
                 codeHelperFunction: helper
             }
@@ -94,8 +96,6 @@ export default class Main extends React.Component {
         
     }
     render() {
-        console.log(this.state.codeInput)
-        console.log(this.state.codeOutput)
         if (this.state.stage === STAGE.CHOOSE_COMPONENT) {
             return (
                 <div className="main-wrapper">
@@ -248,7 +248,7 @@ export default class Main extends React.Component {
                         <br/>
                         {
                             this.state.codeInput.map(el =>{
-                                return el.codeLoop.map(
+                                return el.codeLoopStart.map(
                                     code => {
                                         console.log(code)
                                         return <>{code} <br/> </>
@@ -258,7 +258,7 @@ export default class Main extends React.Component {
                         }
                         {
                             this.state.codeOutput.map(el =>{
-                                return el.codeLoop.map(
+                                return el.codeLoopStart.map(
                                     code => {
                                         console.log(code)
                                         return <>{code} <br/> </>
@@ -266,8 +266,40 @@ export default class Main extends React.Component {
                                 )}
                             )
                         }
+                        {/* TODO: for each io pair, if statement for loop logic */}
+
+                        {
+                            this.state.ioPairs.map((input_list, index) => {
+                                console.log(input_list)
+                                //return 
+                            })
+                        }
+
                         <>{'}'}</>
                         <br/>
+                        <br/>
+
+                        //helper function
+
+                        {
+                            this.state.codeInput.map(el =>{
+                                return el.codeHelperFunction.map(
+                                    code => {
+                                        return <>{code} <br/> </>
+                                    }
+                                )}
+                            )
+                        }
+                        {
+                            this.state.codeOutput.map(el =>{
+                                return el.codeHelperFunction.map(
+                                    code => {
+                                        return <>{code} <br/> </>
+                                    }
+                                )}
+                            )
+                        }
+
                     </code>
 
                     

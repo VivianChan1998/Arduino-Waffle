@@ -48,7 +48,7 @@ class Button extends Component {
         this.setState({mode: answer})
         this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
         console.log("here")
-        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), this.getSetup(), this.getLoopLogic(), this.getHelperFunction())
+        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), this.getSetup(), this.getLoopStart(), this.getLoopLogic(), this.getHelperFunction())
     }
 
     getGlobalVar = () => {
