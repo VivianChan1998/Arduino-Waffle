@@ -45,14 +45,20 @@ class Ultrasonic extends Component {
         if (hasFollowup) {
             this.setState({question: followUp})
         }
+        this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
+        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), this.getSetup(), this.getLoopStart(), this.getLoopLogic(), [])
     }
 
     updateThreshold = (answer) => {
         this.setState({threshold: answer})
+        this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
+        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), this.getSetup(), this.getLoopStart(), this.getLoopLogic(), [])
     }
 
     updateAnalog = (answer) => {
         this.setState({analog: Boolean(true)})
+        this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
+        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), this.getSetup(), this.getLoopStart(), this.getLoopLogic(), [])
     }
 
     getName = () => { return "Ultrasonic" }
@@ -95,6 +101,8 @@ class Ultrasonic extends Component {
         return code;
     }
 
+
+    // TODO?
     render() {
         console.log(this.state.mode)
         if (this.props.getStage() == STAGE.INIT_QUESTION) {

@@ -44,14 +44,20 @@ class Potentiometer extends Component {
         if (hasFollowup) {
             this.setState({question: followUp})
         }
+        this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
+        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), [], this.getLoopStart(), this.getLoopLogic(), [])
     }
 
     updateThreshold = (answer) => {
         this.setState({threshold: answer})
+        this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
+        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), [], this.getLoopStart(), this.getLoopLogic(), [])
     }
 
     updateAnalog = (answer) => {
         this.setState({analog: Boolean(true)})
+        this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
+        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), [], this.getLoopStart(), this.getLoopLogic(), [])
     }
 
     handleAnswer = p => {
@@ -70,6 +76,8 @@ class Potentiometer extends Component {
         } 
         return codeBlock;
     }
+
+    // no setup 
 
     getLoopStart = () => {
         return [`${this.state._val} = analogRead(${this.state._pin})`, `Serial.println(${this.state._val})`]; 
