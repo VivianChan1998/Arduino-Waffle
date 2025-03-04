@@ -8,10 +8,13 @@ class LED extends Component {
     constructor(props){
         super(props)
         this.state = {
+            _pin: `led${props.id}_pin`,
+            _num: `led${props.id}_num`,
+            _objName: `led${props.id}`,
             deviceType: ComponentType.OUTPUT_DEVICE,
             library: "Adafruit_NeoPixel.h",
             initQuestion: <Question handleAnswer={this.updateInit}
-                                    questionText="How many LEDs are there on this strip?"
+                                    questionText={"How many LED units are there on the LED strip: " + `led${props.id}` + "?"}
                                     answerType = {AnswerType.NUMERICAL} />,
             question: <Question handleAnswer = {this.updateAnswer}
                                 questionText="What kind of pattern do you want it to show?"
@@ -30,23 +33,30 @@ class LED extends Component {
                                         followup: ""
                                     }
                                 ]} />, 
-            _pin: `led${props.id}_pin`,
-            _num: `led${props.id}_num`,
-            code: new Code()
+            code: new Code(),
+            init: 0,
+            mode: '',
+            color: ''
+
         }
     }
 
     updateInit = (answer) => {
         this.setState({init: answer})
+        this.props.handlePropsChange({init: answer}, this.props.id, "OUTPUT")
     }
     updateAnswer = (answer, hasFollowup, followUp) => {
         this.setState({mode: answer})
         if (hasFollowup) {
             this.setState({question: followUp})
         }
+        this.props.handlePropsChange({mode: answer}, this.props.id, "OUTPUT")
+        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(), this.getHelperFunction())
     }
     updateColor = (answer) => {
         this.setState({color: answer})
+        this.props.handlePropsChange({color: answer}, this.props.id, "OUTPUT")
+        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(), this.getHelperFunction())
     }
 
     getName = () => { return "LED" }
@@ -75,7 +85,7 @@ class LED extends Component {
             case "rainbow":
                 return [`theaterChaseRainbow(${this.state._objName}, 50);`];
             default:
-                return "";
+                return [];
         }
     }
 
@@ -131,21 +141,13 @@ class LED extends Component {
     }
 
     render() {
-        console.log(this.state.mode)
         if (this.props.getStage() == STAGE.INIT_QUESTION) {
             return (
                 <div>
                     {this.state.initQuestion}
-                    <button onClick={() => {
-                        var p = {
-                            init: this.state.init
-                        }
-                        this.handleAnswer(p)
-                    }} className="question-confirm-button">ok!</button>
                 </div>
             );
         }
-        
         if (this.props.getStage() == STAGE.RENDER_CODE) {
             
             return (
@@ -153,18 +155,9 @@ class LED extends Component {
                 </>
             );
         }
-
         return (
             <div>
                 {this.state.question}
-                <button onClick={() => {
-                    var p = {
-                        mode: this.state.mode,
-                        color: this.state.color
-                    }
-                    this.handleAnswer(p)
-                    this.props.handleCode(this.getGlobalVar(), this.getSetup(), this.getLoopLogic(), this.getHelperFunction())
-            }} className="question-confirm-button">ok!</button>
             </div>
         );
     }

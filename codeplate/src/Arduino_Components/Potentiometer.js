@@ -119,7 +119,7 @@ class Potentiometer extends Component {
                         analog: this.state.analog
                     }
                     this.handleAnswer(p)
-                    this.props.handleCode(this.getGlobalVar(), this.getLoopStart(), this.getLoopLogic())
+                    this.props.handleCode("INPUT", this.state.id, this.getGlobalVar(), this.getLoopStart(), this.getLoopLogic())
             }}>ok!</button>
             </div>
         );
