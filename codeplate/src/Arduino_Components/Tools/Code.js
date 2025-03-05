@@ -5,7 +5,7 @@ export default class Code {
 
     strPinMode(name, io) {
         let ret = `pinMode(${name}, `;
-        ret += (io === 'i') ? "INPUT)" : "OUTPUT)";
+        ret += (io === 'i') ? "INPUT)" : "OUTPUT);";
         return ret;
     }
 
@@ -14,11 +14,11 @@ export default class Code {
     }
 
     strInitVariable(varType, variable, value) {
-        return `${varType} ${variable} = ${value}`;
+        return `${varType} ${variable} = ${value};`;
     }
 
     strAssignVariable(left, right) {
-        return `${left} = ${right}`;
+        return `${left} = ${right};`;
     }
 
     strCallFunction(obj, funcName, listToPass) {

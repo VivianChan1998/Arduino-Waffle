@@ -1,5 +1,5 @@
-function formProgram(program) {
-    let currentIndentCounter = 0;
+export function formProgram(program, indent) {
+    let currentIndentCounter = indent;
     let formattedProgram = "";
 
     for (let line of program) {
@@ -15,7 +15,7 @@ function formProgram(program) {
             indent = "\t".repeat(currentIndentCounter);
             formattedProgram += indent + line + "\n";
         } else {
-            formattedProgram += indent + line + ";\n";
+            formattedProgram += indent + line + "\n";
         }
 
         if (currentIndentCounter === 0) {

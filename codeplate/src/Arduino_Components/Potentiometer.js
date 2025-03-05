@@ -53,7 +53,7 @@ class Potentiometer extends Component {
         this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
         this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), [], this.getLoopStart(), this.getLoopLogic(), [])
     }
-
+    
     updateAnalog = (answer) => {
         this.setState({analog: Boolean(true)})
         this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")

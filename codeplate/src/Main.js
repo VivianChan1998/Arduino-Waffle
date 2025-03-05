@@ -3,7 +3,7 @@ import LED from './Arduino_Components/LED';
 import Button from './Arduino_Components/Button';
 import { STAGE } from './Arduino_Components/Tools/Enums';
 import './index.css'
-
+import { formProgram } from './Utils';
 
 export default class Main extends React.Component {
     constructor (props) {
@@ -196,22 +196,14 @@ export default class Main extends React.Component {
                         {/* GLOBAL */}
                         {
                             this.state.codeInput.map(el =>{
-                                return el.codeGlobal.map(
-                                    code => {
-                                        console.log(code)
-                                        return <>{code} <br/> </>
-                                    }
-                                )}
+                                return <pre>{formProgram(el.codeGlobal, 0)}</pre>
+                            }
                             )
                         }
                         {
                             this.state.codeOutput.map(el =>{
-                                return el.codeGlobal.map(
-                                    code => {
-                                        console.log(code)
-                                        return <>{code} <br/> </>
-                                    }
-                                )}
+                                return <pre>{formProgram(el.codeGlobal, 0)}</pre>
+                            }
                             )
                         }
 
@@ -221,49 +213,31 @@ export default class Main extends React.Component {
                         <br/>
                         {
                             this.state.codeInput.map(el =>{
-                                return el.codeSetup.map(
-                                    code => {
-                                        console.log(code)
-                                        return <>{code} <br/> </>
-                                    }
-                                )}
+                                return <pre>{formProgram(el.codeSetup, 1)}</pre>
+                            }
                             )
                         }
                         {
                             this.state.codeOutput.map(el =>{
-                                return el.codeSetup.map(
-                                    code => {
-                                        console.log(code)
-                                        return <>{code} <br/> </>
-                                    }
-                                )}
+                                return <pre>{formProgram(el.codeSetup, 1)}</pre>
+                                }
                             )
                         }
                         <>{'}'}</>
                         <br/>
 
                         {/* LOOP */}
-
+                        
                         <> void loop{'() {\n\n'}</>
                         <br/>
                         {
                             this.state.codeInput.map(el =>{
-                                return el.codeLoopStart.map(
-                                    code => {
-                                        console.log(code)
-                                        return <>{code} <br/> </>
-                                    }
-                                )}
+                                return <pre>{formProgram(el.codeLoopStart, 1)}</pre>}
                             )
                         }
                         {
                             this.state.codeOutput.map(el =>{
-                                return el.codeLoopStart.map(
-                                    code => {
-                                        console.log(code)
-                                        return <>{code} <br/> </>
-                                    }
-                                )}
+                                return <pre>{formProgram(el.codeLoopStart, 1)}</pre>}
                             )
                         }
                         {/* TODO: for each io pair, if statement for loop logic */}
@@ -281,23 +255,17 @@ export default class Main extends React.Component {
 
                         //helper function
 
+                        <br/>
+
                         {
                             this.state.codeInput.map(el =>{
-                                return el.codeHelperFunction.map(
-                                    code => {
-                                        return <>{code} <br/> </>
-                                    }
-                                )}
-                            )
+                                return <pre>{formProgram(el.codeHelperFunction, 0)}</pre>
+                            })
                         }
                         {
                             this.state.codeOutput.map(el =>{
-                                return el.codeHelperFunction.map(
-                                    code => {
-                                        return <>{code} <br/> </>
-                                    }
-                                )}
-                            )
+                                return <pre>{formProgram(el.codeHelperFunction, 0)}</pre>
+                            })
                         }
 
                     </code>
