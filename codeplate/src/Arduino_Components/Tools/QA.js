@@ -9,6 +9,7 @@ class Question extends React.Component {
         }
     }
     render() {
+        console.log(this.props.answerType)
         return (
             <div id="question-wrapper">
                 <p>{this.props.questionText}</p>

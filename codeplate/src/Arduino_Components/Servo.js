@@ -23,7 +23,7 @@ class Servo extends Component {
                                     {
                                         text: "Sweep the Servo prong 180 degrees.",
                                         value: "sweep",
-                                        followup: <Question handleAnswer = {this.updatePwm}
+                                        followup: <Question handleAnswer = {this.updatePWM}
                                                             questionText="What should the PWM (speed) of the Servo sweep be?"
                                                             answerType={AnswerType.NUMERICAL} />
                                     }
@@ -49,23 +49,30 @@ class Servo extends Component {
         }
     }
 
-    updateAnalog = (answer) => { // fix
+    updateAnalog = (answer) => { // fix 
         this.setState({init: answer})
+        this.props.handlePropsChange({init: answer}, this.props.id, "OUTPUT")
     }
 
     updateInit = (answer, hasFollowup, followUp) => {
         this.setState({mode: answer})
         if (hasFollowup) {
-            this.setState({question: followUp})
+            this.setState({initQuestion: followUp})
         }
+        this.props.handlePropsChange({mode: answer}, this.props.id, "OUTPUT")
+        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(answer, ''), this.getHelperFunction(answer))
     }
 
     updatePosition = (answer) => {
         this.setState({position: answer})
+        this.props.handlePropsChange({position: answer}, this.props.id, "OUTPUT")
+        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(answer, ''), this.getHelperFunction(answer))
     }
 
     updatePWM = (answer) => {
         this.setState({pwm: answer})
+        this.props.handlePropsChange({pwm: answer}, this.props.id, "OUTPUT")
+        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(answer, ''), this.getHelperFunction(answer))
     }
 
     getName = () => { return "Servo" }
@@ -113,35 +120,13 @@ class Servo extends Component {
             return (
                 <div>
                     {this.state.initQuestion}
-                    <button onClick={() => {
-                        var p = {
-                            init: this.state.init
-                        }
-                        this.handleAnswer(p)
-                    }} className="question-confirm-button">ok!</button>
                 </div>
-            );
-        }
-        
-        if (this.props.getStage() == STAGE.RENDER_CODE) {
-            
-            return (
-                <>
-                </>
             );
         }
 
         return (
             <div>
-                {this.state.question}
-                <button onClick={() => {
-                    var p = {
-                        mode: this.state.mode,
-                        color: this.state.color
-                    }
-                    this.handleAnswer(p)
-                    this.props.handleCode(this.getGlobalVar(), this.getSetup(), this.getLoopLogic(), this.getHelperFunction())
-            }} className="question-confirm-button">ok!</button>
+                <p>just press next :)</p>
             </div>
         );
     }

@@ -17,21 +17,21 @@ class Potentiometer extends Component {
                                         [   
                                             {
                                                 text: "Binary threshold with respect to an output device, one output state under threshold, one output state over threshold.", 
-                                                value: "binary threshold",
-                                                followup: <Question handelAnswer = {this.updateThreshold}
-                                                                    questionText = "WhatWhat should the binary threshold be? The max value a potentiometer can read is 1023."
-                                                                    asnwerType = {AnswerType.NUMERICAL} />
+                                                value: "binary",
+                                                followup: <Question handleAnswer = {this.updateThreshold}
+                                                                    questionText = "What should the binary threshold be? The max value a potentiometer can read is 1023."
+                                                                    answerType = {AnswerType.NUMERICAL} />
                                             },
                                             {
                                                 text: "Use analog input for determining the output behavior, each different analog value will directly impact state through conversion of the input values.", 
-                                                value: "analog direct",
+                                                value: "analog",
                                                 followup: "",
                                                 analog: <Question handleAnswer = {this.updateAnalog} />
                                             }
                                         ]
                                     }/>,
             _pin: `potentiometerPin_${props.id}`,
-            _val: `potentiometerVal_ ${props.id}`,
+            _val: `potentiometerVal_${props.id}`,
             _boundary:  `potentiometer_I/O_Boundary_${props.id}`,
             _analog_max: 1023,
             _analog_param_name: this.state._val,
@@ -43,22 +43,23 @@ class Potentiometer extends Component {
     updateInit = (answer, hasFollowup, followUp) => {
         this.setState({mode: answer})
         if (hasFollowup) {
-            this.setState({question: followUp})
+            this.setState({initQuestion: followUp})
         }
+        console.log(hasFollowup)
         this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
-        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), [], this.getLoopStart(), this.getLoopLogic(), [])
+        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), [], this.getLoopStart(), this.getLoopLogic(answer), [])
     }
 
     updateThreshold = (answer) => {
         this.setState({threshold: answer})
         this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
-        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), [], this.getLoopStart(), this.getLoopLogic(), [])
+        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(0), [], this.getLoopStart(), this.getLoopLogic(this.state.mode), [])
     }
     
     updateAnalog = (answer) => {
-        this.setState({analog: Boolean(true)})
-        this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
-        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), [], this.getLoopStart(), this.getLoopLogic(), [])
+        this.setState({analog: answer})
+        this.props.handlePropsChange({analog: answer}, this.props.id, "INPUT")
+        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(answer), [], this.getLoopStart(), this.getLoopLogic(this.state.mode), [])
     }
 
     handleAnswer = p => {
@@ -67,13 +68,13 @@ class Potentiometer extends Component {
 
     getName = () => { return "Potentiometer" }
 
-    getGlobalVar = () => {
+    getGlobalVar = (a) => {
         let codeBlock = [
-            this.state.code.strDefine(this.state._pin, 7), // temp
-            this.state.code.strInitVariable(this.state._val, 6), // temp
+            this.state.code.strDefine(this.state._pin, 7),
+            this.state.code.strInitVariable("int", this.state._val, 6),
         ];
         if (this.state._threshold) {
-            codeBlock.push(this.state.code.strInitVariable("int", this.state._boundary, this.state._threshold));
+            codeBlock.push(this.state.code.strInitVariable("int", this.state._boundary, a));
         } 
         return codeBlock;
     }
@@ -81,56 +82,30 @@ class Potentiometer extends Component {
     // no setup 
 
     getLoopStart = () => {
-        return [`${this.state._val} = analogRead(${this.state._pin})`, `Serial.println(${this.state._val})`]; 
+        return [`${this.state._val} = analogRead(${this.state._pin});`, `Serial.println(${this.state._val});`]; 
     }
 
-    getLoopLogic = () => {
-        let code
-        if (this.state.mode == "binary threshold") {
-            code = `${this.state._val} > ${this.state._boundary}`; 
-        } else if (this.state.mode == "analog direct") {
-            code = ``;
-        } 
+    getLoopLogic = (mode) => {
+        let code = []
+        if (mode == "binary") {
+            code = [`${this.state._val} > ${this.state._boundary}`]; 
+        }
         return code;
     }
     
 
     render() {
-        console.log(this.state.mode)
         if (this.props.getStage() == STAGE.INIT_QUESTION) {
             return (
                 <div>
                     {this.state.initQuestion}
-                    {this.state.init}
-                    <button onClick={() => {
-                        var p = {
-                            init: this.state.init
-                        }
-                        this.handleAnswer(p)
-                    }}>ok!</button>
                 </div>
-            );
-        }
-        
-        if (this.props.getStage() == STAGE.RENDER_CODE) {
-            
-            return (
-                <>
-                </>
             );
         }
 
         return (
             <div>
                 {this.state.question}
-                <button onClick={() => {
-                    var p = {
-                        threshold: this.state.threshold,
-                        analog: this.state.analog
-                    }
-                    this.handleAnswer(p)
-                    this.props.handleCode("INPUT", this.state.id, this.getGlobalVar(), this.getLoopStart(), this.getLoopLogic())
-            }}>ok!</button>
             </div>
         );
     }

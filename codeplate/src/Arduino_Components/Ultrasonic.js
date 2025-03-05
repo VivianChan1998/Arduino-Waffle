@@ -44,22 +44,22 @@ class Ultrasonic extends Component {
     updateInit = (answer, hasFollowup, followUp) => {
         this.setState({mode: answer})
         if (hasFollowup) {
-            this.setState({question: followUp})
+            this.setState({initQuestion: followUp})
         }
         this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
-        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), this.getSetup(), this.getLoopStart(), this.getLoopLogic(), [])
+        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(0), this.getSetup(), this.getLoopStart(), this.getLoopLogic(), [])
     }
 
     updateThreshold = (answer) => {
         this.setState({threshold: answer})
         this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
-        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), this.getSetup(), this.getLoopStart(), this.getLoopLogic(), [])
+        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(answer), this.getSetup(), this.getLoopStart(), this.getLoopLogic(), [])
     }
 
     updateAnalog = (answer) => {
         this.setState({analog: Boolean(true)})
         this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
-        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), this.getSetup(), this.getLoopStart(), this.getLoopLogic(), [])
+        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(this.state.threshold), this.getSetup(), this.getLoopStart(), this.getLoopLogic(), [])
     }
 
     getName = () => { return "Ultrasonic" }
@@ -68,29 +68,28 @@ class Ultrasonic extends Component {
         this.props.handlePropsChange(p, this.props.id, "INPUT")
     }
 
-    getGlobalVar = () => {
+    getGlobalVar = (threshold) => {
         let codeBlock = [
             this.state.code.strDefine(this.state._trig, 7), // temp
-            this.state.code.strDefine(this.state._echo, 6), // temp
-            `float duration, distance`
+            this.state.code.strDefine(this.state._echo, 6) // temp
         ];
         if (this.state._threshold) {
-            codeBlock.push(this.state.code.strInitVariable("int", this.state._boundary, this.state.threshold));
+            codeBlock.push(this.state.code.strInitVariable("int", this.state._boundary, threshold));
         } 
         return codeBlock;
     }
 
     getSetup = () => {
-        return [`pinMode(${this.state._trig}, OUTPUT)`, `pinMode(${this.state._echo}, INPUT)`];
+        return [`pinMode(${this.state._trig}, OUTPUT);`, `pinMode(${this.state._echo}, INPUT);`];
     }
 
     getLoopStart = () => {
-        return [`digitalWrite(${this.state._trig}, LOW)`, `delayMicroseconds(2)`, 
-            `digitalWrite(${this.state._trig}, HIGH)`, `delayMicroseconds(10)`, 
-            `digitalWrite(${this.state._trig}, LOW)`, 
-            `${this.state._duration} = pulseIn(${this.state._echo}, HIGH)`, 
-            `${this.state._distance} = ${this.state._duration} * 0.034 / 2`, 
-            `Serial.print(\"Distance: \")`, `Serial.println(${this.state._distance})`];
+        return [`digitalWrite(${this.state._trig}, LOW);`, `delayMicroseconds(2);`, 
+            `digitalWrite(${this.state._trig}, HIGH);`, `delayMicroseconds(10);`, 
+            `digitalWrite(${this.state._trig}, LOW);`, 
+            `${this.state._duration} = pulseIn(${this.state._echo}, HIGH);`, 
+            `${this.state._distance} = ${this.state._duration} * 0.034 / 2;`, 
+            `Serial.print(\"Distance: \");`, `Serial.println(${this.state._distance});`];
     }
 
     getLoopLogic = () => {
@@ -103,44 +102,17 @@ class Ultrasonic extends Component {
         return code;
     }
 
-
-    // TODO?
     render() {
-        console.log(this.state.mode)
         if (this.props.getStage() == STAGE.INIT_QUESTION) {
             return (
                 <div>
                     {this.state.initQuestion}
-                    {this.state.init}
-                    <button onClick={() => {
-                        var p = {
-                            init: this.state.init
-                        }
-                        this.handleAnswer(p)
-                    }}>ok!</button>
                 </div>
             );
         }
-        
-        if (this.props.getStage() == STAGE.RENDER_CODE) {
-            
-            return (
-                <>
-                </>
-            );
-        }
-
         return (
             <div>
                 {this.state.question}
-                <button onClick={() => {
-                    var p = {
-                        threshold: this.state.threshold,
-                        analog: this.state.analog
-                    }
-                    this.handleAnswer(p)
-                    this.props.handleCode("INPUT", this.state.id, this.getGlobalVar(), this.getSetup(), this.getLoopStart(), this.getLoopLogic())
-            }}>ok!</button>
             </div>
         );
     }

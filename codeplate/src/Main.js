@@ -125,6 +125,9 @@ export default class Main extends React.Component {
                     <div>
                         {this.state.chosenOutputComponents.map(el => el)}
                     </div>
+                    <div>
+                        {this.state.chosenInputComponents.map(el => el)}
+                    </div>
                     <button className='next-step-button' onClick = {() => this.setState({stage: STAGE.IO_PAIRING})}> next </button>
                 </div>
             );
