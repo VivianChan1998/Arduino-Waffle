@@ -37,7 +37,7 @@ class Question extends React.Component {
                                 type="radio" 
                                 id = {index}
                                 value={option.value} 
-                                onChange={e => this.props.handleAnswer(e.target.value, option.followup !== ""? option.followup: "")} 
+                                onChange={e => this.props.handleAnswer(e.target.value, option.followup !== "",  option.followup !== ""? option.followup: "")} 
                             /> 
                             <label form= {index}> {option.text} </label>
                         </label>

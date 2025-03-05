@@ -51,12 +51,12 @@ class LED extends Component {
             this.setState({question: followUp})
         }
         this.props.handlePropsChange({mode: answer}, this.props.id, "OUTPUT")
-        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(), this.getHelperFunction())
+        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(answer, ''), this.getHelperFunction(answer))
     }
     updateColor = (answer) => {
         this.setState({color: answer})
         this.props.handlePropsChange({color: answer}, this.props.id, "OUTPUT")
-        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(), this.getHelperFunction())
+        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(this.state.mode, answer), this.getHelperFunction(this.state.mode))
     }
 
     getName = () => { return "LED" }
@@ -77,10 +77,9 @@ class LED extends Component {
         return [`${this.state._objName}.begin();`];
     }
 
-    getLoopLogic = () => {
-        switch (this.state.mode) {
+    getLoopLogic = (mode, color) => {
+        switch (mode) {
             case "color":
-                const color = this.state.color;
                 return [`colorWipe(${this.state._objName}.Color(${color[0]}${color[1]}, ${color[2]}${color[3]}, ${color[4]}${color[5]}), 50);`];
             case "rainbow":
                 return [`theaterChaseRainbow(${this.state._objName}, 50);`];
@@ -105,8 +104,8 @@ class LED extends Component {
 
     */
 
-    getHelperFunction() {
-        if (this.state.mode === "rainbow") {
+    getHelperFunction(mode) {
+        if (mode === "rainbow") {
             return [
                 "void theaterChaseRainbow(int wait) {",
                 "  int firstPixelHue = 0;",
@@ -144,13 +143,6 @@ class LED extends Component {
                 <div>
                     {this.state.initQuestion}
                 </div>
-            );
-        }
-        if (this.props.getStage() == STAGE.RENDER_CODE) {
-            
-            return (
-                <>
-                </>
             );
         }
         return (
