@@ -123,8 +123,7 @@ class LED extends Component {
                 "      firstPixelHue += 65536 / 90;",
                 "    }",
                 "  }",
-                "}",
-                "led_rainbow"
+                "}"
             ];
         } else {
             return [
@@ -134,8 +133,7 @@ class LED extends Component {
                 "    pixels.show();",
                 "    delay(wait);",
                 "  }",
-                "}",
-                "led_color"
+                "}"
             ];
         }
     }

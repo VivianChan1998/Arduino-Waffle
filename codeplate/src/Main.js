@@ -19,7 +19,7 @@ export default class Main extends React.Component {
             inputProps: [],
             outputProps: [],
             ioPairingId: 0,
-            ioPairs: [[], []], //temp
+            ioPairs: [], //temp
             codeInput: [],
             codeOutput: []
         }
@@ -29,11 +29,14 @@ export default class Main extends React.Component {
         arr.push(new Array())
         var code_arr = this.state.codeInput
         code_arr.push({}) 
+        var io_arr = this.state.ioPairs
+        io_arr.push([])
         this.setState  ({
             chosenInputComponents: this.state.chosenInputComponents.concat([component]), 
             chosenInputComponentsNames: this.state.chosenInputComponentsNames.concat([cname]),
             inputProps: arr,
-            cadeInput: code_arr
+            cadeInput: code_arr,
+            ioPairs: io_arr
         }) 
     }
     handleChoseOutputComponent = (component, cname) => {
@@ -49,7 +52,6 @@ export default class Main extends React.Component {
         }) 
     }
     handlePropsChange = (p, id, io) => {
-        console.log(this.state.outputProps)
         if (io == 'INPUT') {
             var inputProps = this.state.inputProps
             inputProps[id] = {...inputProps[id], ...p}
@@ -71,6 +73,7 @@ export default class Main extends React.Component {
     }
     handleCode = (io, id, global, setup, loopstart, looplogic, helper) => {
         if (io === "INPUT") {
+            console.log(looplogic)
             var code_temp = this.state.codeInput
             code_temp[id] = {
                 codeGlobal: global,
@@ -186,6 +189,7 @@ export default class Main extends React.Component {
             )
         }
         else if (this.state.stage === STAGE.RENDER_CODE) {
+            console.log(this.state.ioPairs)
             return (
                 <div className="main-wrapper">
                     <h2>Render code</h2>
@@ -241,11 +245,18 @@ export default class Main extends React.Component {
                             )
                         }
                         {/* TODO: for each io pair, if statement for loop logic */}
-
                         {
-                            this.state.ioPairs.map((input_list, index) => {
-                                console.log(input_list)
-                                //return 
+                            this.state.ioPairs.map((output_list, index) => {
+                                var ret = ["if (" + this.state.codeInput[index].codeLoop + ") {"]
+                                for(var i=0; i<output_list.length; i++) {
+                                    var output_idx = output_list[i]
+                                    console.log(output_idx)
+                                    console.log(this.state.codeOutput[output_idx])
+                                    ret.push(this.state.codeOutput[output_idx].codeLoop)
+                                }
+                                ret.push("}")
+                                console.log(ret)
+                                return <pre>{formProgram(ret, 1)}</pre>
                             })
                         }
 
