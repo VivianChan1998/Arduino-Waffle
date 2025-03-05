@@ -1,7 +1,8 @@
 import React from "react";
 import Component from "./Components.js";
-import { ComponentType, AnswerType, PinType } from "./Tools/Enums.js";
+import { ComponentType, AnswerType, STAGE } from "./Tools/Enums.js";
 import { Question, Answer } from "./Tools/QA.js";
+import Code from './Tools/Code.js'
 
 class Potentiometer extends Component {
     constructor(props){
@@ -84,10 +85,11 @@ class Potentiometer extends Component {
     }
 
     getLoopLogic = () => {
+        let code
         if (this.state.mode == "binary threshold") {
-            let code = `${this.state._val} > ${this.state._boundary}`; 
+            code = `${this.state._val} > ${this.state._boundary}`; 
         } else if (this.state.mode == "analog direct") {
-            let code = ``;
+            code = ``;
         } 
         return code;
     }

@@ -147,4 +147,4 @@ class Servo extends Component {
     }
 }
 
-export default LED;
+export default Servo;
