@@ -14,21 +14,21 @@ class LED extends Component {
             deviceType: ComponentType.OUTPUT_DEVICE,
             library: "Adafruit_NeoPixel.h",
             initQuestion: <Question handleAnswer={this.updateInit}
-                                    questionText={"How many LED units are there on the LED strip: " + `led${props.id}` + "?"}
+                                    questionText={"How many LED units are there on the LED strip number " +  props.id + "?"}
                                     answerType = {AnswerType.NUMERICAL} />,
             question: <Question handleAnswer = {this.updateAnswer}
                                 questionText="What kind of pattern do you want it to show?"
                                 answerType={AnswerType.MULTI_OPTION}
                                 answerOption={[
                                     {
-                                        text: "Turn into one color",
+                                        text: "all LEDs should show the same color",
                                         value: "color",
                                         followup: <Question handleAnswer = {this.updateColor}
-                                                            questionText="What color do you want?"
+                                                            questionText="What color do you want? (HEX code, ex:ffff03)" //TODO: example in input box
                                                             answerType={AnswerType.TEXT} />
                                     },
                                     {
-                                        text: "Do a rainbow pattern circulation",
+                                        text: "all LEDs should cycle through rainbow colors",
                                         value: "rainbow",
                                         followup: ""
                                     }

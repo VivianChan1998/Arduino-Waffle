@@ -366,7 +366,7 @@ class ChooseComponent extends React.Component {
                 <h3>Chose Input Components</h3>
                 {
                     this.state.chosenInput.length == 0?
-                    <p>click on buttons to add components.</p> :
+                    <p>Click on the buttons below to add components. You may add more than one of each type if you want.</p> :
                     this.state.chosenInput.map( (name, idx) => <p key={idx}> {name} </p>)
                 }
                 <div>
@@ -380,7 +380,7 @@ class ChooseComponent extends React.Component {
                 <h3>Chose Output Components</h3>
                 {
                     this.state.chosenOutput.length == 0?
-                    <p>click on buttons to add components.</p> :
+                    <p>Click on the buttons below to add components. You may add more than one of each type if you want.</p> :
                     this.state.chosenOutput.map( (name, idx) => <p key={idx}> {name} </p>)
                 }
                 <div>

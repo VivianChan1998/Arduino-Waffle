@@ -11,19 +11,19 @@ class Potentiometer extends Component {
             deviceType: ComponentType.INPUT_DEVICE,
             init: 0,
             initQuestion: <Question handleAnswer={this.updateInit}
-                                    questionText="What do you what to use this potentiometer for?"
+                                    questionText="What kind of values should come out of the potentiometer?  By default, values range from 0 to 1023."
                                     answerType = {AnswerType.MULTI_OPTION} 
                                     answerOption = {
                                         [   
                                             {
-                                                text: "Binary threshold with respect to an output device, one output state under threshold, one output state over threshold.", 
+                                                text: "Turn the potentiometer values into just two values, using a threshold.  I want one output state under the threshold, one output state over the threshold.", 
                                                 value: "binary",
                                                 followup: <Question handleAnswer = {this.updateThreshold}
-                                                                    questionText = "What should the binary threshold be? The max value a potentiometer can read is 1023."
+                                                                    questionText = "What should the threshold be? The potentiometer values range from 0 to 1023."
                                                                     answerType = {AnswerType.NUMERICAL} />
                                             },
                                             {
-                                                text: "Use analog input for determining the output behavior, each different analog value will directly impact state through conversion of the input values.", 
+                                                text: "Pass along the full range of values. I'll use some rules to convert the range of values into the outputs I want.", 
                                                 value: "analog",
                                                 followup: "",
                                                 analog: <Question handleAnswer = {this.updateAnalog} />

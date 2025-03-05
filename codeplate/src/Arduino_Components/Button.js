@@ -11,22 +11,22 @@ class Button extends Component {
             deviceType: ComponentType.INPUT_DEVICE_ONLY_DIGITAL,
             init: 0,
             question: <Question handleAnswer = {this.updateAnswer}
-                                    questionText = "What kind of input does the button take?"
+                                    questionText = "When should the button trigger an output?"
                                     answerType = {AnswerType.MULTI_OPTION}
                                     answerOption = {
                                         [
                                             {
-                                                text: "when button is pressed for once",
+                                                text: "when the button is pressed briefly",
                                                 value: "press",
                                                 followup: ""
                                             },
                                             {
-                                                text: "when button is held down",
+                                                text: "when the button is held down",
                                                 value: "held",
                                                 followup: ""
                                             },
                                             {
-                                                text: "when button is not pressed",
+                                                text: "when the button is not being held down",
                                                 value: "not",
                                                 followup: ""
                                             }
