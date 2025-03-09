@@ -34,7 +34,9 @@ class Potentiometer extends Component {
             _boundary:  `potentiometer_I/O_Boundary_${props.id}`,
             _analog_max: 1023,
             _analog_param_name: this.state._val,
-            code: new Code()
+            code: new Code(),
+            mode: '',
+            threshold: '',
         }
     }
 
@@ -50,13 +52,13 @@ class Potentiometer extends Component {
 
     updateThreshold = (answer) => {
         this.setState({threshold: answer})
-        this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
+        this.props.handlePropsChange({threshold: answer}, this.props.id, "INPUT")
         this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), [], this.getLoopStart(), this.getLoopLogic(), [])
     }
-    
+
     updateAnalog = (answer) => {
-        this.setState({analog: Boolean(true)})
-        this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
+        this.setState({analog: answer})
+        this.props.handlePropsChange({analog: answer}, this.props.id, "INPUT")
         this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), [], this.getLoopStart(), this.getLoopLogic(), [])
     }
 

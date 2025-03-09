@@ -45,27 +45,40 @@ class Servo extends Component {
             _servo: `servo_${props.id}`,
             _pos: `pos_${props.id}`,
             analogMax: 180,
-            code: new Code()
+            code: new Code(),
+            init: '',
+            analog: '',
+            position: '',
+            pwm: '',
+
         }
     }
 
-    updateAnalog = (answer) => { // fix
+    updateInit = (answer) => {
         this.setState({init: answer})
-    }
-
-    updateInit = (answer, hasFollowup, followUp) => {
-        this.setState({mode: answer})
         if (hasFollowup) {
             this.setState({question: followUp})
         }
+        this.props.handlePropsChange({mode: answer}, this.props.id, "OUTPUT")
+        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(), this.getHelperFunction())
     }
 
     updatePosition = (answer) => {
         this.setState({position: answer})
+        this.props.handlePropsChange({position: answer}, this.props.id, "OUTPUT")
+        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(), this.getHelperFunction())
     }
 
-    updatePWM = (answer) => {
+    updatePwm = (answer) => {
         this.setState({pwm: answer})
+        this.props.handlePropsChange({pwm: answer}, this.props.id, "OUTPUT")
+        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(), this.getHelperFunction())
+    }
+
+    updateAnalog = (answer) => {
+        this.setState({analog: answer})
+        this.props.handlePropsChange({analog: answer}, this.props.id, "OUTPUT")
+        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(), this.getHelperFunction())
     }
 
     getName = () => { return "Servo" }
