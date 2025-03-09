@@ -1,6 +1,9 @@
 import React from 'react';
 import LED from './Arduino_Components/LED';
 import Button from './Arduino_Components/Button';
+import Ultrasonic from './Arduino_Components/Ultrasonic';
+import Servo from './Arduino_Components/Servo'
+import Potentiometer from './Arduino_Components/Potentiometer';
 import { STAGE } from './Arduino_Components/Tools/Enums';
 import './index.css'
 import { formProgram } from './Utils';
@@ -10,8 +13,8 @@ export default class Main extends React.Component {
         super(props);
         this.state = {
             stage: STAGE.CHOOSE_COMPONENT,
-            availableInputComponents: ["button"],
-            availableOutputComponents: ['LED'],
+            availableInputComponents: ["Button", "Ultrasonic", "Potentiometer"],
+            availableOutputComponents: ["LED", "Servo"],
             chosenInputComponentsNames: [],
             chosenInputComponents: [],
             chosenOutputComponentsNames: [],
@@ -19,7 +22,7 @@ export default class Main extends React.Component {
             inputProps: [],
             outputProps: [],
             ioPairingId: 0,
-            ioPairs: [[], []], //temp
+            ioPairs: [],
             codeInput: [],
             codeOutput: []
         }
@@ -29,11 +32,14 @@ export default class Main extends React.Component {
         arr.push(new Array())
         var code_arr = this.state.codeInput
         code_arr.push({}) 
+        var io_arr = this.state.ioPairs
+        io_arr.push([])
         this.setState  ({
             chosenInputComponents: this.state.chosenInputComponents.concat([component]), 
             chosenInputComponentsNames: this.state.chosenInputComponentsNames.concat([cname]),
             inputProps: arr,
-            cadeInput: code_arr
+            cadeInput: code_arr,
+            ioPairs: io_arr
         }) 
     }
     handleChoseOutputComponent = (component, cname) => {
@@ -49,7 +55,6 @@ export default class Main extends React.Component {
         }) 
     }
     handlePropsChange = (p, id, io) => {
-        console.log(this.state.outputProps)
         if (io == 'INPUT') {
             var inputProps = this.state.inputProps
             inputProps[id] = {...inputProps[id], ...p}
@@ -71,6 +76,7 @@ export default class Main extends React.Component {
     }
     handleCode = (io, id, global, setup, loopstart, looplogic, helper) => {
         if (io === "INPUT") {
+            console.log(looplogic)
             var code_temp = this.state.codeInput
             code_temp[id] = {
                 codeGlobal: global,
@@ -118,6 +124,9 @@ export default class Main extends React.Component {
                     <h2>Initializing components</h2>
                     <div>
                         {this.state.chosenOutputComponents.map(el => el)}
+                    </div>
+                    <div>
+                        {this.state.chosenInputComponents.map(el => el)}
                     </div>
                     <button className='next-step-button' onClick = {() => this.setState({stage: STAGE.IO_PAIRING})}> next </button>
                 </div>
@@ -186,12 +195,12 @@ export default class Main extends React.Component {
             )
         }
         else if (this.state.stage === STAGE.RENDER_CODE) {
+            console.log(this.state.ioPairs)
             return (
                 <div className="main-wrapper">
                     <h2>Render code</h2>
                     <br/>
 
-                    {/*TODO: format code */}
                     <code>
                         {/* GLOBAL */}
                         {
@@ -240,12 +249,18 @@ export default class Main extends React.Component {
                                 return <pre>{formProgram(el.codeLoopStart, 1)}</pre>}
                             )
                         }
-                        {/* TODO: for each io pair, if statement for loop logic */}
-
                         {
-                            this.state.ioPairs.map((input_list, index) => {
-                                console.log(input_list)
-                                //return 
+                            this.state.ioPairs.map((output_list, index) => {
+                                var ret = ["if (" + this.state.codeInput[index].codeLoop + ") {"]
+                                for(var i=0; i<output_list.length; i++) {
+                                    var output_idx = output_list[i]
+                                    console.log(output_idx)
+                                    console.log(this.state.codeOutput[output_idx])
+                                    ret.push(this.state.codeOutput[output_idx].codeLoop)
+                                }
+                                ret.push("}")
+                                console.log(ret)
+                                return <pre>{formProgram(ret, 1)}</pre>
                             })
                         }
 
@@ -298,7 +313,13 @@ class ChooseComponent extends React.Component {
                         handleCode={this.props.handleCode}
                         />
                 break;
-                /*TODO : add more objects */
+            case 'Servo':
+                obj = <Servo handlePropsChange={this.props.handlePropsChange}
+                        id={this.state.chosenOutput.length}
+                        getStage={this.props.getStage}
+                        handleCode={this.props.handleCode}
+                        />
+                break;
             default:
                 console.log("error")
         }
@@ -311,8 +332,22 @@ class ChooseComponent extends React.Component {
         })
         var obj = null
         switch (el) {
-            case 'button':
+            case 'Button':
                 obj = <Button handlePropsChange={this.props.handlePropsChange}
+                                id={this.state.chosenInput.length}
+                                getStage={this.props.getStage}
+                                handleCode={this.props.handleCode}
+                                />
+                break;
+            case 'Ultrasonic':
+                obj = <Ultrasonic handlePropsChange={this.props.handlePropsChange}
+                                id={this.state.chosenInput.length}
+                                getStage={this.props.getStage}
+                                handleCode={this.props.handleCode}
+                                />
+                break;
+            case 'Potentiometer':
+                obj = <Potentiometer handlePropsChange={this.props.handlePropsChange}
                                 id={this.state.chosenInput.length}
                                 getStage={this.props.getStage}
                                 handleCode={this.props.handleCode}

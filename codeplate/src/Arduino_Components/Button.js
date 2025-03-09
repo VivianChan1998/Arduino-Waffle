@@ -43,34 +43,31 @@ class Button extends Component {
     getName = () => { return "Button" }
 
     updateAnswer = (answer, option) => {
-        console.log(answer)
-        console.log(this.props.id)
         this.setState({mode: answer})
         this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
-        console.log("here")
-        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), this.getSetup(), this.getLoopStart(), this.getLoopLogic(), this.getHelperFunction())
+        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(answer), this.getSetup(), this.getLoopStart(answer), this.getLoopLogic(answer), this.getHelperFunction())
     }
 
-    getGlobalVar = () => {
+    getGlobalVar = (mode) => {
         var ret = [this.state.code.strInitVariable("const int", this.state._pin, '2'), this.state.code.strInitVariable("int", this.state._val, '0')]
-        if (this.state.mode === "press")
+        if (mode === "press")
             ret.push(this.state.code.strInitVariable("int", this.state._prev, '0'))
-        console.log(ret)
         return ret
     }
     getSetup = () => {
         return [this.state.code.strPinMode(this.state._pin, 'o')]
     }
-    getLoopStart = () => {
+    getLoopStart = (mode) => {
         var ret = []
-        if (this.state.mode == "press")
+        if (mode == "press")
             ret.push(this.state.code.strAssignVariable(this.state._prev, this.state._val))
         ret.push(this.state.code.strAssignVariable(this.state._val, 'digitalRead(' + this.state._pin + ')'))
         return ret
     } //TODO
-    getLoopLogic = () => {
+    getLoopLogic = (mode) => {
         var ret = []
-        switch (this.state.mode){
+        console.log(mode)
+        switch (mode){
             case "press":
                 ret.push(this.state._prev + " == 0 &&" + this.state._val + " == 1")
             case "held":
