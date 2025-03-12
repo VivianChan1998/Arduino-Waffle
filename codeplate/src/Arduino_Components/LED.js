@@ -88,6 +88,10 @@ class LED extends Component {
         }
     }
 
+    getAnalogOutputFunction = (stateNum, param, paramMax, reverse = false) => {
+
+    }
+
     /* TODO
 
     getLoopLogicAnalog(stateNum, param, paramMax, reverse = false) {
@@ -138,6 +142,8 @@ class LED extends Component {
     }
 
     render() {
+        console.log(`LED${this.props.id}`)
+        console.log(this.props.isAnalog)
         if (this.props.getStage() == STAGE.INIT_QUESTION) {
             return (
                 <div>

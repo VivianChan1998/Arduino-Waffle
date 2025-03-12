@@ -41,11 +41,14 @@ class Potentiometer extends Component {
 
 
     updateInit = (answer, hasFollowup, followUp) => {
+        if(answer==="analog"){
+            console.log("analog input")
+            this.props.setAnalog(this.props.id)
+        }
         this.setState({mode: answer})
         if (hasFollowup) {
             this.setState({initQuestion: followUp})
         }
-        console.log(hasFollowup)
         this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
         this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), [], this.getLoopStart(), this.getLoopLogic(answer), [])
     }

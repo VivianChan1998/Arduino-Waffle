@@ -36,7 +36,7 @@ class Button extends Component {
             _pin: "button" + props.id + "_pin",
             _val: "button" + props.id + "_val",
             _prev: "button" + props.id + "_prev",
-            code: new Code(),
+            code: new Code()
         }
     }
 

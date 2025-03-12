@@ -9,7 +9,6 @@ class Question extends React.Component {
         }
     }
     render() {
-        console.log(this.props.answerType)
         return (
             <div id="question-wrapper">
                 <p>{this.props.questionText}</p>
@@ -49,6 +48,7 @@ class Question extends React.Component {
                     this.props.answerType === AnswerType.TEXT ?
                         <input type="text" onChange={e => this.props.handleAnswer(e.target.value)} /> : ""
                 }
+                <br/>
             </div>
         );
     };

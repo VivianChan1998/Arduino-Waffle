@@ -23,8 +23,10 @@ export default class Main extends React.Component {
             outputProps: [],
             ioPairingId: 0,
             ioPairs: [],
+            outputIsPaired: [],
             codeInput: [],
-            codeOutput: []
+            codeOutput: [],
+            isAnalogInput: []
         }
     }
     handleChoseInputComponent = (component, cname) => {
@@ -34,24 +36,33 @@ export default class Main extends React.Component {
         code_arr.push({}) 
         var io_arr = this.state.ioPairs
         io_arr.push([])
+        var isAnalog = this.state.isAnalogInput
+        isAnalog.push(0)
+        var isPaired = this.state.outputIsPaired
+        isPaired.push(0)
+        var id = this.state.chosenInputComponents.length
+
         this.setState  ({
             chosenInputComponents: this.state.chosenInputComponents.concat([component]), 
-            chosenInputComponentsNames: this.state.chosenInputComponentsNames.concat([cname]),
+            chosenInputComponentsNames: this.state.chosenInputComponentsNames.concat([`${cname}${id}`]),
             inputProps: arr,
             cadeInput: code_arr,
-            ioPairs: io_arr
+            ioPairs: io_arr,
+            isAnalogInput: isAnalog,
+            outputIsPaired: isPaired
         }) 
     }
-    handleChoseOutputComponent = (component, cname) => {
+    handleChoseOutputComponent = (component, cname, id) => {
         var arr = this.state.outputProps
         arr.push(new Array())
         var code_arr = this.state.codeOutput
-        code_arr.push({}) 
+        code_arr.push({})
+        console.log(cname)
         this.setState  ({
             chosenOutputComponents: this.state.chosenOutputComponents.concat([component]),
-            chosenOutputComponentsNames: this.state.chosenOutputComponentsNames.concat([cname]),
+            chosenOutputComponentsNames: this.state.chosenOutputComponentsNames.concat([`${cname}${id}`]),
             outputProps: arr,
-            codeOutput: code_arr
+            codeOutput: code_arr,
         }) 
     }
     handlePropsChange = (p, id, io) => {
@@ -74,16 +85,17 @@ export default class Main extends React.Component {
     getStage = () => {
         return this.state.stage
     }
-    handleCode = (io, id, global, setup, loopstart, looplogic, helper) => {
+    handleCode = (io, id, global, setup, loopstart, looplogic, helper=[], analogInputParam="", analogOutputFunction=[]) => {
         if (io === "INPUT") {
-            console.log(looplogic)
             var code_temp = this.state.codeInput
             code_temp[id] = {
                 codeGlobal: global,
                 codeSetup: setup,
                 codeLoopStart: loopstart,
                 codeLoop: looplogic,
-                codeHelperFunction: helper
+                codeHelperFunction: helper,
+                analogInput: analogInputParam,
+                analogOutput: analogOutputFunction
             }
             this.setState({codeInput: code_temp})
         }
@@ -94,12 +106,43 @@ export default class Main extends React.Component {
                 codeSetup: setup,
                 codeLoopStart: loopstart,
                 codeLoop: looplogic,
-                codeHelperFunction: helper
+                codeHelperFunction: helper,
+                analogInput: analogInputParam,
+                analogOutput: analogOutputFunction
             }
             this.setState({codeOutput: code_temp})
         }
-
-        
+    }
+    setAnalog = (id) => {
+        var isAnalog = this.state.isAnalogInput
+        isAnalog[id] = 1
+        this.setState({isAnalogInput: isAnalog})
+    }
+    setComponentsAnalog = () => {
+        console.log("set analog output")
+        var output = this.state.chosenOutputComponents
+        console.log(this.state.ioPairs.length)
+        for(var pair_id=0; pair_id < this.state.ioPairs.length; pair_id++) {
+            console.log("pair_id")
+            console.log(pair_id)
+            if(this.state.isAnalogInput[pair_id]) {
+                console.log("iopairs")
+                console.log(this.state.ioPairs[pair_id])
+                for(var i=0; i<this.state.ioPairs[pair_id].length; i++) {
+                    console.log(i)
+                    var o = this.state.ioPairs[pair_id][i]
+                    output[o] = React.cloneElement(output[o], {
+                        isAnalog: true
+                    });
+                    console.log(output[o])
+                }
+            }
+        }
+            
+        console.log(output)
+        this.setState({
+            chosenOutputComponents: output
+        })
     }
     render() {
         if (this.state.stage === STAGE.CHOOSE_COMPONENT) {
@@ -113,6 +156,7 @@ export default class Main extends React.Component {
                                     handlePropsChange={this.handlePropsChange}
                                     getStage={this.getStage}
                                     handleCode={this.handleCode}
+                                    setAnalog={this.setAnalog}
                                     />
                     <button className='next-step-button' onClick = {() => this.setState({stage: STAGE.INIT_QUESTION})}> next </button>
                 </div>
@@ -137,34 +181,47 @@ export default class Main extends React.Component {
                 <div className="main-wrapper">
                     <h2>Pairing inputs and outputs</h2>
                     <div>
-                        <h3>For the {this.state.chosenInputComponentsNames[this.state.ioPairingId]} {[this.state.ioPairingId]} component:</h3>
+                        <h3>For the {this.state.chosenInputComponentsNames[this.state.ioPairingId]} component:</h3>
                         {
                             this.state.chosenInputComponents[this.state.ioPairingId]
                         }
                         
                         <h3>Which output component would you like to pair it with?</h3>
                         {
-                            this.state.ioPairs[this.state.ioPairingId].map((el,index) => <p>{this.state.chosenOutputComponentsNames[el]}{index}</p>)
+                            this.state.ioPairs[this.state.ioPairingId].map((el,index) => <p>{this.state.chosenOutputComponentsNames[el]}</p>)
                         }
                         <br/>
                         {
-                            this.state.chosenOutputComponents.map((el, index) => {
+                            this.state.chosenOutputComponents.map((component, index) => {
+                                if(this.state.outputIsPaired[index]) {
+                                    return ""
+                                }
                                 return <button key={index} onClick={() => {
                                     var temp = this.state.ioPairs
                                     temp[this.state.ioPairingId] = temp[this.state.ioPairingId].concat([index])
+                                    var isPaired = this.state.outputIsPaired
+                                    isPaired[index] = 1
                                     this.setState({
-                                        ioPairs: temp
+                                        ioPairs: temp,
+                                        outputIsPaired: isPaired
                                     })
-                                }}> {this.state.chosenOutputComponentsNames[this.state.ioPairingId] + ' ' + index} </button>
+                                }}> {this.state.chosenOutputComponentsNames[index]} </button>
                             }) /* TODO potential bug here?? */
                         }
                     </div>
                     {
                         this.state.ioPairingId < this.state.chosenInputComponents.length - 1 ?
-                        <button onClick = {() => this.setState({ioPairingId: this.state.ioPairingId + 1})}> next </button> :
+                        <button onClick = {() => {
+                            this.setState({
+                                ioPairingId: this.state.ioPairingId + 1,
+                                //outputIsPaired: this.state.outputIsPaired.fill(0)
+                            })
+                        }
+                        }> next </button> :
                         <button onClick = {() => {
                             this.setState({stage: STAGE.DEFINE_BEHAVIOR})
                             this.setState({ioPairingId: 0})
+                            this.setComponentsAnalog()
                         }} className='next-step-button'> next </button>
                     }
                 </div>
@@ -178,11 +235,15 @@ export default class Main extends React.Component {
                     <h3>For the {this.state.chosenInputComponentsNames[this.state.ioPairingId] + ' ' + this.state.ioPairingId} component: </h3> {/*TODO write the sentence in a better way*/}
                     {
                         
-                        this.state.ioPairs[this.state.ioPairingId].map((idx, index) => 
-                            <>
-                                <h4> Output {this.state.chosenOutputComponentsNames[idx] + index}: </h4>
-                                {this.state.chosenOutputComponents[idx]}
-                            </>
+                        this.state.ioPairs[this.state.ioPairingId].map((idx, index) => {
+                            return (
+                                <>
+                                    <h4> Output {this.state.chosenOutputComponentsNames[idx] + index}: </h4>
+                                    {this.state.chosenOutputComponents[idx]}
+                                </>
+                            )
+                        }
+                            
                         
                         )
                     }
@@ -300,7 +361,7 @@ class ChooseComponent extends React.Component {
             chosenInput: []
         }
     }
-    handleChoseOutput = (el) => {
+    handleChoseOutput = (el, id) => {
         this.setState({
             chosenOutput: this.state.chosenOutput.concat([el])
         })
@@ -323,7 +384,7 @@ class ChooseComponent extends React.Component {
             default:
                 console.log("error")
         }
-        this.props.handleChoseOutputComponent(obj, el)
+        this.props.handleChoseOutputComponent(obj, el, this.state.chosenOutput.length)
     }
 
     handleChoseInput = (el) => {
@@ -344,6 +405,7 @@ class ChooseComponent extends React.Component {
                                 id={this.state.chosenInput.length}
                                 getStage={this.props.getStage}
                                 handleCode={this.props.handleCode}
+                                setAnalog={this.props.setAnalog}
                                 />
                 break;
             case 'Potentiometer':
@@ -351,13 +413,14 @@ class ChooseComponent extends React.Component {
                                 id={this.state.chosenInput.length}
                                 getStage={this.props.getStage}
                                 handleCode={this.props.handleCode}
+                                setAnalog={this.props.setAnalog}
                                 />
                 break;
                 /*TODO : add more objects */
             default:
                 console.log("error")
         }
-        this.props.handleChoseInputComponent(obj, el)
+        this.props.handleChoseInputComponent(obj, el, this.state.chosenInput.length)
     }
     render() {
         return (
