@@ -57,7 +57,6 @@ export default class Main extends React.Component {
         arr.push(new Array())
         var code_arr = this.state.codeOutput
         code_arr.push({})
-        console.log(cname)
         this.setState  ({
             chosenOutputComponents: this.state.chosenOutputComponents.concat([component]),
             chosenOutputComponentsNames: this.state.chosenOutputComponentsNames.concat([`${cname}${id}`]),
@@ -121,20 +120,13 @@ export default class Main extends React.Component {
     setComponentsAnalog = () => {
         console.log("set analog output")
         var output = this.state.chosenOutputComponents
-        console.log(this.state.ioPairs.length)
         for(var pair_id=0; pair_id < this.state.ioPairs.length; pair_id++) {
-            console.log("pair_id")
-            console.log(pair_id)
             if(this.state.isAnalogInput[pair_id]) {
-                console.log("iopairs")
-                console.log(this.state.ioPairs[pair_id])
                 for(var i=0; i<this.state.ioPairs[pair_id].length; i++) {
-                    console.log(i)
                     var o = this.state.ioPairs[pair_id][i]
                     output[o] = React.cloneElement(output[o], {
                         isAnalog: true
                     });
-                    console.log(output[o])
                 }
             }
         }
