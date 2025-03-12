@@ -283,6 +283,7 @@ export default class Main extends React.Component {
 
                     <div 
                         ref={this.textContainerRef}
+                        className='code'
                     >
                         {/* GLOBAL */}
                         {
