@@ -11,19 +11,19 @@ class Potentiometer extends Component {
             deviceType: ComponentType.INPUT_DEVICE,
             init: 0,
             initQuestion: <Question handleAnswer={this.updateInit}
-                                    questionText="What do you what to use this potentiometer for?"
+                                    questionText= {`What do you what to use Potentiometer ${props.id} for?`}
                                     answerType = {AnswerType.MULTI_OPTION} 
                                     answerOption = {
                                         [   
                                             {
-                                                text: "Binary threshold with respect to an output device, one output state under threshold, one output state over threshold.", 
+                                                text: "Binary threshold with respect to an output component, one output state under threshold, one output state over threshold.", 
                                                 value: "binary",
                                                 followup: <Question handleAnswer = {this.updateThreshold}
                                                                     questionText = "What should the binary threshold be? The max value a potentiometer can read is 1023."
                                                                     answerType = {AnswerType.NUMERICAL} />
                                             },
                                             {
-                                                text: "Use analog input for determining the output behavior, each different analog value will directly impact state through conversion of the input values.", 
+                                                text: "Use analog input for determining the output component behavior, each different analog value will directly impact state through conversion of the input values.", 
                                                 value: "analog",
                                                 followup: "",
                                                 analog: <Question handleAnswer = {this.updateAnalog} />
@@ -55,7 +55,7 @@ class Potentiometer extends Component {
     updateThreshold = (answer) => {
         this.setState({threshold: answer})
         this.props.handlePropsChange({threshold: answer}, this.props.id, "INPUT")
-        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(), [], this.getLoopStart(), this.getLoopLogic(), [])
+        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(answer), [], this.getLoopStart(), this.getLoopLogic(), [])
     }
 
     updateAnalog = (answer) => {
@@ -70,12 +70,13 @@ class Potentiometer extends Component {
 
     getName = () => { return "Potentiometer" }
 
-    getGlobalVar = (a) => {
+    getGlobalVar = (threshold) => {
         let codeBlock = [
+            `// Defines global variables for Potentiometer ${props.id}`, 
             this.state.code.strDefine(this.state._pin, 7),
             this.state.code.strInitVariable("int", this.state._val, 6),
         ];
-        if (this.state._threshold) {
+        if (threshold) {
             codeBlock.push(this.state.code.strInitVariable("int", this.state._boundary, a));
         } 
         return codeBlock;
@@ -84,13 +85,17 @@ class Potentiometer extends Component {
     // no setup 
 
     getLoopStart = () => {
-        return [`${this.state._val} = analogRead(${this.state._pin});`, `Serial.println(${this.state._val});`]; 
+        return [
+            `// Reading and printing read values from Potentiometer ${props.id}`,
+            `${this.state._val} = analogRead(${this.state._pin});`, 
+            `Serial.println(${this.state._val});`]; 
     }
 
     getLoopLogic = (mode) => {
         let code = []
         if (mode == "binary") {
-            code = [`${this.state._val} > ${this.state._boundary}`]; 
+            code = [`// Threshold set for Potentiometer ${props.id}`, 
+            `${this.state._val} > ${this.state._boundary}`]; 
         }
         return code;
     }

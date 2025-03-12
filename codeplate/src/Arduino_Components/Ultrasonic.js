@@ -11,19 +11,19 @@ class Ultrasonic extends Component {
             deviceType: ComponentType.INPUT_DEVICE,
             init: 0,
             initQuestion: <Question handleAnswer={this.updateInit}
-                                    questionText="What do you want to use this ultrasonic sensor for?"
+                                    questionText= {`What do you want to use Ultrasonic Sensor ${props.id} for?`}
                                     answerType = {AnswerType.MULTI_OPTION} 
                                     answerOption = {
                                         [
                                             {
-                                                text: "Binary threshold with respect to an output device, one output state under threshold, one output state over threshold.", 
+                                                text: "Binary threshold with respect to an output component, one output state under threshold, one output state over threshold.", 
                                                 value: "binary threshold",
                                                 followup: <Question handleAnswer = {this.updateThreshold}
                                                                     questionText="What threshold value do you want in centimeters?"
                                                                     answerType={AnswerType.NUMERICAL} />
                                             },
                                             {
-                                                text: "Use analog input for determining for the output, each different analog value will differently impact state.",
+                                                text: "Use analog input for determining for the output component behavior, each different analog value will differently impact state.",
                                                 value: "analog direct",
                                                 followup: "",
                                                 analog: <Question handleAnswer = {this.updateAnalog} />
@@ -37,7 +37,10 @@ class Ultrasonic extends Component {
             _distance:`ultrasonicDistance_${props.id}`,
             analog_max: 1023,
             analog_param_name: this.state._distance, // is analog max the same for distance? need to check on the same                 
-            code: new Code()                 
+            code: new Code(),
+            mode: '',
+            threshold: '',
+            analog: null,
         }
     }
 
@@ -47,19 +50,19 @@ class Ultrasonic extends Component {
             this.setState({initQuestion: followUp})
         }
         this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
-        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(0), this.getSetup(), this.getLoopStart(), this.getLoopLogic(), [])
+        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(''), this.getSetup(), this.getLoopStart(), this.getLoopLogic(mode), [])
     }
 
     updateThreshold = (answer) => {
         this.setState({threshold: answer})
         this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
-        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(answer), this.getSetup(), this.getLoopStart(), this.getLoopLogic(), [])
+        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(answer), this.getSetup(), this.getLoopStart(), this.getLoopLogic(this.state.mode), [])
     }
 
     updateAnalog = (answer) => {
         this.setState({analog: Boolean(true)})
         this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
-        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(this.state.threshold), this.getSetup(), this.getLoopStart(), this.getLoopLogic(), [])
+        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(''), this.getSetup(), this.getLoopStart(), this.getLoopLogic(this.state.mode), [])
     }
 
     getName = () => { return "Ultrasonic" }
@@ -70,33 +73,40 @@ class Ultrasonic extends Component {
 
     getGlobalVar = (threshold) => {
         let codeBlock = [
+            `// Defines global variables for Ultrasonic Sensor ${props.id}`, 
             this.state.code.strDefine(this.state._trig, 7), // temp
             this.state.code.strDefine(this.state._echo, 6) // temp
         ];
-        if (this.state._threshold) {
+        if (threshold) {
             codeBlock.push(this.state.code.strInitVariable("int", this.state._boundary, threshold));
         } 
         return codeBlock;
     }
 
     getSetup = () => {
-        return [`pinMode(${this.state._trig}, OUTPUT);`, `pinMode(${this.state._echo}, INPUT);`];
+        return [
+            `// Setup code for component: Ultrasonic Sensor ${props.id}`,
+            `pinMode(${this.state._trig}, OUTPUT);`, 
+            `pinMode(${this.state._echo}, INPUT);`];
     }
 
     getLoopStart = () => {
-        return [`digitalWrite(${this.state._trig}, LOW);`, `delayMicroseconds(2);`, 
+        return [
+            `// Read in distance values for Ultrasonic Sensor ${props.id}. Distance has been converted to cm.`,
+            `digitalWrite(${this.state._trig}, LOW);`, `delayMicroseconds(2);`, 
             `digitalWrite(${this.state._trig}, HIGH);`, `delayMicroseconds(10);`, 
             `digitalWrite(${this.state._trig}, LOW);`, 
             `${this.state._duration} = pulseIn(${this.state._echo}, HIGH);`, 
             `${this.state._distance} = ${this.state._duration} * 0.034 / 2;`, 
-            `Serial.print(\"Distance: \");`, `Serial.println(${this.state._distance});`];
+            `Serial.print(\"Distance: \");`, 
+            `Serial.println(${this.state._distance});`];
     }
 
-    getLoopLogic = () => {
+    getLoopLogic = (mode) => {
         let code;
-        if (this.state.mode == "binary threshold") {
+        if (mode == "binary threshold") {
             code = `${this.state._distance} > ${this.state._boundary}`; 
-        } else if (this.state.mode == "analog direct") {
+        } else if (mode == "analog direct") { // TODO
             code = ``;
         } 
         return code;
