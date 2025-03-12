@@ -28,6 +28,7 @@ export default class Main extends React.Component {
             codeOutput: [],
             isAnalogInput: []
         }
+        this.textContainerRef = React.createRef();
     }
     handleChoseInputComponent = (component, cname) => {
         var arr = this.state.inputProps
@@ -140,6 +141,25 @@ export default class Main extends React.Component {
             chosenOutputComponents: output
         })
     }
+
+    handleCopy = () => {
+        var textContainer = this.textContainerRef;
+        console.log(textContainer)
+        if (textContainer) {
+            var textToCopy = textContainer.current.innerText;
+            console.log(textToCopy)
+
+            navigator.clipboard.writeText(textToCopy).then(function () {
+                this.setState({ copied: true });
+                setTimeout(function () {
+                    this.setState({ copied: false });
+                }.bind(this), 2000);
+            }.bind(this)).catch(function (err) {
+                console.error("Copy failed:", err);
+            });
+        }
+    };
+
     render() {
         if (this.state.stage === STAGE.CHOOSE_COMPONENT) {
             return (
@@ -257,7 +277,13 @@ export default class Main extends React.Component {
                     <h2>Render code</h2>
                     <br/>
 
-                    <code>
+                    <button onClick={() => this.handleCopy()} className="next-step-button">
+                        {this.state.copied ? "Copied!" : "Copy"}
+                    </button>
+
+                    <div 
+                        ref={this.textContainerRef}
+                    >
                         {/* GLOBAL */}
                         {
                             this.state.codeInput.map(el =>{
@@ -347,7 +373,7 @@ export default class Main extends React.Component {
                             })
                         }
 
-                    </code>
+                    </div>
 
                     
                 </div>

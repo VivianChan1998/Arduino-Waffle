@@ -93,12 +93,6 @@ class Button extends Component {
     }
 
     render() {
-        if (this.props.getStage() === STAGE.RENDER_CODE) {
-            return (
-                <>
-                </>
-            )
-        }
         if (this.props.getStage() === STAGE.INIT_QUESTION) {
             return (
                 <div>
