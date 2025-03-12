@@ -78,10 +78,13 @@ class Button extends Component {
         switch (mode){
             case "press":
                 ret.push(this.state._prev + " == 0 &&" + this.state._val + " == 1")
+                break
             case "held":
                 ret.push(this.state._val + " == 1")
+                break
             case "not":
                 ret.push(this.state._val + " == 0")
+                break
         }
         return ret
     }
