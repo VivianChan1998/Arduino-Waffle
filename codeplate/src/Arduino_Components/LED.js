@@ -1,5 +1,5 @@
 import React from "react";
-import Component from "./Components.js";
+import Component from "./Tools/Components.js";
 import { ComponentType, AnswerType, STAGE } from "./Tools/Enums.js";
 import { Question, Answer } from "./Tools/QA.js";
 import Code from "./Tools/Code.js";
@@ -32,11 +32,15 @@ class LED extends Component {
                                         value: "rainbow",
                                         followup: ""
                                     }
-                                ]} />, 
+                                ]} />,
+            questionAnalog: <Question handleAnswer = {this.updateColor}
+                                questionText="What color do you want? (HEX code, ex:ffff03)" //TODO: example in input box
+                                answerType={AnswerType.TEXT} />,
             code: new Code(),
             init: 0,
             mode: '',
-            color: ''
+            color: '',
+            isAnalog: 0
 
         }
     }
@@ -51,12 +55,30 @@ class LED extends Component {
             this.setState({question: followUp})
         }
         this.props.handlePropsChange({mode: answer}, this.props.id, "OUTPUT")
-        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(answer, ''), this.getHelperFunction(answer))
+        this.props.handleCode({
+            io: "OUTPUT",
+            id: this.props.id,
+            global: this.getGlobalVar(),
+            setup: this.getSetup(),
+            loopstart: [], // Assuming loopstart is an empty array as in your original call
+            looplogic: this.getLoopLogic(answer, ''),
+            helper: this.getHelperFunction(answer),
+            analogOutputFunction: this.getAnalogOutputFunction(), // Fixing incorrect assignment syntax
+        });
     }
     updateColor = (answer) => {
         this.setState({color: answer})
         this.props.handlePropsChange({color: answer}, this.props.id, "OUTPUT")
-        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(this.state.mode, answer), this.getHelperFunction(this.state.mode))
+        this.props.handleCode({
+            io: "OUTPUT",
+            id: this.props.id,
+            global: this.getGlobalVar(),
+            setup: this.getSetup(),
+            loopstart: [], // Assuming loopstart is an empty array
+            looplogic: this.getLoopLogic(this.state.mode, answer),
+            helper: this.getHelperFunction(this.state.mode),
+            analogOutputFunction: this.getAnalogOutputFunction()
+        });
     }
 
     getName = () => { return "LED" }
@@ -88,25 +110,19 @@ class LED extends Component {
         }
     }
 
-    getAnalogOutputFunction = (stateNum, param, paramMax, reverse = false) => {
-
-    }
-
-    /* TODO
-
-    getLoopLogicAnalog(stateNum, param, paramMax, reverse = false) {
-        let brightness = `int(${this.analogMax} / ${paramMax} * ${param})`;
+    getAnalogOutputFunction = (reverse = false) => {
+        var brightness = `float( 1023 / ${this.props.paramMax} * ${this.props.paramName})`;
         if (reverse) {
-            brightness = `${this.analogMax} - ${brightness}`;
+            brightness = "1023 - " + brightness;
         }
-        const color = this.states[stateNum]["color"];
+        const color = this.state.color;
         return [
-            `${this._objName}.setBrightness(${brightness});`,
-            `colorWipe(${this._objName}.Color(${color[0]}${color[1]}, ${color[2]}${color[3]}, ${color[4]}${color[5]}), 50);`
+            `float brightness = ${brightness};`,
+            `${this.state._objName}.setBrightness(brightness);`,
+            `colorWipe(${this.state._objName}.Color(${color[0]}${color[1]}, ${color[2]}${color[3]}, ${color[4]}${color[5]}), 50);`
         ];
-    }
 
-    */
+    }
 
     getHelperFunction(mode) {
         if (mode === "rainbow") {
@@ -142,14 +158,19 @@ class LED extends Component {
     }
 
     render() {
-        console.log(`LED${this.props.id}`)
-        console.log(this.props.isAnalog)
         if (this.props.getStage() == STAGE.INIT_QUESTION) {
             return (
                 <div>
                     {this.state.initQuestion}
                 </div>
             );
+        }
+        if (this.props.isAnalog) {
+            return (
+                <div>
+                    {this.state.questionAnalog}
+                </div>
+            )
         }
         return (
             <div>

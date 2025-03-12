@@ -1,5 +1,5 @@
 import React from "react";
-import Component from "./Components.js";
+import Component from "./Tools/Components.js";
 import { ComponentType, AnswerType, STAGE } from "./Tools/Enums.js";
 import { Question, Answer } from "./Tools/QA.js";
 import Code from "./Tools/Code.js";
@@ -45,7 +45,15 @@ class Button extends Component {
     updateAnswer = (answer, option) => {
         this.setState({mode: answer})
         this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
-        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(answer), this.getSetup(), this.getLoopStart(answer), this.getLoopLogic(answer), this.getHelperFunction())
+        this.props.handleCode({
+            io: "INPUT",
+            id: this.props.id,
+            global: this.getGlobalVar(answer),
+            setup: this.getSetup(),
+            loopstart: this.getLoopStart(answer),
+            looplogic: this.getLoopLogic(answer),
+            helper: this.getHelperFunction()
+        });
     }
 
     getGlobalVar = (mode) => {
@@ -88,11 +96,13 @@ class Button extends Component {
                 </>
             )
         }
-        return (
-            <div>
-                {this.state.question}
-            </div>
-        );
+        if (this.props.getStage() === STAGE.INIT_QUESTION) {
+            return (
+                <div>
+                    {this.state.question}
+                </div>
+            );
+        }
     }
 }
 

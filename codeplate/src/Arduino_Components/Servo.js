@@ -1,5 +1,5 @@
 import React from "react";
-import Component from "./Components.js";
+import Component from "./Tools/Components.js";
 import { ComponentType, AnswerType, STAGE } from "./Tools/Enums.js";
 import { Question, Answer } from "./Tools/QA.js";
 import Code from "./Tools/Code.js";
@@ -60,19 +60,45 @@ class Servo extends Component {
             this.setState({initQuestion: followUp})
         }
         this.props.handlePropsChange({mode: answer}, this.props.id, "OUTPUT")
-        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(answer, ''), this.getHelperFunction(answer))
+        this.props.handleCode({
+            io: "OUTPUT",
+            id: this.props.id,
+            global: this.getGlobalVar(),
+            setup: this.getSetup(),
+            loopstart: [], // Assuming loopstart is an empty array
+            looplogic: this.getLoopLogic(answer, ''),
+            helper: this.getHelperFunction(answer)
+        });        
     }
 
     updatePosition = (answer) => {
         this.setState({position: answer})
         this.props.handlePropsChange({position: answer}, this.props.id, "OUTPUT")
-        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(answer, ''), this.getHelperFunction(answer))
+        this.props.handleCode({
+            io: "OUTPUT",
+            id: this.props.id,
+            global: this.getGlobalVar(),
+            setup: this.getSetup(),
+            loopstart: [], // Assuming loopstart is an empty array
+            looplogic: this.getLoopLogic(answer, ''),
+            helper: this.getHelperFunction(answer)
+        });
+        
     }
 
     updatePWM = (answer) => {
         this.setState({pwm: answer})
         this.props.handlePropsChange({pwm: answer}, this.props.id, "OUTPUT")
-        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(answer, ''), this.getHelperFunction(answer))
+        this.props.handleCode({
+            io: "OUTPUT",
+            id: this.props.id,
+            global: this.getGlobalVar(),
+            setup: this.getSetup(),
+            loopstart: [], // Assuming loopstart is an empty array
+            looplogic: this.getLoopLogic(answer, ''),
+            helper: this.getHelperFunction(answer)
+        });
+        
     }
 
     getName = () => { return "Servo" }

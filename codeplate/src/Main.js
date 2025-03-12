@@ -84,7 +84,7 @@ export default class Main extends React.Component {
     getStage = () => {
         return this.state.stage
     }
-    handleCode = (io, id, global, setup, loopstart, looplogic, helper=[], analogInputParam="", analogOutputFunction=[]) => {
+    handleCode = ({io, id, global, setup, loopstart, looplogic, helper=[], analogInputParam="", analogOutputFunction=[]}) => {
         if (io === "INPUT") {
             var code_temp = this.state.codeInput
             code_temp[id] = {
@@ -112,26 +112,30 @@ export default class Main extends React.Component {
             this.setState({codeOutput: code_temp})
         }
     }
-    setAnalog = (id) => {
+    setAnalog = (id, paramName, paramMax) => {
         var isAnalog = this.state.isAnalogInput
-        isAnalog[id] = 1
+        isAnalog[id] = {
+            paramName: paramName,
+            paramMax: paramMax
+        }
         this.setState({isAnalogInput: isAnalog})
     }
     setComponentsAnalog = () => {
         console.log("set analog output")
         var output = this.state.chosenOutputComponents
         for(var pair_id=0; pair_id < this.state.ioPairs.length; pair_id++) {
-            if(this.state.isAnalogInput[pair_id]) {
+            var a = this.state.isAnalogInput[pair_id]
+            if(a != 0) {
                 for(var i=0; i<this.state.ioPairs[pair_id].length; i++) {
                     var o = this.state.ioPairs[pair_id][i]
                     output[o] = React.cloneElement(output[o], {
-                        isAnalog: true
+                        isAnalog: true,
+                        paramName: a.paramName,
+                        paramMax: a.paramMax
                     });
                 }
             }
         }
-            
-        console.log(output)
         this.setState({
             chosenOutputComponents: output
         })
@@ -224,13 +228,13 @@ export default class Main extends React.Component {
                 <div className="main-wrapper">
                     <h2>Define behavior</h2>
                     <br/>
-                    <h3>For the {this.state.chosenInputComponentsNames[this.state.ioPairingId] + ' ' + this.state.ioPairingId} component: </h3> {/*TODO write the sentence in a better way*/}
+                    <h3>For the {this.state.chosenInputComponentsNames[this.state.ioPairingId]} component: </h3> {/*TODO write the sentence in a better way*/}
                     {
                         
                         this.state.ioPairs[this.state.ioPairingId].map((idx, index) => {
                             return (
                                 <>
-                                    <h4> Output {this.state.chosenOutputComponentsNames[idx] + index}: </h4>
+                                    <h4> Output {this.state.chosenOutputComponentsNames[idx]}: </h4>
                                     {this.state.chosenOutputComponents[idx]}
                                 </>
                             )
@@ -248,7 +252,6 @@ export default class Main extends React.Component {
             )
         }
         else if (this.state.stage === STAGE.RENDER_CODE) {
-            console.log(this.state.ioPairs)
             return (
                 <div className="main-wrapper">
                     <h2>Render code</h2>
@@ -304,16 +307,24 @@ export default class Main extends React.Component {
                         }
                         {
                             this.state.ioPairs.map((output_list, index) => {
-                                var ret = ["if (" + this.state.codeInput[index].codeLoop + ") {"]
-                                for(var i=0; i<output_list.length; i++) {
-                                    var output_idx = output_list[i]
-                                    console.log(output_idx)
-                                    console.log(this.state.codeOutput[output_idx])
-                                    ret.push(this.state.codeOutput[output_idx].codeLoop)
+                                if(this.state.isAnalogInput[index] === 0) {
+                                    var ret = ["if (" + this.state.codeInput[index].codeLoop + ") {"]
+                                    for(var i=0; i<output_list.length; i++) {
+                                        var output_idx = output_list[i]
+                                        ret.push(this.state.codeOutput[output_idx].codeLoop)
+                                    }
+                                    ret.push("}")
+                                    return <pre>{formProgram(ret, 1)}</pre>
                                 }
-                                ret.push("}")
-                                console.log(ret)
-                                return <pre>{formProgram(ret, 1)}</pre>
+                                else {
+                                    var ret = []
+                                    for(var i=0; i<output_list.length; i++) {
+                                        var output_idx = output_list[i]
+                                        ret.push(this.state.codeOutput[output_idx].analogOutput)
+                                    }
+                                    return <pre>{formProgram(ret, 1)}</pre> 
+                                }
+                                
                             })
                         }
 

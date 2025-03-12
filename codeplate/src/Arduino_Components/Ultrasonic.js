@@ -1,5 +1,5 @@
 import React from "react";
-import Component from "./Components.js";
+import Component from "./Tools/Components.js";
 import { ComponentType, AnswerType, STAGE } from "./Tools/Enums.js";
 import { Question, Answer } from "./Tools/QA.js";
 import Code from './Tools/Code.js'
@@ -47,19 +47,46 @@ class Ultrasonic extends Component {
             this.setState({initQuestion: followUp})
         }
         this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
-        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(0), this.getSetup(), this.getLoopStart(), this.getLoopLogic(), [])
+        this.props.handleCode({
+            io: "INPUT",
+            id: this.props.id,
+            global: this.getGlobalVar(0),
+            setup: this.getSetup(),
+            loopstart: this.getLoopStart(),
+            looplogic: this.getLoopLogic(),
+            analogInputParam: this.getAnalogInput() // Fixed incorrect assignment syntax
+        });
+        
     }
 
     updateThreshold = (answer) => {
         this.setState({threshold: answer})
         this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
-        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(answer), this.getSetup(), this.getLoopStart(), this.getLoopLogic(), [])
+        this.props.handleCode({
+            io: "INPUT",
+            id: this.props.id,
+            global: this.getGlobalVar(answer),
+            setup: this.getSetup(),
+            loopstart: this.getLoopStart(),
+            looplogic: this.getLoopLogic(),
+            analogInputParam: this.getAnalogInput() // Fixed incorrect assignment syntax
+        });
+        
     }
 
     updateAnalog = (answer) => {
         this.setState({analog: Boolean(true)})
         this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
-        this.props.handleCode("INPUT", this.props.id, this.getGlobalVar(this.state.threshold), this.getSetup(), this.getLoopStart(), this.getLoopLogic(), [])
+        this.props.handleCode({
+            io: "INPUT",
+            id: this.props.id,
+            global: this.getGlobalVar(this.state.threshold),
+            setup: this.getSetup(),
+            loopstart: this.getLoopStart(),
+            looplogic: this.getLoopLogic(),
+            analogInputParam: this.getAnalogInput() // Fixed incorrect assignment syntax
+        });
+        
     }
 
     getName = () => { return "Ultrasonic" }
@@ -100,6 +127,10 @@ class Ultrasonic extends Component {
             code = ``;
         } 
         return code;
+    }
+
+    getAnalogInput = () => {
+        return this.state._distance
     }
 
     render() {
