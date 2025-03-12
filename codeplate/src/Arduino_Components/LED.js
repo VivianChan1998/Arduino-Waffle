@@ -47,20 +47,23 @@ class LED extends Component {
 
     updateInit = (answer) => {
         this.setState({init: answer})
-        this.props.handlePropsChange({init: answer}, this.props.id, "OUTPUT")
+        //this.props.handlePropsChange({init: answer}, this.props.id, "OUTPUT")
+        this.props.handleCode({
+            io: "OUTPUT",
+            id: this.props.id,
+            global: this.getGlobalVar(answer),
+            setup: this.getSetup(),
+        });
     }
     updateAnswer = (answer, hasFollowup, followUp) => {
         this.setState({mode: answer})
         if (hasFollowup) {
             this.setState({question: followUp})
         }
-        this.props.handlePropsChange({mode: answer}, this.props.id, "OUTPUT")
+        //this.props.handlePropsChange({mode: answer}, this.props.id, "OUTPUT")
         this.props.handleCode({
             io: "OUTPUT",
             id: this.props.id,
-            global: this.getGlobalVar(),
-            setup: this.getSetup(),
-            loopstart: [], // Assuming loopstart is an empty array as in your original call
             looplogic: this.getLoopLogic(answer, ''),
             helper: this.getHelperFunction(answer),
             analogOutputFunction: this.getAnalogOutputFunction(), // Fixing incorrect assignment syntax
@@ -68,13 +71,10 @@ class LED extends Component {
     }
     updateColor = (answer) => {
         this.setState({color: answer})
-        this.props.handlePropsChange({color: answer}, this.props.id, "OUTPUT")
+        //this.props.handlePropsChange({color: answer}, this.props.id, "OUTPUT")
         this.props.handleCode({
             io: "OUTPUT",
             id: this.props.id,
-            global: this.getGlobalVar(),
-            setup: this.getSetup(),
-            loopstart: [], // Assuming loopstart is an empty array
             looplogic: this.getLoopLogic(this.state.mode, answer),
             helper: this.getHelperFunction(this.state.mode),
             analogOutputFunction: this.getAnalogOutputFunction()
@@ -87,10 +87,10 @@ class LED extends Component {
         this.props.handlePropsChange(p, this.props.id, "OUTPUT")
     }
 
-    getGlobalVar = () => {
+    getGlobalVar = (num) => {
         return [
             this.state.code.strDefine(this.state._pin, 9), //temp
-            this.state.code.strDefine(this.state._num, this.state.init),
+            this.state.code.strDefine(this.state._num, num),
             `Adafruit_NeoPixel ${this.state._objName} = Adafruit_NeoPixel(${this.state._num}, ${this.state._pin}, NEO_GRB + NEO_KHZ800);`
         ];
     }

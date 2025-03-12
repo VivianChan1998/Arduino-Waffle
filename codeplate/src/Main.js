@@ -89,26 +89,27 @@ export default class Main extends React.Component {
         if (io === "INPUT") {
             var code_temp = this.state.codeInput
             code_temp[id] = {
-                codeGlobal: global,
-                codeSetup: setup,
-                codeLoopStart: loopstart,
-                codeLoop: looplogic,
-                codeHelperFunction: helper,
-                analogInput: analogInputParam,
-                analogOutput: analogOutputFunction
+                codeGlobal: global!==undefined? global:code_temp[id].codeGlobal,
+                codeSetup: setup!==undefined? setup:code_temp[id].codeSetup,
+                codeLoopStart: loopstart!==undefined? loopstart:code_temp[id].codeLoopStart,
+                codeLoop: looplogic!==undefined? looplogic : code_temp[id].codeLoop,
+                codeHelperFunction: helper!==undefined? helper : code_temp[id].codeHelperFunction,
+                analogInput: analogInputParam!==undefined? analogInputParam : code_temp[id].analogInput,
+                analogOutput: analogOutputFunction!==undefined? analogOutputFunction : code_temp[id].analogOutput
+
             }
             this.setState({codeInput: code_temp})
         }
         else{
             var code_temp = this.state.codeOutput
             code_temp[id] = {
-                codeGlobal: global,
-                codeSetup: setup,
-                codeLoopStart: loopstart,
-                codeLoop: looplogic,
-                codeHelperFunction: helper,
-                analogInput: analogInputParam,
-                analogOutput: analogOutputFunction
+                codeGlobal: global!==undefined? global:code_temp[id].codeGlobal,
+                codeSetup: setup!==undefined? setup:code_temp[id].codeSetup,
+                codeLoopStart: loopstart!==undefined? loopstart:code_temp[id].codeLoopStart,
+                codeLoop: looplogic!==undefined? looplogic : code_temp[id].codeLoop,
+                codeHelperFunction: helper!==undefined? helper : code_temp[id].codeHelperFunction,
+                analogInput: analogInputParam!==undefined? analogInputParam : code_temp[id].analogInput,
+                analogOutput: analogOutputFunction!==undefined? analogOutputFunction : code_temp[id].analogOutput
             }
             this.setState({codeOutput: code_temp})
         }
@@ -259,8 +260,6 @@ export default class Main extends React.Component {
                                 </>
                             )
                         }
-                            
-                        
                         )
                     }
                     {

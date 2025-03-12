@@ -101,7 +101,7 @@ class Potentiometer extends Component {
             this.state.code.strDefine(this.state._pin, 7),
             this.state.code.strInitVariable("int", this.state._val, 0),
         ];
-        if (this.state._threshold) {
+        if (this.state.mode == "binary") {
             codeBlock.push(this.state.code.strInitVariable("int", this.state._boundary, a));
         } 
         return codeBlock;

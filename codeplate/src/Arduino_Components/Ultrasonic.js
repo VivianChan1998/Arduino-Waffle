@@ -100,7 +100,7 @@ class Ultrasonic extends Component {
             this.state.code.strDefine(this.state._trig, 7), // temp
             this.state.code.strDefine(this.state._echo, 6) // temp
         ];
-        if (this.state._threshold) {
+        if (this.state.mode == "binary threshold") {
             codeBlock.push(this.state.code.strInitVariable("int", this.state._boundary, threshold));
         } 
         return codeBlock;

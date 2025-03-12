@@ -1,4 +1,5 @@
 export function formProgram(program, indent) {
+    if(program === undefined) return ""
     let currentIndentCounter = indent;
     let formattedProgram = "";
 
