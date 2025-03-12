@@ -17,18 +17,18 @@ class LED extends Component {
                                     questionText={"How many LED units are there on the LED strip: " + `led${props.id}` + "?"}
                                     answerType = {AnswerType.NUMERICAL} />,
             question: <Question handleAnswer = {this.updateAnswer}
-                                questionText="What kind of pattern do you want it to show?"
+                                questionText="What kind of color pattern do you want it to show?"
                                 answerType={AnswerType.MULTI_OPTION}
                                 answerOption={[
                                     {
-                                        text: "Turn into one color",
+                                        text: "Turn into one color.",
                                         value: "color",
                                         followup: <Question handleAnswer = {this.updateColor}
-                                                            questionText="What color do you want?"
+                                                            questionText="What color do you want, in the form of a hexcode?"
                                                             answerType={AnswerType.TEXT} />
                                     },
                                     {
-                                        text: "Do a rainbow pattern circulation",
+                                        text: "Do a circulating rainbow pattern.",
                                         value: "rainbow",
                                         followup: ""
                                     }
@@ -67,6 +67,7 @@ class LED extends Component {
 
     getGlobalVar = () => {
         return [
+            `// Defines global variables for LED ${props.id}`,
             this.state.code.strDefine(this.state._pin, 9), //temp
             this.state.code.strDefine(this.state._num, this.state.init),
             `Adafruit_NeoPixel ${this.state._objName} = Adafruit_NeoPixel(${this.state._num}, ${this.state._pin}, NEO_GRB + NEO_KHZ800);`
@@ -74,15 +75,18 @@ class LED extends Component {
     }
 
     getSetup = () => {
-        return [`${this.state._objName}.begin();`];
+        return [
+            `// Begin for component: LED ${props.id}`,
+            `${this.state._objName}.begin();`
+        ];
     }
 
     getLoopLogic = (mode, color) => {
         switch (mode) {
             case "color":
-                return [`colorWipe(${this.state._objName}.Color(${color[0]}${color[1]}, ${color[2]}${color[3]}, ${color[4]}${color[5]}), 50);`];
+                return [`// Function call which sets LED ${this.props.id} to desired color`, `colorWipe(${this.state._objName}.Color(${color[0]}${color[1]}, ${color[2]}${color[3]}, ${color[4]}${color[5]}), 50);`];
             case "rainbow":
-                return [`theaterChaseRainbow(${this.state._objName}, 50);`];
+                return [`// Function call which sets LED ${this.props.id} to do a circulating rainbow pattern`, `theaterChaseRainbow(${this.state._objName}, 50);`];
             default:
                 return [];
         }
@@ -107,6 +111,7 @@ class LED extends Component {
     getHelperFunction(mode) {
         if (mode === "rainbow") {
             return [
+                `// Helper function for producing a rainbow pattern for LED components (Neopixel)`,
                 "void theaterChaseRainbow(int wait) {",
                 "  int firstPixelHue = 0;",
                 "  for(int a = 0; a < 30; a++) {",
@@ -126,6 +131,7 @@ class LED extends Component {
             ];
         } else {
             return [
+                `// Helper function for producing setting LED pixels to a specific color (Neopixel)`, 
                 "void colorWipe(uint32_t color, int wait) {",
                 "  for(int i = 0; i < pixels.numPixels(); i++) {",
                 "    pixels.setPixelColor(i, color);",

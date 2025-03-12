@@ -10,7 +10,7 @@ class Servo extends Component {
         this.state = {
             deviceType: ComponentType.OUTPUT_DEVICE,
             initQuestion: <Question handleAnswer = {this.updateInit}
-                                questionText="What do you want to use your Servo motor for?"
+                                questionText= {`What do you want to use Servo motor ${props.id} for?`}
                                 answerType={AnswerType.MULTI_OPTION}
                                 answerOption={[
                                     {
@@ -46,17 +46,12 @@ class Servo extends Component {
             _pos: `pos_${props.id}`,
             analogMax: 180,
             code: new Code(),
-            init: '',
+            mode: '',
             analog: '',
             position: '',
             pwm: '',
 
         }
-    }
-
-    updateAnalog = (answer) => { // fix 
-        this.setState({init: answer})
-        this.props.handlePropsChange({init: answer}, this.props.id, "OUTPUT")
     }
 
     updateInit = (answer, hasFollowup, followUp) => {
@@ -65,26 +60,25 @@ class Servo extends Component {
             this.setState({initQuestion: followUp})
         }
         this.props.handlePropsChange({mode: answer}, this.props.id, "OUTPUT")
-        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(answer, ''), this.getHelperFunction(answer))
+        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(answer), this.getSetup(), [], this.getLoopLogic(answer, '', ''), this.getHelperFunction())
     }
 
     updatePosition = (answer) => {
         this.setState({position: answer})
         this.props.handlePropsChange({position: answer}, this.props.id, "OUTPUT")
-        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(answer, ''), this.getHelperFunction(answer))
+        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(this.state.mode), this.getSetup(), [], this.getLoopLogic(this.state.mode, answer, ''), this.getHelperFunction())
     }
 
     updatePwm = (answer) => {
         this.setState({pwm: answer})
         this.props.handlePropsChange({pwm: answer}, this.props.id, "OUTPUT")
-        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(), this.getHelperFunction())
+        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(this.state.mode), this.getSetup(), [], this.getLoopLogic(this.state.mode, '', answer), this.getHelperFunction())
     }
 
-    updateAnalog = (answer) => {
+    updateAnalog = (answer) => { // todo, dep on implementation 
         this.setState({analog: answer})
         this.props.handlePropsChange({analog: answer}, this.props.id, "OUTPUT")
-        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(), this.getHelperFunction())
-        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(), this.getSetup(), [], this.getLoopLogic(answer, ''), this.getHelperFunction(answer))
+        this.props.handleCode("OUTPUT", this.props.id, this.getGlobalVar(this.state.mode), this.getSetup(), [], this.getLoopLogic(answer, '', ''), this.getHelperFunction())
     }
 
     getName = () => { return "Servo" }
@@ -93,16 +87,31 @@ class Servo extends Component {
         this.props.handlePropsChange(p, this.props.id, "OUTPUT")
     }
 
-    getGlobalVar = () => {
-        let code = [`Servo ${this.state._servo}`];
-        if (this.state.init == "sweep") {
+    getGlobalVar = (mode) => {
+        let code = [`// Defines global variables for Servo ${props.id}`, `Servo ${this.state._servo}`];
+        if (mode == "sweep") {
             code.push(`int ${this.state._pos} = 0`);
         }
         return code;
     }
 
     getSetup = () => {
-        return [`${this.state._servo}.attach(6);`];
+        return [`// Attach Servo ${props.id} to pin 6`, `${this.state._servo}.attach(6);`];
+    }
+
+    getLoopLogic = (mode, position, pwm) => {
+        switch (mode) {
+            case "position":
+                return [`// Code below sets Servo ${this.props.id} to desired position`, `${this.props._servo}.write(${position})`, "delay(15)"];
+            case "sweep":
+                return [`// Code below causes Servo ${this.props.id} to sweep in a specific pwm`, `for (${this.props._pos} = 0; ${this.props._pos} <= 180; ${this.props._pos} += 1) {`, `${this.props._pos}.write(${this.props._pos})`, "delay(15)", "}", `for (${this.props._pos} = 180; ${this.props._pos} >= 0; ${this.props._pos} -= 1) {`, `${this.props._servo}.write(${this.props._pos})`, "delay(15)", "}"];
+            default:
+                return [];
+        }
+    }
+
+    getHelperFunction = () => {
+        return [];
     }
 
     /* TODO
