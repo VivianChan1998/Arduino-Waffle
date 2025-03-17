@@ -5,9 +5,12 @@ import Main from './Main';
 function App() {
     return (
         <div className="App">
-            <header className="App-header">
-                <Main />
+            <header>
+                
             </header>
+            <div className="App-header">
+                <Main />
+            </div>
         </div>
     );
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import LED from './Arduino_Components/LED';
 import Button from './Arduino_Components/Button';
 import Ultrasonic from './Arduino_Components/Ultrasonic';
-import Servo from './Arduino_Components/Servo'
+import Stepper from './Arduino_Components/Stepper'
 import Potentiometer from './Arduino_Components/Potentiometer';
 import { STAGE } from './Arduino_Components/Tools/Enums';
 import './index.css'
@@ -14,7 +14,7 @@ export default class Main extends React.Component {
         this.state = {
             stage: STAGE.CHOOSE_COMPONENT,
             availableInputComponents: ["Button", "Ultrasonic", "Potentiometer"],
-            availableOutputComponents: ["LED", "Servo"],
+            availableOutputComponents: ["LED", "Stepper Motor"],
             chosenInputComponentsNames: [],
             chosenInputComponents: [],
             chosenOutputComponentsNames: [],
@@ -120,6 +120,7 @@ export default class Main extends React.Component {
             paramName: paramName,
             paramMax: paramMax
         }
+        console.log(isAnalog[id])
         this.setState({isAnalogInput: isAnalog})
     }
     setComponentsAnalog = () => {
@@ -128,6 +129,7 @@ export default class Main extends React.Component {
         for(var pair_id=0; pair_id < this.state.ioPairs.length; pair_id++) {
             var a = this.state.isAnalogInput[pair_id]
             if(a != 0) {
+                console.log(a)
                 for(var i=0; i<this.state.ioPairs[pair_id].length; i++) {
                     var o = this.state.ioPairs[pair_id][i]
                     output[o] = React.cloneElement(output[o], {
@@ -162,6 +164,9 @@ export default class Main extends React.Component {
     };
 
     render() {
+        console.log(this.state.codeInput)
+        console.log(this.state.codeOutput)
+        console.log(this.state.chosenOutputComponents)
         if (this.state.stage === STAGE.CHOOSE_COMPONENT) {
             return (
                 <div className="main-wrapper">
@@ -198,7 +203,7 @@ export default class Main extends React.Component {
                 <div className="main-wrapper">
                     <h2>Pairing inputs and outputs</h2>
                     <div>
-                        <h3>For the {this.state.chosenInputComponentsNames[this.state.ioPairingId]} component:</h3>
+                        <h3>For {this.state.chosenInputComponentsNames[this.state.ioPairingId]}:</h3>
                         {
                             this.state.chosenInputComponents[this.state.ioPairingId]
                         }
@@ -249,7 +254,7 @@ export default class Main extends React.Component {
                 <div className="main-wrapper">
                     <h2>Define behavior</h2>
                     <br/>
-                    <h3>For the {this.state.chosenInputComponentsNames[this.state.ioPairingId]} component: </h3> {/*TODO write the sentence in a better way*/}
+                    <h3>For {this.state.chosenInputComponentsNames[this.state.ioPairingId]}: </h3> {/*TODO write the sentence in a better way*/}
                     {
                         
                         this.state.ioPairs[this.state.ioPairingId].map((idx, index) => {
@@ -340,7 +345,11 @@ export default class Main extends React.Component {
                                         ret.push(this.state.codeOutput[output_idx].codeLoop)
                                     }
                                     ret.push("}")
-                                    return <pre>{formProgram(ret, 1)}</pre>
+                                    return (
+                                        ret.map(el => {
+                                            return <pre>{formProgram(el, 1)}</pre>
+                                        })
+                                    )
                                 }
                                 else {
                                     var ret = []
@@ -348,7 +357,11 @@ export default class Main extends React.Component {
                                         var output_idx = output_list[i]
                                         ret.push(this.state.codeOutput[output_idx].analogOutput)
                                     }
-                                    return <pre>{formProgram(ret, 1)}</pre> 
+                                    return (
+                                        ret.map(el => {
+                                            return <pre>{formProgram(el, 1)}</pre>
+                                        })
+                                    )
                                 }
                                 
                             })
@@ -357,8 +370,6 @@ export default class Main extends React.Component {
                         <>{'}'}</>
                         <br/>
                         <br/>
-
-                        //helper function
 
                         <br/>
 
@@ -403,8 +414,8 @@ class ChooseComponent extends React.Component {
                         handleCode={this.props.handleCode}
                         />
                 break;
-            case 'Servo':
-                obj = <Servo handlePropsChange={this.props.handlePropsChange}
+            case 'Stepper Motor':
+                obj = <Stepper handlePropsChange={this.props.handlePropsChange}
                         id={this.state.chosenOutput.length}
                         getStage={this.props.getStage}
                         handleCode={this.props.handleCode}

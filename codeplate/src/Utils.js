@@ -5,6 +5,10 @@ export function formProgram(program, indent) {
 
     for (let line of program) {
         let indent = "\t".repeat(currentIndentCounter);
+
+        if (line===undefined) {
+            continue;
+        }
         
         if (line.includes("#define")) {
             formattedProgram += indent + line + "\n";

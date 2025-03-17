@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  margin: 0;
 }
 
 code, .code {
@@ -30,14 +31,12 @@ h4 {
 
 p {
   display: inline-block;
-  white-space: nowrap;
   margin: 2vh 20px 2vh 0;
   font-size: 1.2rem
 }
 
 .main-wrapper {
   width: 75vw;
-  word-wrap: break-word;
   overflow-wrap: break-word;
 }
 

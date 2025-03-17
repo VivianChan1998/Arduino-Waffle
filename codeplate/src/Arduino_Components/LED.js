@@ -14,7 +14,7 @@ class LED extends Component {
             deviceType: ComponentType.OUTPUT_DEVICE,
             library: "Adafruit_NeoPixel.h",
             initQuestion: <Question handleAnswer={this.updateInit}
-                                    questionText={"How many LED units are there on the LED strip number " +  props.id + "?"}
+                                    questionText={"How many LED units are there on LED strip number " +  props.id + "?"}
                                     answerType = {AnswerType.NUMERICAL} />,
             question: <Question handleAnswer = {this.updateAnswer}
                                 questionText="What kind of pattern do you want it to show?"
@@ -111,7 +111,7 @@ class LED extends Component {
     }
 
     getAnalogOutputFunction = (reverse = false) => {
-        var brightness = `float( 1023 / ${this.props.paramMax} * ${this.props.paramName})`;
+        var brightness = `map(${this.props.paramName}, 0, 1023, 0, ${this.props.paramMax});`
         if (reverse) {
             brightness = "1023 - " + brightness;
         }

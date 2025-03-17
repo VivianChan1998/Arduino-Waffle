@@ -11,22 +11,22 @@ class Ultrasonic extends Component {
             deviceType: ComponentType.INPUT_DEVICE,
             init: 0,
             initQuestion: <Question handleAnswer={this.updateInit}
-                                    questionText="What do you want to use this ultrasonic sensor for?"
+                                    questionText="What kind of values should come out of the ultrasonic sensor? By default, values range from 0 to 1023."
                                     answerType = {AnswerType.MULTI_OPTION} 
                                     answerOption = {
                                         [
                                             {
-                                                text: "Binary threshold with respect to an output device, one output state under threshold, one output state over threshold.", 
-                                                value: "binary threshold",
+                                                text: "Turn the ultrasonic values into just two values, using a threshold. I want one output state under the threshold, one output state over the threshold.", 
+                                                value: "binary",
                                                 followup: <Question handleAnswer = {this.updateThreshold}
-                                                                    questionText="What threshold value do you want in centimeters?"
+                                                                    questionText="What should the threshold be? The ultrasonic value is an arbitrary number that represents the distance, from 0 (extremely close) to 1023."
                                                                     answerType={AnswerType.NUMERICAL} />
                                             },
                                             {
-                                                text: "Use analog input for determining for the output, each different analog value will differently impact state.",
-                                                value: "analog direct",
+                                                text: "Pass along the full range of values. I'll use some rules to convert the range of values into the outputs I want.",
+                                                value: "analog",
                                                 followup: "",
-                                                analog: <Question handleAnswer = {this.updateAnalog} />
+                                                //analog: <Question handleAnswer = {this.updateAnalog} />
                                             }
                                         ]
                                     }/>,
@@ -35,18 +35,21 @@ class Ultrasonic extends Component {
             _boundary: `ultrasonic_I/O_Boundary_${props.id}`,
             _duration: `ultrasonicDuration_${props.id}`,
             _distance:`ultrasonicDistance_${props.id}`,
-            analog_max: 1023,
-            analog_param_name: this.state._distance, // is analog max the same for distance? need to check on the same                 
+            analog_max: 1023,                
             code: new Code()                 
         }
     }
 
     updateInit = (answer, hasFollowup, followUp) => {
         this.setState({mode: answer})
+        if(answer==="analog"){
+            console.log("analog input")
+            this.props.setAnalog(this.props.id, this.state._distance, this.state.analog_max)
+        }
         if (hasFollowup) {
             this.setState({initQuestion: followUp})
         }
-        this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
+        //this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
         this.props.handleCode({
             io: "INPUT",
             id: this.props.id,
@@ -61,7 +64,7 @@ class Ultrasonic extends Component {
 
     updateThreshold = (answer) => {
         this.setState({threshold: answer})
-        this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
+        //this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
         this.props.handleCode({
             io: "INPUT",
             id: this.props.id,
@@ -69,7 +72,7 @@ class Ultrasonic extends Component {
             setup: this.getSetup(),
             loopstart: this.getLoopStart(),
             looplogic: this.getLoopLogic(),
-            analogInputParam: this.getAnalogInput() // Fixed incorrect assignment syntax
+            analogInputParam: this.getAnalogInput()
         });
         
     }
@@ -84,7 +87,7 @@ class Ultrasonic extends Component {
             setup: this.getSetup(),
             loopstart: this.getLoopStart(),
             looplogic: this.getLoopLogic(),
-            analogInputParam: this.getAnalogInput() // Fixed incorrect assignment syntax
+            analogInputParam: this.getAnalogInput()
         });
         
     }
