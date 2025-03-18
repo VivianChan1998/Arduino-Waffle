@@ -32,7 +32,8 @@ const AnswerType = Object.freeze({
     BOOL: 0,
     NUMERICAL: 1,
     MULTI_OPTION: 2,
-    TEXT: 3
+    TEXT: 3,
+    COLOR: 4
 });
 
 const STAGE = Object.freeze({

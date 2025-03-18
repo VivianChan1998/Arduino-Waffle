@@ -339,12 +339,13 @@ export default class Main extends React.Component {
                         {
                             this.state.ioPairs.map((output_list, index) => {
                                 if(this.state.isAnalogInput[index] === 0) {
-                                    var ret = ["if (" + this.state.codeInput[index].codeLoop + ") {"]
+                                    var ret = [["if (" + this.state.codeInput[index].codeLoop[0] + ") {"]]
                                     for(var i=0; i<output_list.length; i++) {
                                         var output_idx = output_list[i]
                                         ret.push(this.state.codeOutput[output_idx].codeLoop)
                                     }
-                                    ret.push("}")
+                                    ret.push(["}"])
+                                    console.log(ret)
                                     return (
                                         ret.map(el => {
                                             return <pre>{formProgram(el, 1)}</pre>

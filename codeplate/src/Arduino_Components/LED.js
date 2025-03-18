@@ -24,8 +24,8 @@ class LED extends Component {
                                         text: "all LEDs should show the same color",
                                         value: "color",
                                         followup: <Question handleAnswer = {this.updateColor}
-                                                            questionText="What color do you want? (HEX code, ex:ffff03)" //TODO: example in input box
-                                                            answerType={AnswerType.TEXT} />
+                                                            questionText="What color do you want?" //TODO: example in input box
+                                                            answerType={AnswerType.COLOR} />
                                     },
                                     {
                                         text: "all LEDs should cycle through rainbow colors",
@@ -34,8 +34,8 @@ class LED extends Component {
                                     }
                                 ]} />,
             questionAnalog: <Question handleAnswer = {this.updateColor}
-                                questionText="What color do you want? (HEX code, ex:ffff03)" //TODO: example in input box
-                                answerType={AnswerType.TEXT} />,
+                                questionText="What color do you want?"
+                                answerType={AnswerType.COLOR} />,
             code: new Code(),
             init: 0,
             mode: '',
@@ -89,6 +89,7 @@ class LED extends Component {
 
     getGlobalVar = (num) => {
         return [
+            this.state.code.strInclude(this.state.library),
             this.state.code.strDefine(this.state._pin, 9), //temp
             this.state.code.strDefine(this.state._num, num),
             `Adafruit_NeoPixel ${this.state._objName} = Adafruit_NeoPixel(${this.state._num}, ${this.state._pin}, NEO_GRB + NEO_KHZ800);`
@@ -102,7 +103,8 @@ class LED extends Component {
     getLoopLogic = (mode, color) => {
         switch (mode) {
             case "color":
-                return [`colorWipe(${this.state._objName}.Color(${color[0]}${color[1]}, ${color[2]}${color[3]}, ${color[4]}${color[5]}), 50);`];
+                var hex1 = parseInt(`${color[1]}${color[2]}`, 16);
+                return [`colorWipe(${this.state._objName}.Color(${hex1}, ${color[3]}${color[4]}, ${color[5]}${color[6]}), 50);`];
             case "rainbow":
                 return [`theaterChaseRainbow(${this.state._objName}, 50);`];
             default:
@@ -131,13 +133,13 @@ class LED extends Component {
                 "  int firstPixelHue = 0;",
                 "  for(int a = 0; a < 30; a++) {",
                 "    for(int b = 0; b < 3; b++) {",
-                "      pixels.clear();",
-                "      for(int c = b; c < pixels.numPixels(); c += 3) {",
-                "        int hue = firstPixelHue + c * 65536L / pixels.numPixels();",
-                "        uint32_t color = pixels.gamma32(pixels.ColorHSV(hue));",
-                "        pixels.setPixelColor(c, color);",
+                `      ${this.state._objName}.clear();`,
+                `      for(int c = b; c < ${this.state._objName}.numPixels(); c += 3) {`,
+                `        int hue = firstPixelHue + c * 65536L / ${this.state._objName}.numPixels();`,
+                `        uint32_t color = ${this.state._objName}.gamma32(${this.state._objName}.ColorHSV(hue));`,
+                `        ${this.state._objName}.setPixelColor(c, color);`,
                 "      }",
-                "      pixels.show();",
+                `      ${this.state._objName}.show();`,
                 "      delay(wait);",
                 "      firstPixelHue += 65536 / 90;",
                 "    }",
@@ -147,9 +149,9 @@ class LED extends Component {
         } else {
             return [
                 "void colorWipe(uint32_t color, int wait) {",
-                "  for(int i = 0; i < pixels.numPixels(); i++) {",
-                "    pixels.setPixelColor(i, color);",
-                "    pixels.show();",
+                `  for(int i = 0; i < ${this.state._objName}.numPixels(); i++) {`,
+                `    ${this.state._objName}.setPixelColor(i, color);`,
+                `    ${this.state._objName}.show();`,
                 "    delay(wait);",
                 "  }",
                 "}"

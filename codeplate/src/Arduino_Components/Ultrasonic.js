@@ -16,7 +16,7 @@ class Ultrasonic extends Component {
                                     answerOption = {
                                         [
                                             {
-                                                text: "Turn the ultrasonic values into just two values, using a threshold. I want one output state under the threshold, one output state over the threshold.", 
+                                                text: "Turn the ultrasonic values into just two values, using a threshold. With one output state above the threshold.", 
                                                 value: "binary",
                                                 followup: <Question handleAnswer = {this.updateThreshold}
                                                                     questionText="What should the threshold be? The ultrasonic value is an arbitrary number that represents the distance, from 0 (extremely close) to 1023."
@@ -32,7 +32,7 @@ class Ultrasonic extends Component {
                                     }/>,
             _trig: `ultrasonicTrig_${props.id}_pin`,
             _echo: `ultrasonicEcho_${props.id}_pin`,
-            _boundary: `ultrasonic_I/O_Boundary_${props.id}`,
+            _boundary: `ultrasonicThreshold_${props.id}`,
             _duration: `ultrasonicDuration_${props.id}`,
             _distance:`ultrasonicDistance_${props.id}`,
             analog_max: 1023,                
@@ -45,21 +45,22 @@ class Ultrasonic extends Component {
         if(answer==="analog"){
             console.log("analog input")
             this.props.setAnalog(this.props.id, this.state._distance, this.state.analog_max)
+
+            this.props.handleCode({
+                io: "INPUT",
+                id: this.props.id,
+                global: this.getGlobalVar(0),
+                setup: this.getSetup(),
+                loopstart: this.getLoopStart(),
+                looplogic: this.getLoopLogic(),
+                analogInputParam: this.getAnalogInput() // Fixed incorrect assignment syntax
+            });
         }
         if (hasFollowup) {
             this.setState({initQuestion: followUp})
         }
         //this.props.handlePropsChange({mode: answer}, this.props.id, "INPUT")
-        this.props.handleCode({
-            io: "INPUT",
-            id: this.props.id,
-            global: this.getGlobalVar(0),
-            setup: this.getSetup(),
-            loopstart: this.getLoopStart(),
-            looplogic: this.getLoopLogic(),
-            analogInputParam: this.getAnalogInput() // Fixed incorrect assignment syntax
-        });
-        
+
     }
 
     updateThreshold = (answer) => {
@@ -72,7 +73,6 @@ class Ultrasonic extends Component {
             setup: this.getSetup(),
             loopstart: this.getLoopStart(),
             looplogic: this.getLoopLogic(),
-            analogInputParam: this.getAnalogInput()
         });
         
     }
@@ -101,16 +101,19 @@ class Ultrasonic extends Component {
     getGlobalVar = (threshold) => {
         let codeBlock = [
             this.state.code.strDefine(this.state._trig, 7), // temp
-            this.state.code.strDefine(this.state._echo, 6) // temp
+            this.state.code.strDefine(this.state._echo, 6), // temp
+            this.state.code.strInitVariable("int", this.state._distance, 7),
+            this.state.code.strInitVariable("int", this.state._duration, 0),
         ];
-        if (this.state.mode == "binary threshold") {
+        if (this.state.mode == "binary") {
             codeBlock.push(this.state.code.strInitVariable("int", this.state._boundary, threshold));
         } 
         return codeBlock;
     }
 
     getSetup = () => {
-        return [`pinMode(${this.state._trig}, OUTPUT);`, `pinMode(${this.state._echo}, INPUT);`];
+        return [
+            `pinMode(${this.state._trig}, OUTPUT);`, `pinMode(${this.state._echo}, INPUT);`];
     }
 
     getLoopStart = () => {
@@ -123,12 +126,10 @@ class Ultrasonic extends Component {
     }
 
     getLoopLogic = () => {
-        let code;
-        if (this.state.mode == "binary threshold") {
-            code = `${this.state._distance} > ${this.state._boundary}`; 
-        } else if (this.state.mode == "analog direct") {
-            code = ``;
-        } 
+        var code = [];
+        if (this.state.mode == "binary") {
+            code.push(`${this.state._distance} > ${this.state._boundary}`); 
+        }
         return code;
     }
 

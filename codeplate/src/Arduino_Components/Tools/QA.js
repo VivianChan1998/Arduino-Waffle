@@ -48,6 +48,10 @@ class Question extends React.Component {
                     this.props.answerType === AnswerType.TEXT ?
                         <input type="text" onChange={e => this.props.handleAnswer(e.target.value)} /> : ""
                 }
+                {
+                    this.props.answerType === AnswerType.COLOR ?
+                        <input type="color" onChange={e => this.props.handleAnswer(e.target.value)} /> : ""
+                }
                 <br/>
             </div>
         );
