@@ -9,6 +9,10 @@ class Stepper extends Component {
         super(props)
         this.state = {
             deviceType: ComponentType.OUTPUT_DEVICE,
+            initQuestion: <Question handleAnswer = {this.updateSpeed}
+                                    questionText="What should the initial speed of the stepper be? Ranging from 0 - 255 with 255 being the fastest."
+                                    answerType={AnswerType.NUMERICAL} />,
+
             digitalQuestion: <Question handleAnswer = {this.updateDigital}
                                 questionText="What should the Stepper motor do when it is triggered?"
                                 answerType={AnswerType.MULTI_OPTION}
@@ -46,8 +50,23 @@ class Stepper extends Component {
             _sensorReadingName: `stepper${props.id}_sensorReading`,
             _pos: `pos_${props.id}`,
             analogMax: 255,
-            code: new Code()
+            code: new Code(),
+            speed: 255,
         }
+    }
+
+    updateSpeed = (answer) => {
+        console.log("update speed")
+        this.setState({speed: answer})
+        //this.props.handlePropsChange({speed: answer}, this.props.id, "OUTPUT")
+        this.setState({digitalMode: "analog"})
+            this.props.handleCode({
+                io: "OUTPUT",
+                id: this.props.id,
+                global: this.getGlobalVar(),
+                setup: this.getSetup(answer),
+                analogOutputFunction: this.getLoopLogicAnalog(answer)
+            });
     }
 
     updateAnalog = (answer, hasFollowup, followUp) => {
@@ -57,12 +76,9 @@ class Stepper extends Component {
                 io: "OUTPUT",
                 id: this.props.id,
                 global: this.getGlobalVar(),
-                setup: this.getSetup(255),
                 analogOutputFunction: this.getLoopLogicAnalog(answer)
             });
     }
-
-
 
     updateDigital = (answer, hasFollowup, followUp) => {
         console.log("update digital")
@@ -92,7 +108,7 @@ class Stepper extends Component {
             io: "OUTPUT",
             id: this.props.id,
             global: this.getGlobalVar(),
-            setup: this.getSetup(answer),
+            //setup: this.getSetup(answer),
             looplogic: this.getLoopLogic(1)
         });
         
@@ -123,7 +139,7 @@ class Stepper extends Component {
     getLoopLogicAnalog = (answer) => {
         if (answer === "position") {
             return [
-                `int pos = int( 200 / ${this.props.paramMax} * ${this.props.paramName});`,
+                `int pos = int( 200 * ${this.props.paramName} / ${this.props.paramMax}.0);`,
                 `if (${this.state._countName}%200 < pos ) {`,
                 `${this.state._objName}.step(1);`,
                 `${this.state._countName}++;`,
@@ -144,7 +160,14 @@ class Stepper extends Component {
     }
     
     render() {
-        console.log(this.props.isAnalog)
+        console.log(this.props.isSerial)
+        if (this.props.getStage() == STAGE.INIT_QUESTION) {
+            return (
+                <div>
+                    {this.state.initQuestion}
+                </div>
+            );
+        }
         if (this.props.getStage() == STAGE.DEFINE_BEHAVIOR) {
             if(this.props.isAnalog) {
                 return (

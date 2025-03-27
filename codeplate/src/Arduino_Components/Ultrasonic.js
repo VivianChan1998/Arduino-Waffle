@@ -11,7 +11,7 @@ class Ultrasonic extends Component {
             deviceType: ComponentType.INPUT_DEVICE,
             init: 0,
             initQuestion: <Question handleAnswer={this.updateInit}
-                                    questionText="What kind of values should come out of the ultrasonic sensor? By default, values range from 0 to 1023."
+                                    questionText="What kind of values should come out of the ultrasonic sensor? By default, values range from 0 to 255."
                                     answerType = {AnswerType.MULTI_OPTION} 
                                     answerOption = {
                                         [
@@ -19,7 +19,7 @@ class Ultrasonic extends Component {
                                                 text: "Turn the ultrasonic values into just two values, using a threshold. With one output state above the threshold.", 
                                                 value: "binary",
                                                 followup: <Question handleAnswer = {this.updateThreshold}
-                                                                    questionText="What should the threshold be? The ultrasonic value is an arbitrary number that represents the distance, from 0 (extremely close) to 1023."
+                                                                    questionText="What should the threshold be? The ultrasonic value is an arbitrary number that represents the distance, from 0 (extremely close) to 255."
                                                                     answerType={AnswerType.NUMERICAL} />
                                             },
                                             {
@@ -35,7 +35,7 @@ class Ultrasonic extends Component {
             _boundary: `ultrasonicThreshold_${props.id}`,
             _duration: `ultrasonicDuration_${props.id}`,
             _distance:`ultrasonicDistance_${props.id}`,
-            analog_max: 1023,                
+            analog_max: 255,                
             code: new Code()                 
         }
     }
@@ -117,12 +117,16 @@ class Ultrasonic extends Component {
     }
 
     getLoopStart = () => {
-        return [`digitalWrite(${this.state._trig}, LOW);`, `delayMicroseconds(2);`, 
+        console.log(this.props.isSerial)
+        var ret = [`digitalWrite(${this.state._trig}, LOW);`, `delayMicroseconds(2);`, 
             `digitalWrite(${this.state._trig}, HIGH);`, `delayMicroseconds(10);`, 
             `digitalWrite(${this.state._trig}, LOW);`, 
             `${this.state._duration} = pulseIn(${this.state._echo}, HIGH);`, 
-            `${this.state._distance} = ${this.state._duration} * 0.034 / 2;`, 
-            `Serial.print(\"Distance: \");`, `Serial.println(${this.state._distance});`];
+            `${this.state._distance} = ${this.state._duration} * 0.034 / 2;`]
+        if (this.props.isSerial) {
+            ret.push(`Serial.print("Duration: ");`, `Serial.println(${this.state._duration});`, `Serial.print(\"Distance: \");`, `Serial.println(${this.state._distance});`);
+        }
+        return ret
     }
 
     getLoopLogic = () => {

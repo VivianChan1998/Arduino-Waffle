@@ -7,6 +7,7 @@ import Potentiometer from './Arduino_Components/Potentiometer';
 import { STAGE } from './Arduino_Components/Tools/Enums';
 import './index.css'
 import { formProgram } from './Utils';
+import Serial from './Arduino_Components/Serial';
 
 export default class Main extends React.Component {
     constructor (props) {
@@ -26,7 +27,8 @@ export default class Main extends React.Component {
             outputIsPaired: [],
             codeInput: [],
             codeOutput: [],
-            isAnalogInput: []
+            isAnalogInput: [],
+            isSerial: false
         }
         this.textContainerRef = React.createRef();
     }
@@ -64,6 +66,26 @@ export default class Main extends React.Component {
             outputProps: arr,
             codeOutput: code_arr,
         }) 
+    }
+    handleSerial = () => {
+        this.setState({isSerial: true})
+        console.log("set serial")
+        var input = this.state.chosenInputComponents
+        for(var i=0; i<input.length; i++) {
+            input[i] = React.cloneElement(input[i], {
+                isSerial: true
+            });
+        }
+        var output = this.state.chosenOutputComponents
+        for(var i=0; i<output.length; i++) {
+            output[i] = React.cloneElement(output[i], {
+                isSerial: true
+            });
+        }
+        this.setState({
+            chosenOutputComponents: output,
+            chosenInputComponents: input
+        })
     }
     handlePropsChange = (p, id, io) => {
         if (io == 'INPUT') {
@@ -164,9 +186,6 @@ export default class Main extends React.Component {
     };
 
     render() {
-        console.log(this.state.codeInput)
-        console.log(this.state.codeOutput)
-        console.log(this.state.chosenOutputComponents)
         if (this.state.stage === STAGE.CHOOSE_COMPONENT) {
             return (
                 <div className="main-wrapper">
@@ -189,7 +208,16 @@ export default class Main extends React.Component {
                 <div className="main-wrapper">
                     <h2>Initializing components</h2>
                     <div>
-                        {this.state.chosenOutputComponents.map(el => el)}
+                        <Serial handleSerial={this.handleSerial}
+                                getStage={this.getStage}
+                                handleCode={this.handleCode}
+                        />
+                    
+                    </div>
+                    <div>
+                        {this.state.chosenOutputComponents.map(el => {
+                            console.log(el)
+                            return el})}
                     </div>
                     <div>
                         {this.state.chosenInputComponents.map(el => el)}
@@ -210,7 +238,10 @@ export default class Main extends React.Component {
                         
                         <h3>Which output component would you like to pair it with?</h3>
                         {
+                            this.state.ioPairs[this.state.ioPairingId].length > 0 ?
                             this.state.ioPairs[this.state.ioPairingId].map((el,index) => <p>{this.state.chosenOutputComponentsNames[el]}</p>)
+                            :
+                            <p>Click on the buttons below to add components. You may add more than one component if you want.</p>
                         }
                         <br/>
                         {
@@ -252,15 +283,15 @@ export default class Main extends React.Component {
         else if (this.state.stage === STAGE.DEFINE_BEHAVIOR) {
             return (
                 <div className="main-wrapper">
-                    <h2>Define behavior</h2>
+                    <h2>Define Behavior</h2>
                     <br/>
-                    <h3>For {this.state.chosenInputComponentsNames[this.state.ioPairingId]}: </h3> {/*TODO write the sentence in a better way*/}
+                    <h3>When {this.state.chosenInputComponentsNames[this.state.ioPairingId]} is triggered: </h3>
                     {
                         
                         this.state.ioPairs[this.state.ioPairingId].map((idx, index) => {
                             return (
                                 <>
-                                    <h4> Output {this.state.chosenOutputComponentsNames[idx]}: </h4>
+                                    {/* <h4> Output {this.state.chosenOutputComponentsNames[idx]}: </h4> */}
                                     {this.state.chosenOutputComponents[idx]}
                                 </>
                             )
@@ -307,6 +338,11 @@ export default class Main extends React.Component {
 
                         <> void setup{'() {'}</>
                         <br/>
+                        {
+                            this.state.isSerial?
+                            <pre>{formProgram(["Serial.begin(9600);"], 1)}</pre>:
+                            ""
+                        }
                         {
                             this.state.codeInput.map(el =>{
                                 return <pre>{formProgram(el.codeSetup, 1)}</pre>

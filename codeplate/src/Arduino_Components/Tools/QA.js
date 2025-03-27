@@ -5,13 +5,19 @@ class Question extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            number: 0
+            number: 0,
+            selectedValue: null, // Holds the currently selected option
         }
     }
+    handleSelection = (value, hasFollowup, followup) => {
+        console.log(value)
+        this.setState({ selectedValue: value }); // Update local state
+        this.props.handleAnswer(value, hasFollowup, followup); // Notify parent if needed
+    };
     render() {
         return (
             <div id="question-wrapper">
-                <p>{this.props.questionText}</p>
+                <h3>{this.props.questionText}</h3>
                 {
                     this.props.answerType === AnswerType.BOOL ?
                         <>
@@ -35,11 +41,13 @@ class Question extends React.Component {
                         <label key={index} className="question-options">
                             <input 
                                 type="radio" 
-                                id = {index}
+                                id={index}
+                                name={this.props.questionText}  // Ensures only one option is selected
                                 value={option.value} 
-                                onChange={e => this.props.handleAnswer(e.target.value, option.followup !== "",  option.followup !== ""? option.followup: "")} 
+                                checked={this.state.selectedValue === option.value} // Controls selection state
+                                onChange={() => this.handleSelection(option.value, option.followup !== "", option.followup || "")} 
                             /> 
-                            <label form= {index}> {option.text} </label>
+                            <label htmlFor={index}>{option.text}</label>
                         </label>
                     )) //TODO: assure only one option can appear as chosen at one time
                     : "" 

@@ -11,7 +11,7 @@ class Button extends Component {
             deviceType: ComponentType.INPUT_DEVICE_ONLY_DIGITAL,
             init: 0,
             question: <Question handleAnswer = {this.updateAnswer}
-                                    questionText = "When should the button trigger an output?"
+                                    questionText = {`When should the button ${props.id} trigger an output?`}
                                     answerType = {AnswerType.MULTI_OPTION}
                                     answerOption = {
                                         [

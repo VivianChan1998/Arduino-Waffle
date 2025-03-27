@@ -17,7 +17,7 @@ class LED extends Component {
                                     questionText={"How many LED units are there on LED strip number " +  props.id + "?"}
                                     answerType = {AnswerType.NUMERICAL} />,
             question: <Question handleAnswer = {this.updateAnswer}
-                                questionText="What kind of pattern do you want it to show?"
+                                questionText={`What kind of pattern do you want LED strip number ${props.id} to show?`}
                                 answerType={AnswerType.MULTI_OPTION}
                                 answerOption={[
                                     {
