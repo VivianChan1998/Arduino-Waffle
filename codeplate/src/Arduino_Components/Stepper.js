@@ -121,17 +121,24 @@ class Stepper extends Component {
     }
 
     getGlobalVar = () => {
-        return [`#include <Stepper.h>`, `const int stepsPerRevolution = 200;`,
+        return [
+            `// Declaring global variables for Stepper ${props.id}`,
+            `#include <Stepper.h>`, 
+            `const int stepsPerRevolution = 200;`,
+            `// Initialize object for Stepper ${props.id}`,
             `Stepper ${this.state._objName}(stepsPerRevolution, 8, 9, 10, 11);`,
             `int ${this.state._countName} = 0;`
         ];
     }
     getSetup = (pwm) => {
-        return [`${this.state._objName}.setSpeed(${pwm});`,]
+        return [
+            `// Set the speed of the Stepper ${props.id} to inputted speed (${pwm})`,
+            `${this.state._objName}.setSpeed(${pwm});`,]
     }
 
     getLoopLogic = (steps) => {
         return [
+            `// Code for stepping Stepper ${props.id} ${steps} times`,
             `${this.state._objName}.step(${steps});`
         ]
     }
@@ -139,6 +146,7 @@ class Stepper extends Component {
     getLoopLogicAnalog = (answer) => {
         if (answer === "position") {
             return [
+                `// Code for Stepper ${props.id}: change position based on input component read value`,
                 `int pos = int( 200 * ${this.props.paramName} / ${this.props.paramMax}.0);`,
                 `if (${this.state._countName}%200 < pos ) {`,
                 `${this.state._objName}.step(1);`,
@@ -152,6 +160,7 @@ class Stepper extends Component {
         }
         else {
             return [
+                `// Code for Stepper ${props.id}: change speed based on input component read value`
                 `int count = int( 255 / ${this.props.paramMax} * ${this.props.paramName});`,
                 `${this.state._objName}.setSpeed(speed);`,
                 `${this.state._objName}.step(1);`,

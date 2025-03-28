@@ -89,24 +89,28 @@ class LED extends Component {
 
     getGlobalVar = (num) => {
         return [
+            `// Declaring relevant libraries and global variables for LED ${props.id}`,
             this.state.code.strInclude(this.state.library),
+
+            `// Connect LED ${props.id} to the analog 9`,
             this.state.code.strDefine(this.state._pin, 9), //temp
+
             this.state.code.strDefine(this.state._num, num),
             `Adafruit_NeoPixel ${this.state._objName} = Adafruit_NeoPixel(${this.state._num}, ${this.state._pin}, NEO_GRB + NEO_KHZ800);`
         ];
     }
 
     getSetup = () => {
-        return [`${this.state._objName}.begin();`];
+        return [`// Code responsible for beginning LED ${props.id}`, `${this.state._objName}.begin();`];
     }
 
     getLoopLogic = (mode, color) => {
         switch (mode) {
             case "color":
                 var hex1 = parseInt(`${color[1]}${color[2]}`, 16);
-                return [`colorWipe(${this.state._objName}.Color(${hex1}, ${color[3]}${color[4]}, ${color[5]}${color[6]}), 50);`];
+                return [`// Code responsible for setting LED ${props.id} to inputted hex color`, `colorWipe(${this.state._objName}.Color(${hex1}, ${color[3]}${color[4]}, ${color[5]}${color[6]}), 50);`];
             case "rainbow":
-                return [`theaterChaseRainbow(${this.state._objName}, 50);`];
+                return [`// Code responsible for setting LED ${props.id} to rainbow`, `theaterChaseRainbow(${this.state._objName}, 50);`];
             default:
                 return [];
         }
@@ -119,6 +123,7 @@ class LED extends Component {
         }
         const color = this.state.color;
         return [
+            `// Code responsible for setting LED ${props.id} an analog brightness based on input component`, 
             `float brightness = ${brightness};`,
             `${this.state._objName}.setBrightness(brightness);`,
             `colorWipe(${this.state._objName}.Color(${color[0]}${color[1]}, ${color[2]}${color[3]}, ${color[4]}${color[5]}), 50);`
@@ -129,6 +134,7 @@ class LED extends Component {
     getHelperFunction(mode) {
         if (mode === "rainbow") {
             return [
+                `// Helper function from Neopixel library responsible for setting LED ${props.id} to rainbow`,
                 "void theaterChaseRainbow(int wait) {",
                 "  int firstPixelHue = 0;",
                 "  for(int a = 0; a < 30; a++) {",
@@ -148,6 +154,7 @@ class LED extends Component {
             ];
         } else {
             return [
+                `// Helper function from Neopixel library responsible for setting LED ${props.id} to a specific color`,
                 "void colorWipe(uint32_t color, int wait) {",
                 `  for(int i = 0; i < ${this.state._objName}.numPixels(); i++) {`,
                 `    ${this.state._objName}.setPixelColor(i, color);`,

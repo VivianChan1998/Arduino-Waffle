@@ -98,10 +98,14 @@ class Potentiometer extends Component {
 
     getGlobalVar = (a) => {
         let codeBlock = [
+            `// Declaring global variables for Potentiometer ${props.id}`,
+            `// Connect Potentiometer ${props.id} to analog 7`,
             this.state.code.strDefine(this.state._pin, 7),
+            `// Voltage measured by Potentiometer ${props.id}`,
             this.state.code.strInitVariable("int", this.state._val, 0),
         ];
         if (this.state.mode == "binary") {
+            `// User-selected threshold for Potentiometer ${props.id}`,
             codeBlock.push(this.state.code.strInitVariable("int", this.state._boundary, a));
         } 
         return codeBlock;
@@ -110,12 +114,16 @@ class Potentiometer extends Component {
     // no setup 
 
     getLoopStart = () => {
-        return [`${this.state._val} = analogRead(${this.state._pin});`, `Serial.println(${this.state._val});`]; 
+        return [
+            `// Read in Voltage measured by Potentiometer ${props.id} and print to serial monitor`,
+            `${this.state._val} = analogRead(${this.state._pin});`, 
+            `Serial.println(${this.state._val});`]; 
     }
 
     getLoopLogic = (mode) => {
         let code = []
         if (mode == "binary") {
+            `// Code for binary input/output states`,
             code = [`${this.state._val} > ${this.state._boundary}`]; 
         }
         return code;
