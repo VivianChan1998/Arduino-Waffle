@@ -100,17 +100,12 @@ class Ultrasonic extends Component {
 
     getGlobalVar = (threshold) => {
         let codeBlock = [
-            `// Declaring global variables for Ultrasonic Sensor ${props.id}`,
-            `// Variables used to read distance for Ultrasonic Sensor ${props.id}`,
             this.state.code.strDefine(this.state._trig, 7), // temp
             this.state.code.strDefine(this.state._echo, 6), // temp
-
-            `// Variables used to store the distance and duration of reading measurements for Ultrasonic Sensor ${props.id}`,
-            this.state.code.strInitVariable("int", this.state._distance, 0),
-            this.state.code.strInitVariable("int", this.state._duration, 7),
+            this.state.code.strInitVariable("int", this.state._distance, 7),
+            this.state.code.strInitVariable("int", this.state._duration, 0),
         ];
         if (this.state.mode == "binary") {
-            `// User-selected threshold for Ultrasonic Sensor ${props.id}`,
             codeBlock.push(this.state.code.strInitVariable("int", this.state._boundary, threshold));
         } 
         return codeBlock;
@@ -118,22 +113,17 @@ class Ultrasonic extends Component {
 
     getSetup = () => {
         return [
-            `// Connect trig and echo pins for Ultrasonic Sensor ${props.id}`,
-            `pinMode(${this.state._trig}, OUTPUT);`, 
-            `pinMode(${this.state._echo}, INPUT);`];
+            `pinMode(${this.state._trig}, OUTPUT);`, `pinMode(${this.state._echo}, INPUT);`];
     }
 
     getLoopStart = () => {
         console.log(this.props.isSerial)
-        var ret = [
-            `// Code to read in input data and convert measured data to centimeters for Ultrasonic Sensor ${props.id}`
-            `digitalWrite(${this.state._trig}, LOW);`, `delayMicroseconds(2);`, 
+        var ret = [`digitalWrite(${this.state._trig}, LOW);`, `delayMicroseconds(2);`, 
             `digitalWrite(${this.state._trig}, HIGH);`, `delayMicroseconds(10);`, 
             `digitalWrite(${this.state._trig}, LOW);`, 
             `${this.state._duration} = pulseIn(${this.state._echo}, HIGH);`, 
             `${this.state._distance} = ${this.state._duration} * 0.034 / 2;`]
         if (this.props.isSerial) {
-            `// Code to print relevant variables for Ultrasonic Sensor ${props.id} to Serial Monitor`,
             ret.push(`Serial.print("Duration: ");`, `Serial.println(${this.state._duration});`, `Serial.print(\"Distance: \");`, `Serial.println(${this.state._distance});`);
         }
         return ret
@@ -142,7 +132,6 @@ class Ultrasonic extends Component {
     getLoopLogic = () => {
         var code = [];
         if (this.state.mode == "binary") {
-            `// Code for binary input/output states`
             code.push(`${this.state._distance} > ${this.state._boundary}`); 
         }
         return code;
