@@ -17,18 +17,18 @@ class LED extends Component {
                                     questionText={"How many LED units are there on LED strip number " +  props.id + "?"}
                                     answerType = {AnswerType.NUMERICAL} />,
             question: <Question handleAnswer = {this.updateAnswer}
-                                questionText={`What kind of pattern do you want LED strip number ${props.id} to show?`}
+                                questionText={`What kind of pattern do you want LED ${props.id} to show?`}
                                 answerType={AnswerType.MULTI_OPTION}
                                 answerOption={[
                                     {
-                                        text: "all LEDs should show the same color",
+                                        text: "LEDs should show the same color",
                                         value: "color",
                                         followup: <Question handleAnswer = {this.updateColor}
                                                             questionText="What color do you want?" //TODO: example in input box
                                                             answerType={AnswerType.COLOR} />
                                     },
                                     {
-                                        text: "all LEDs should cycle through rainbow colors",
+                                        text: "LEDs should cycle through rainbow colors",
                                         value: "rainbow",
                                         followup: ""
                                     }
@@ -89,24 +89,27 @@ class LED extends Component {
 
     getGlobalVar = (num) => {
         return [
+            `// Declare relevant libraries and global variables for LED ${this.props.id}`,
             this.state.code.strInclude(this.state.library),
+            `// Connect LED ${this.props.id} to pin 9`,
             this.state.code.strDefine(this.state._pin, 9), //temp
             this.state.code.strDefine(this.state._num, num),
+            `// Instantiate LED ${this.props.id} using Adafruit_NeoPixel package`,
             `Adafruit_NeoPixel ${this.state._objName} = Adafruit_NeoPixel(${this.state._num}, ${this.state._pin}, NEO_GRB + NEO_KHZ800);`
         ];
     }
 
     getSetup = () => {
-        return [`${this.state._objName}.begin();`];
+        return [`// Begin LED ${this.props.id}`, `${this.state._objName}.begin();`];
     }
 
     getLoopLogic = (mode, color) => {
         switch (mode) {
             case "color":
                 var hex1 = parseInt(`${color[1]}${color[2]}`, 16);
-                return [`colorWipe(${this.state._objName}.Color(${hex1}, ${color[3]}${color[4]}, ${color[5]}${color[6]}), 50);`];
+                return [`// Set LED ${this.props.id} to the user provided color (converted to hex)`, `colorWipe(${this.state._objName}.Color(${hex1}, ${color[3]}${color[4]}, ${color[5]}${color[6]}), 50);`];
             case "rainbow":
-                return [`theaterChaseRainbow(${this.state._objName}, 50);`];
+                return [`// Set LED ${this.props.id} to a rainbow cycle`, `theaterChaseRainbow(${this.state._objName}, 50);`];
             default:
                 return [];
         }
@@ -119,6 +122,7 @@ class LED extends Component {
         }
         const color = this.state.color;
         return [
+            `// Set LED ${this.props.id} to a brightness scaled on the input`,
             `float brightness = ${brightness};`,
             `${this.state._objName}.setBrightness(brightness);`,
             `colorWipe(${this.state._objName}.Color(${color[0]}${color[1]}, ${color[2]}${color[3]}, ${color[4]}${color[5]}), 50);`
@@ -129,6 +133,7 @@ class LED extends Component {
     getHelperFunction(mode) {
         if (mode === "rainbow") {
             return [
+                `// Helper function that sets an LED to a rainbow chase`,
                 "void theaterChaseRainbow(int wait) {",
                 "  int firstPixelHue = 0;",
                 "  for(int a = 0; a < 30; a++) {",
@@ -148,6 +153,7 @@ class LED extends Component {
             ];
         } else {
             return [
+                `// Helper function that sets an LED to specific color`,
                 "void colorWipe(uint32_t color, int wait) {",
                 `  for(int i = 0; i < ${this.state._objName}.numPixels(); i++) {`,
                 `    ${this.state._objName}.setPixelColor(i, color);`,

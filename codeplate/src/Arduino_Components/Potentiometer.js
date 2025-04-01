@@ -11,7 +11,7 @@ class Potentiometer extends Component {
             deviceType: ComponentType.INPUT_DEVICE,
             init: 0,
             initQuestion: <Question handleAnswer={this.updateInit}
-                                    questionText="What kind of values should come out of the potentiometer?  By default, values range from 0 to 1023."
+                                    questionText="What kind of values should come out of the potentiometer? By default, values range from 0 to 1023."
                                     answerType = {AnswerType.MULTI_OPTION} 
                                     answerOption = {
                                         [   
@@ -98,11 +98,14 @@ class Potentiometer extends Component {
 
     getGlobalVar = (a) => {
         let codeBlock = [
-            this.state.code.strDefine(this.state._pin, 7),
+            `// Declare relevant libraries and global variables for Potentiometer ${this.props.id}`, 
+            this.state.code.strDefine(this.state._pin, `A0`),
+            `// ${this.state.val} saves the measured resistance of Potentiometer ${this.props.id}`, 
             this.state.code.strInitVariable("int", this.state._val, 0),
         ];
         if (this.state.mode == "binary") {
-            codeBlock.push(this.state.code.strInitVariable("int", this.state._boundary, a));
+        
+            codeBlock.push(...[`// Instantiate the boundary for Potentiometer ${this.props.id}`, this.state.code.strInitVariable("int", this.state._boundary, a)]);
         } 
         return codeBlock;
     }
@@ -110,7 +113,7 @@ class Potentiometer extends Component {
     // no setup 
 
     getLoopStart = () => {
-        return [`${this.state._val} = analogRead(${this.state._pin});`, `Serial.println(${this.state._val});`]; 
+        return [`// Update the resistance read by Potentiometer ${this.props.id}`, `${this.state._val} = analogRead(${this.state._pin});`, `Serial.println(${this.state._val});`]; 
     }
 
     getLoopLogic = (mode) => {

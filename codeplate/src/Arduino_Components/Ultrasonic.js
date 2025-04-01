@@ -11,7 +11,7 @@ class Ultrasonic extends Component {
             deviceType: ComponentType.INPUT_DEVICE,
             init: 0,
             initQuestion: <Question handleAnswer={this.updateInit}
-                                    questionText="What kind of values should come out of the ultrasonic sensor? By default, values range from 0 to 255."
+                                    questionText="What kind of values should come out of the ultrasonic sensor? By default, values range from 0 to 255, which will be converted to cm."
                                     answerType = {AnswerType.MULTI_OPTION} 
                                     answerOption = {
                                         [
@@ -19,7 +19,7 @@ class Ultrasonic extends Component {
                                                 text: "Turn the ultrasonic values into just two values, using a threshold. With one output state above the threshold.", 
                                                 value: "binary",
                                                 followup: <Question handleAnswer = {this.updateThreshold}
-                                                                    questionText="What should the threshold be? The ultrasonic value is an arbitrary number that represents the distance, from 0 (extremely close) to 255."
+                                                                    questionText="What should the threshold be? The ultrasonic value is a number that represents the distance in cm."
                                                                     answerType={AnswerType.NUMERICAL} />
                                             },
                                             {
@@ -100,31 +100,42 @@ class Ultrasonic extends Component {
 
     getGlobalVar = (threshold) => {
         let codeBlock = [
+            `// Declare variables for Ultrasonic Sensor ${this.props.id}`,
+            `// Connect the trig pin of Ultrasonic Sensor ${this.props.id} to Digital 7`,
             this.state.code.strDefine(this.state._trig, 7), // temp
+            `// Connect the echo pin of Ultrasonic Sensor ${this.props.id} to Digital 6`,
             this.state.code.strDefine(this.state._echo, 6), // temp
-            this.state.code.strInitVariable("int", this.state._distance, 7),
+
+            `// Variable for the raw distance for Ultrasonic Sensor ${this.props.id}`,
+            this.state.code.strInitVariable("int", this.state._distance, 0),
+
+            `// Variable for collecting the measured length of sound wave for Ultrasonic Sensor ${this.props.id}, which will be converted to distance`,
             this.state.code.strInitVariable("int", this.state._duration, 0),
         ];
         if (this.state.mode == "binary") {
-            codeBlock.push(this.state.code.strInitVariable("int", this.state._boundary, threshold));
+            codeBlock.push(...[`// Instantiate the boundary for Ultrasonic Sensor ${this.props.id}`, this.state.code.strInitVariable("int", this.state._boundary, threshold)]);
         } 
         return codeBlock;
     }
 
     getSetup = () => {
-        return [
-            `pinMode(${this.state._trig}, OUTPUT);`, `pinMode(${this.state._echo}, INPUT);`];
+        return [`// Start reading in values for Ultrasonic Sensor ${this.props.id}`, `pinMode(${this.state._trig}, OUTPUT);`, `pinMode(${this.state._echo}, INPUT);`];
     }
 
     getLoopStart = () => {
         console.log(this.props.isSerial)
-        var ret = [`digitalWrite(${this.state._trig}, LOW);`, `delayMicroseconds(2);`, 
+        var ret = [
+            `// Read in the measured distance for Ultrasonic Sensor ${this.props.id}`,
+            `digitalWrite(${this.state._trig}, LOW);`, `delayMicroseconds(2);`, 
             `digitalWrite(${this.state._trig}, HIGH);`, `delayMicroseconds(10);`, 
             `digitalWrite(${this.state._trig}, LOW);`, 
-            `${this.state._duration} = pulseIn(${this.state._echo}, HIGH);`, 
+            `${this.state._duration} = pulseIn(${this.state._echo}, HIGH);`,
+            
+            `Convert the measured duration to centimeters`,
             `${this.state._distance} = ${this.state._duration} * 0.034 / 2;`]
         if (this.props.isSerial) {
-            ret.push(`Serial.print("Duration: ");`, `Serial.println(${this.state._duration});`, `Serial.print(\"Distance: \");`, `Serial.println(${this.state._distance});`);
+            ret.push(
+                `// Print values to Serial monitor for Ultrasonic Sensor ${this.props.id}`, `Serial.print("Duration: ");`, `Serial.println(${this.state._duration});`, `Serial.print(\"Distance: \");`, `Serial.println(${this.state._distance});`);
         }
         return ret
     }

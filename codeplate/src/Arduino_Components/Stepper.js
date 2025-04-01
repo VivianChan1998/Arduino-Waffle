@@ -121,17 +121,22 @@ class Stepper extends Component {
     }
 
     getGlobalVar = () => {
-        return [`#include <Stepper.h>`, `const int stepsPerRevolution = 200;`,
+        return [
+            `// Declare relevant libraries and global variables for Stepper ${this.props.id}`,
+            `#include <Stepper.h>`, 
+            `// Steppers default have a range of 200 steps for a full revolution`,
+            `const int stepsPerRevolution = 200;`,
             `Stepper ${this.state._objName}(stepsPerRevolution, 8, 9, 10, 11);`,
             `int ${this.state._countName} = 0;`
         ];
     }
     getSetup = (pwm) => {
-        return [`${this.state._objName}.setSpeed(${pwm});`,]
+        return [`// Set Stepper ${this.props.id} to it's initial speed ${pwm}`, `${this.state._objName}.setSpeed(${pwm});`]
     }
 
     getLoopLogic = (steps) => {
         return [
+            `// Step Stepper ${this.props.id} ${steps} times`,
             `${this.state._objName}.step(${steps});`
         ]
     }
@@ -139,6 +144,8 @@ class Stepper extends Component {
     getLoopLogicAnalog = (answer) => {
         if (answer === "position") {
             return [
+                `// Map value read from input component for Stepper ${this.props.id} to a position`, 
+                `// pos represents the mapped position to move Stepper ${this.props.id} to`
                 `int pos = int( 200 * ${this.props.paramName} / ${this.props.paramMax}.0);`,
                 `if (${this.state._countName}%200 < pos ) {`,
                 `${this.state._objName}.step(1);`,
@@ -152,7 +159,9 @@ class Stepper extends Component {
         }
         else {
             return [
-                `int count = int( 255 / ${this.props.paramMax} * ${this.props.paramName});`,
+                `// Map value read from input component for Stepper ${this.props.id} to a speed`,
+                `// speed represents the mapped speed to set Stepper ${this.props.id} to`, 
+                `int speed = int( 255 / ${this.props.paramMax} * ${this.props.paramName});`,
                 `${this.state._objName}.setSpeed(speed);`,
                 `${this.state._objName}.step(1);`,
             ];
