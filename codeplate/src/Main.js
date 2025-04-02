@@ -107,7 +107,7 @@ export default class Main extends React.Component {
     getStage = () => {
         return this.state.stage
     }
-    handleCode = ({io, id, global, setup, loopstart, looplogic, helper=[], analogInputParam="", analogOutputFunction=[]}) => {
+    handleCode = ({io, id, global, setup, loopstart, looplogic, loopelse, helper=[], analogInputParam="", analogOutputFunction=[]}) => {
         if (io === "INPUT") {
             var code_temp = this.state.codeInput
             code_temp[id] = {
@@ -115,6 +115,7 @@ export default class Main extends React.Component {
                 codeSetup: setup!==undefined? setup:code_temp[id].codeSetup,
                 codeLoopStart: loopstart!==undefined? loopstart:code_temp[id].codeLoopStart,
                 codeLoop: looplogic!==undefined? looplogic : code_temp[id].codeLoop,
+                codeLoopElse: loopelse!==undefined? loopelse : code_temp[id].codeLoopElse,
                 codeHelperFunction: helper!==undefined? helper : code_temp[id].codeHelperFunction,
                 analogInput: analogInputParam!==undefined? analogInputParam : code_temp[id].analogInput,
                 analogOutput: analogOutputFunction!==undefined? analogOutputFunction : code_temp[id].analogOutput
@@ -129,6 +130,7 @@ export default class Main extends React.Component {
                 codeSetup: setup!==undefined? setup:code_temp[id].codeSetup,
                 codeLoopStart: loopstart!==undefined? loopstart:code_temp[id].codeLoopStart,
                 codeLoop: looplogic!==undefined? looplogic : code_temp[id].codeLoop,
+                codeLoopElse: loopelse!==undefined? loopelse : code_temp[id].codeLoopElse,
                 codeHelperFunction: helper!==undefined? helper : code_temp[id].codeHelperFunction,
                 analogInput: analogInputParam!==undefined? analogInputParam : code_temp[id].analogInput,
                 analogOutput: analogOutputFunction!==undefined? analogOutputFunction : code_temp[id].analogOutput
@@ -376,12 +378,21 @@ export default class Main extends React.Component {
                             this.state.ioPairs.map((output_list, index) => {
                                 if(this.state.isAnalogInput[index] === 0) {
                                     var ret = [["if (" + this.state.codeInput[index].codeLoop[0] + ") {"]]
+                                    var els = []
                                     for(var i=0; i<output_list.length; i++) {
                                         var output_idx = output_list[i]
                                         ret.push(this.state.codeOutput[output_idx].codeLoop)
+                                        els.push(this.state.codeOutput[output_idx].codeLoopElse)
                                     }
                                     ret.push(["}"])
-                                    console.log(ret)
+                                    console.log(els)
+                                    if(els.length > 0) {
+                                        ret.push(["else {"])
+                                        for(var i=0; i<els.length; i++) {
+                                            ret.push(els[i])
+                                        }
+                                        ret.push(["}"])
+                                    }
                                     return (
                                         ret.map(el => {
                                             return <pre>{formProgram(el, 1)}</pre>

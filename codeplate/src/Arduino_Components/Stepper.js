@@ -7,10 +7,11 @@ import Code from "./Tools/Code.js";
 class Stepper extends Component {
     constructor(props){
         super(props)
+        console.log(props.id)
         this.state = {
             deviceType: ComponentType.OUTPUT_DEVICE,
             initQuestion: <Question handleAnswer = {this.updateSpeed}
-                                    questionText="What should the initial speed of the stepper be? Ranging from 0 - 255 with 255 being the fastest."
+                                    questionText="What should the speed of the stepper motor be? Ranging from 1 - 255 with 255 being the fastest. 255 as a default is recommended."
                                     answerType={AnswerType.NUMERICAL} />,
 
             digitalQuestion: <Question handleAnswer = {this.updateDigital}
@@ -142,12 +143,14 @@ class Stepper extends Component {
     }
 
     getLoopLogicAnalog = (answer) => {
+        console.log(this.props.id)
+        var id = this.props.id || 0
         if (answer === "position") {
             return [
-                `// Map value read from input component for Stepper ${this.props.id} to a position`, 
-                `// pos represents the mapped position to move Stepper ${this.props.id} to`
-                `int pos = int( 200 * ${this.props.paramName} / ${this.props.paramMax}.0);`,
-                `if (${this.state._countName}%200 < pos ) {`,
+                `// Map value read from input component for Stepper ${id} to a position, map(value, fromLow, fromHigh, toLow, toHigh)`, 
+                `// pos represents the mapped position to move Stepper ${id} to 1023`,
+                `int pos = map(potentiometerVal_0, 0, 1023, 0, 200);`,//int( 200 * ${this.props.paramName} / ${this.props.paramMax}.0);`,
+                `if (${this.state._countName} < pos ) {`,
                 `${this.state._objName}.step(1);`,
                 `${this.state._countName}++;`,
                 `}`,
@@ -159,9 +162,9 @@ class Stepper extends Component {
         }
         else {
             return [
-                `// Map value read from input component for Stepper ${this.props.id} to a speed`,
-                `// speed represents the mapped speed to set Stepper ${this.props.id} to`, 
-                `int speed = int( 255 / ${this.props.paramMax} * ${this.props.paramName});`,
+                `// Map value read from input component for Stepper ${id} to a speed, map(value, fromLow, fromHigh, toLow, toHigh)`,
+                `// speed represents the mapped speed to set Stepper ${id} to 1023`,
+                `int speed = map(potentiometerVal_0, 0, 1023, 0, 255);`,//int( 255 / ${this.props.paramMax} * ${this.props.paramName});`,
                 `${this.state._objName}.setSpeed(speed);`,
                 `${this.state._objName}.step(1);`,
             ];

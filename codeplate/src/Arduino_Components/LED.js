@@ -64,6 +64,7 @@ class LED extends Component {
         this.props.handleCode({
             io: "OUTPUT",
             id: this.props.id,
+            loopelse: this.getLoopElse(),
             looplogic: this.getLoopLogic(answer, ''),
             helper: this.getHelperFunction(answer),
             analogOutputFunction: this.getAnalogOutputFunction(), // Fixing incorrect assignment syntax
@@ -75,6 +76,7 @@ class LED extends Component {
         this.props.handleCode({
             io: "OUTPUT",
             id: this.props.id,
+            loopelse: this.getLoopElse(),
             looplogic: this.getLoopLogic(this.state.mode, answer),
             helper: this.getHelperFunction(this.state.mode),
             analogOutputFunction: this.getAnalogOutputFunction()
@@ -85,6 +87,13 @@ class LED extends Component {
 
     handleAnswer = p => {
         this.props.handlePropsChange(p, this.props.id, "OUTPUT")
+    }
+
+    getLoopElse = () => {
+        return  [
+            `// Clear all LEDs on LED ${this.props.id}`,
+            `colorWipe(${this.state._objName}.Color(0,0,0), 1);`
+        ]
     }
 
     getGlobalVar = (num) => {
@@ -107,9 +116,9 @@ class LED extends Component {
         switch (mode) {
             case "color":
                 var hex1 = parseInt(`${color[1]}${color[2]}`, 16);
-                return [`// Set LED ${this.props.id} to the user provided color (converted to hex)`, `colorWipe(${this.state._objName}.Color(${hex1}, ${color[3]}${color[4]}, ${color[5]}${color[6]}), 50);`];
+                return [`// Set LED ${this.props.id} to the user provided color (converted to hex)`, `colorWipe(${this.state._objName}.Color(${hex1}, ${color[3]}${color[4]}, ${color[5]}${color[6]}), 1);`];
             case "rainbow":
-                return [`// Set LED ${this.props.id} to a rainbow cycle`, `theaterChaseRainbow(${this.state._objName}, 50);`];
+                return [`// Set LED ${this.props.id} to a rainbow cycle`, `theaterChaseRainbow(${this.state._objName}, 1);`];
             default:
                 return [];
         }
@@ -125,14 +134,24 @@ class LED extends Component {
             `// Set LED ${this.props.id} to a brightness scaled on the input`,
             `float brightness = ${brightness};`,
             `${this.state._objName}.setBrightness(brightness);`,
-            `colorWipe(${this.state._objName}.Color(${color[0]}${color[1]}, ${color[2]}${color[3]}, ${color[4]}${color[5]}), 50);`
+            `colorWipe(${this.state._objName}.Color(${color[0]}${color[1]}, ${color[2]}${color[3]}, ${color[4]}${color[5]}), 1);`
         ];
 
     }
 
     getHelperFunction(mode) {
+        var ret = [
+            `// Helper function that sets an LED to specific color`,
+            "void colorWipe(uint32_t color, int wait) {",
+            `  for(int i = 0; i < ${this.state._objName}.numPixels(); i++) {`,
+            `    ${this.state._objName}.setPixelColor(i, color);`,
+            `    ${this.state._objName}.show();`,
+            "    delay(wait);",
+            "  }",
+            "}"
+        ]
         if (mode === "rainbow") {
-            return [
+            ret.concat([
                 `// Helper function that sets an LED to a rainbow chase`,
                 "void theaterChaseRainbow(int wait) {",
                 "  int firstPixelHue = 0;",
@@ -150,19 +169,9 @@ class LED extends Component {
                 "    }",
                 "  }",
                 "}"
-            ];
-        } else {
-            return [
-                `// Helper function that sets an LED to specific color`,
-                "void colorWipe(uint32_t color, int wait) {",
-                `  for(int i = 0; i < ${this.state._objName}.numPixels(); i++) {`,
-                `    ${this.state._objName}.setPixelColor(i, color);`,
-                `    ${this.state._objName}.show();`,
-                "    delay(wait);",
-                "  }",
-                "}"
-            ];
-        }
+            ])
+        } 
+        return ret
     }
 
     render() {

@@ -131,7 +131,7 @@ class Ultrasonic extends Component {
             `digitalWrite(${this.state._trig}, LOW);`, 
             `${this.state._duration} = pulseIn(${this.state._echo}, HIGH);`,
             
-            `Convert the measured duration to centimeters`,
+            `//Convert the measured duration to centimeters`,
             `${this.state._distance} = ${this.state._duration} * 0.034 / 2;`]
         if (this.props.isSerial) {
             ret.push(
@@ -143,7 +143,7 @@ class Ultrasonic extends Component {
     getLoopLogic = () => {
         var code = [];
         if (this.state.mode == "binary") {
-            code.push(`${this.state._distance} > ${this.state._boundary}`); 
+            code.push(`${this.state._distance} < ${this.state._boundary}`); 
         }
         return code;
     }
