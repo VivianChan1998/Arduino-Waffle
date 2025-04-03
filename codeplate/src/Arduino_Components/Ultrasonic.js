@@ -143,7 +143,7 @@ class Ultrasonic extends Component {
     getLoopLogic = () => {
         var code = [];
         if (this.state.mode == "binary") {
-            code.push(`${this.state._distance} < ${this.state._boundary}`); 
+            code.push(`${this.state._distance} > ${this.state._boundary}`); 
         }
         return code;
     }
